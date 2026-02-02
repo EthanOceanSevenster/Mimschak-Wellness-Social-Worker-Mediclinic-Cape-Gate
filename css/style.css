@@ -5,9 +5,10 @@
 * License: https://creativecommons.org/licenses/by/3.0/
 */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
-body {
+html, body {
   overflow-x: hidden;
-  position: relative; }
+  position: relative;
+  width: 100%; }
 
 body {
   font-family: "Inter", sans-serif;
@@ -704,3 +705,19 @@ textarea {
     height: 50px;
     border-radius: 50%;
     background: rgba(59, 93, 80, 0.2); }
+
+/* Prevent horizontal overflow from decorative elements */
+.hero,
+.why-choose-section,
+.we-help-section,
+.product-section,
+.untree_co-section,
+.testimonial-section,
+.footer-section {
+  overflow-x: hidden; }
+
+@media (max-width: 991px) {
+  .hero .hero-img-wrap:after,
+  .why-choose-section .img-wrap:before,
+  .we-help-section .imgs-grid:before {
+    display: none; } }
