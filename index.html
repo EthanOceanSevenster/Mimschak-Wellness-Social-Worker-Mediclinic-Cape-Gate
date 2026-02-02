@@ -379,6 +379,129 @@
 		</a>
 
 		<style>
+			/* Responsive fixes */
+			@media (max-width: 767px) {
+				/* Hero profile image */
+				.hero .hero-img-wrap img {
+					width: 180px !important;
+					height: 180px !important;
+					margin-top: 20px;
+					margin-bottom: 20px;
+				}
+
+				/* Hero buttons stack vertically */
+				.hero .intro-excerpt p:last-child .btn {
+					display: block;
+					width: 100%;
+					margin-bottom: 10px;
+				}
+				.hero .intro-excerpt p:last-child .btn.me-2 {
+					margin-right: 0 !important;
+				}
+
+				/* Section padding reduce */
+				.product-section,
+				.why-choose-section,
+				.we-help-section,
+				.untree_co-section,
+				.testimonial-section {
+					padding: 3rem 0 !important;
+				}
+
+				/* Custom list full width on mobile */
+				.custom-list li {
+					width: 100% !important;
+					display: block !important;
+				}
+
+				/* Feature cards text size */
+				.feature h3 {
+					font-size: 13px;
+				}
+				.feature p {
+					font-size: 12px;
+					line-height: 18px;
+				}
+
+				/* About preview card padding */
+				.untree_co-section .p-4 {
+					padding: 1rem !important;
+				}
+
+				/* CTA section */
+				.testimonial-section .btn-lg {
+					display: block;
+					width: 100%;
+					margin-bottom: 10px;
+				}
+				.testimonial-section .btn-lg.me-3 {
+					margin-right: 0 !important;
+				}
+
+				/* Footer columns */
+				.footer-section .col-md-4 {
+					text-align: center;
+				}
+
+				/* Why choose sidebar image */
+				.why-choose-section .img-wrap {
+					margin-top: 2rem;
+				}
+
+				/* Quote block padding */
+				.we-help-section .p-5 {
+					padding: 1.5rem !important;
+				}
+
+				/* Location section cards */
+				.untree_co-section .col-md-4 .text-center.p-4 {
+					padding: 1rem !important;
+				}
+
+				/* WhatsApp button mobile position */
+				.whatsapp-float {
+					width: 50px !important;
+					height: 50px !important;
+					bottom: 80px !important;
+					right: 15px !important;
+					font-size: 24px !important;
+				}
+			}
+
+			@media (max-width: 575px) {
+				/* Hero heading size */
+				.hero h1 {
+					font-size: 28px !important;
+				}
+
+				/* Service cards on very small screens */
+				.product-section .product-item {
+					padding: 15px !important;
+				}
+				.product-section .product-item .fas {
+					font-size: 36px !important;
+				}
+
+				/* Section titles */
+				.section-title {
+					font-size: 24px;
+				}
+
+				/* About preview profile image */
+				.untree_co-section img[style*="120px"] {
+					width: 90px !important;
+					height: 90px !important;
+				}
+			}
+
+			@media (min-width: 768px) and (max-width: 991px) {
+				/* Hero image on tablet */
+				.hero .hero-img-wrap img {
+					width: 220px !important;
+					height: 220px !important;
+				}
+			}
+
 			.whatsapp-float {
 				position: fixed;
 				width: 60px;
