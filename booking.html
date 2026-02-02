@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="author" content="Mimschak Wellness">
+  <link rel="shortcut icon" href="favicon.png">
+
+  <meta name="description" content="Book a consultation with Mimschak Wellness - Professional Social Worker at Mediclinic Cape Gate. Schedule your appointment today." />
+  <meta name="keywords" content="book appointment, social worker, counselling, therapy, Cape Town, Mediclinic Cape Gate" />
+
+		<!-- Bootstrap CSS -->
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+		<link href="css/tiny-slider.css" rel="stylesheet">
+		<link href="css/style.css" rel="stylesheet">
+		<title>Book Appointment | Mimschak Wellness | Social Worker</title>
+
+		<style>
+			.calendar-container {
+				background: white;
+				border-radius: 20px;
+				box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+				padding: 30px;
+			}
+			.month-nav {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 25px;
+				padding-bottom: 15px;
+				border-bottom: 2px solid #f0f0f0;
+			}
+			.month-nav button {
+				background: #E8F4FC;
+				border: none;
+				border-radius: 10px;
+				padding: 12px 20px;
+				cursor: pointer;
+				transition: all 0.2s ease;
+				color: #1F86C7;
+				font-weight: 600;
+			}
+			.month-nav button:hover {
+				background: #1F86C7;
+				color: white;
+			}
+			.month-nav h3 {
+				margin: 0;
+				color: #333;
+				font-weight: 700;
+			}
+			.calendar-grid {
+				display: grid;
+				grid-template-columns: repeat(7, 1fr);
+				gap: 8px;
+			}
+			.day-header {
+				text-align: center;
+				font-weight: 700;
+				color: #1F86C7;
+				padding: 15px 0;
+				font-size: 14px;
+			}
+			.day-cell {
+				aspect-ratio: 1;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				border-radius: 12px;
+				cursor: pointer;
+				font-weight: 600;
+				font-size: 16px;
+				transition: all 0.2s ease;
+				background: #f8f9fa;
+			}
+			.day-cell:hover:not(.disabled):not(.empty) {
+				background: #E8F4FC;
+				transform: scale(1.05);
+			}
+			.day-cell.selected {
+				background: #1F86C7;
+				color: white;
+				transform: scale(1.05);
+			}
+			.day-cell.disabled {
+				color: #ccc;
+				cursor: not-allowed;
+				background: transparent;
+			}
+			.day-cell.empty {
+				cursor: default;
+				background: transparent;
+			}
+			.day-cell.today {
+				border: 2px solid #1F86C7;
+			}
+			.time-section {
+				margin-top: 30px;
+				padding-top: 30px;
+				border-top: 2px solid #f0f0f0;
+			}
+			.time-section h4 {
+				margin-bottom: 20px;
+				color: #333;
+			}
+			.time-slots {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+				gap: 12px;
+			}
+			.time-slot {
+				padding: 15px 20px;
+				border: 2px solid #e9ecef;
+				border-radius: 12px;
+				text-align: center;
+				cursor: pointer;
+				transition: all 0.2s ease;
+				font-weight: 600;
+				font-size: 15px;
+			}
+			.time-slot:hover {
+				border-color: #1F86C7;
+				background: #E8F4FC;
+			}
+			.time-slot.selected {
+				background: #1F86C7;
+				color: white;
+				border-color: #1F86C7;
+			}
+			.book-btn {
+				margin-top: 30px;
+				padding: 18px 50px;
+				font-size: 18px;
+				font-weight: 700;
+				border-radius: 12px;
+				width: 100%;
+			}
+			.selected-info {
+				background: #E8F4FC;
+				border-radius: 12px;
+				padding: 20px;
+				margin-top: 20px;
+				display: none;
+			}
+			.selected-info.show {
+				display: block;
+			}
+			.selected-info p {
+				margin: 0;
+				color: #333;
+				font-size: 16px;
+			}
+			.selected-info strong {
+				color: #1F86C7;
+			}
+			.info-card {
+				background: white;
+				border-radius: 15px;
+				padding: 25px;
+				box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+				margin-bottom: 20px;
+			}
+			.info-card h5 {
+				color: #1F86C7;
+				margin-bottom: 15px;
+			}
+			.info-card ul {
+				list-style: none;
+				padding: 0;
+				margin: 0;
+			}
+			.info-card li {
+				padding: 8px 0;
+				color: #666;
+				display: flex;
+				align-items: center;
+			}
+			.info-card li i {
+				color: #1F86C7;
+				margin-right: 10px;
+				width: 20px;
+			}
+			@media (max-width: 768px) {
+				.calendar-container {
+					padding: 20px;
+				}
+				.day-cell {
+					font-size: 14px;
+				}
+				.month-nav button {
+					padding: 10px 15px;
+					font-size: 14px;
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<!-- Start Header/Navigation -->
+		<nav class="custom-navbar navbar navbar-expand-md" aria-label="Navigation bar">
+
+			<div class="container">
+				<a class="navbar-brand" href="index.html">Mimschak Wellness<span>.</span></a>
+
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div class="collapse navbar-collapse" id="navbarsFurni">
+					<ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+						<li class="nav-item">
+							<a class="nav-link" href="index.html">Home</a>
+						</li>
+						<li><a class="nav-link" href="about.html">About</a></li>
+						<li><a class="nav-link" href="services.html">Services</a></li>
+						<li><a class="nav-link" href="contact.html">Contact</a></li>
+						<li class="active"><a class="nav-link" href="booking.html">Booking</a></li>
+					</ul>
+				</div>
+			</div>
+
+		</nav>
+		<!-- End Header/Navigation -->
+
+		<!-- Start Hero Section -->
+		<div class="hero">
+			<div class="container">
+				<div class="row justify-content-between">
+					<div class="col-lg-7">
+						<div class="intro-excerpt">
+							<h1>Book Your <span class="d-block">Appointment</span></h1>
+							<p class="mb-4">Select a date and time that works for you.</p>
+						</div>
+					</div>
+					<div class="col-lg-5">
+						<div class="hero-img-wrap text-center">
+							<i class="fas fa-calendar-check" style="font-size: 180px; color: white;"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Hero Section -->
+
+		<!-- Start Booking Section -->
+		<div class="untree_co-section">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-8 mb-5 mb-lg-0">
+						<div class="calendar-container">
+							<!-- Month Navigation -->
+							<div class="month-nav">
+								<button id="prevMonth"><i class="fas fa-chevron-left me-2"></i>Prev</button>
+								<h3 id="currentMonth">January 2026</h3>
+								<button id="nextMonth">Next<i class="fas fa-chevron-right ms-2"></i></button>
+							</div>
+
+							<!-- Calendar Grid -->
+							<div class="calendar-grid" id="calendarGrid">
+								<!-- Generated by JavaScript -->
+							</div>
+
+							<!-- Time Slots -->
+							<div class="time-section">
+								<h4><i class="fas fa-clock me-2" style="color: #1F86C7;"></i>Select a Time</h4>
+								<div class="time-slots" id="timeSlots">
+									<div class="time-slot" data-time="09:00">09:00 AM</div>
+									<div class="time-slot" data-time="10:00">10:00 AM</div>
+									<div class="time-slot" data-time="11:00">11:00 AM</div>
+									<div class="time-slot" data-time="12:00">12:00 PM</div>
+									<div class="time-slot" data-time="14:00">02:00 PM</div>
+									<div class="time-slot" data-time="15:00">03:00 PM</div>
+									<div class="time-slot" data-time="16:00">04:00 PM</div>
+								</div>
+							</div>
+
+							<!-- Selected Info -->
+							<div class="selected-info" id="selectedInfo">
+								<p><i class="fas fa-calendar-check me-2" style="color: #1F86C7;"></i>
+									<strong>Selected:</strong> <span id="selectedDisplay">-</span>
+								</p>
+							</div>
+
+							<!-- Book Button -->
+							<button class="btn btn-primary book-btn" id="bookBtn" disabled>
+								<i class="fab fa-whatsapp me-2"></i>Book via WhatsApp
+							</button>
+						</div>
+					</div>
+
+					<!-- Info Sidebar -->
+					<div class="col-lg-4">
+						<div class="info-card">
+							<h5><i class="fas fa-info-circle me-2"></i>Booking Info</h5>
+							<ul>
+								<li><i class="fas fa-clock"></i>Sessions: 45-60 minutes</li>
+								<li><i class="fas fa-map-marker-alt"></i>Mediclinic Cape Gate</li>
+								<li><i class="fas fa-calendar"></i>Mon - Fri only</li>
+								<li><i class="fas fa-shield-alt"></i>100% Confidential</li>
+							</ul>
+						</div>
+
+						<div class="info-card">
+							<h5><i class="fas fa-tag me-2"></i>Session Rates</h5>
+							<ul>
+								<li><i class="fas fa-comments"></i>Consultation (30min) — <strong>R250</strong></li>
+								<li><i class="fas fa-user-clock"></i>Initial Session (1hr) — <strong>R650</strong></li>
+								<li><i class="fas fa-sync-alt"></i>Ongoing Session — <strong>R550</strong></li>
+								<li><i class="fas fa-users"></i>Group (8-10) — <strong>R850/hr</strong></li>
+								<li><i class="fas fa-chalkboard-teacher"></i>Training (per 10) — <strong>R1 250/hr</strong></li>
+							</ul>
+						</div>
+
+						<div class="info-card" style="background: linear-gradient(135deg, #1F86C7 0%, #6FB6E6 100%);">
+							<h5 class="text-white"><i class="fas fa-phone-alt me-2"></i>Call Instead?</h5>
+							<a href="tel:0725464057" class="btn btn-light d-block">
+								<i class="fas fa-phone me-2"></i>072 546 4057
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End Booking Section -->
+
+		<!-- Start Footer Section -->
+		<footer class="footer-section" style="background-color: #f5f5f5; color: #000; padding: 40px 0 20px 0;">
+			<div class="container">
+				<div class="row mb-4">
+					<div class="col-md-4 mb-4 mb-md-0">
+						<h6 style="color: #000;">Mimschak Wellness</h6>
+						<p style="font-size: 14px; color: #333;">Providing compassionate, professional social work services to support individuals and families through life's challenges.</p>
+						<p style="font-size: 13px; color: #555; margin-top: 10px;">
+							<strong>UKZN Honours</strong><br>
+							<strong>089 000 0495425</strong>
+						</p>
+					</div>
+					<div class="col-md-4 mb-4 mb-md-0">
+						<h6 style="color: #000;">Services</h6>
+						<ul class="list-unstyled" style="font-size: 14px;">
+							<li style="color: #333; margin-bottom: 5px;">Counselling</li>
+							<li style="color: #333; margin-bottom: 5px;">Family Support</li>
+							<li style="color: #333; margin-bottom: 5px;">Trauma</li>
+							<li style="color: #333; margin-bottom: 5px;">Bereavement</li>
+							<li style="color: #333; margin-bottom: 5px;">HIV/AIDS Support</li>
+							<li style="color: #333; margin-bottom: 5px;">Assessments</li>
+							<li style="color: #333; margin-bottom: 5px;">Abuse Support</li>
+							<li style="color: #333; margin-bottom: 5px;">Substance Abuse</li>
+						</ul>
+					</div>
+					<div class="col-md-4">
+						<h6 style="color: #000;">Contact</h6>
+						<p style="font-size: 14px; color: #333; margin-bottom: 10px;">
+							<strong>Mediclinic Cape Gate</strong><br>
+							Tanner Street, Cape Town
+						</p>
+						<p style="font-size: 14px; color: #333; margin-bottom: 8px;">
+							<i class="fas fa-phone me-2"></i><a href="tel:0725464057" style="color: #333; text-decoration: none;">072 546 4057</a>
+						</p>
+						<p style="font-size: 14px; color: #333; margin-bottom: 8px;">
+							<i class="fas fa-envelope me-2"></i><a href="mailto:phakamandamase@gmail.com" style="color: #333; text-decoration: none;">phakamandamase@gmail.com</a>
+						</p>
+						<p style="font-size: 14px; color: #333;">
+							Mon - Fri: By Appointment
+						</p>
+					</div>
+				</div>
+				<hr style="border-color: #ddd; margin: 20px 0;">
+				<div class="row">
+					<div class="col-12 text-center" style="font-size: 14px; color: #666;">
+						<p>&copy; 2024 Mimschak Wellness. All rights reserved.</p>
+					</div>
+				</div>
+			</div>
+		</footer>
+		<!-- End Footer Section -->
+
+		<!-- WhatsApp Floating Button -->
+		<a href="https://wa.me/27725464057" class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+			<i class="fab fa-whatsapp"></i>
+		</a>
+
+		<style>
+			.whatsapp-float {
+				position: fixed;
+				width: 60px;
+				height: 60px;
+				bottom: 100px;
+				right: 30px;
+				background-color: #25D366;
+				color: #fff;
+				border-radius: 50%;
+				text-align: center;
+				font-size: 30px;
+				box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+				z-index: 1000;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				transition: background-color 0.3s ease, transform 0.3s ease;
+				animation: floatAnim 3s ease-in-out infinite;
+			}
+			.whatsapp-float:hover {
+				background-color: #128C7E;
+				color: #fff;
+				transform: scale(1.1);
+				animation-play-state: paused;
+			}
+			@keyframes floatAnim {
+				0%, 100% { transform: translateY(0); }
+				50% { transform: translateY(-15px); }
+			}
+		</style>
+
+		<script src="js/bootstrap.bundle.min.js"></script>
+		<script src="js/tiny-slider.js"></script>
+		<script src="js/custom.js"></script>
+
+		<script>
+			let selectedDate = null;
+			let selectedTime = '';
+			let currentMonth = new Date().getMonth();
+			let currentYear = new Date().getFullYear();
+
+			const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+			const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+			function generateCalendar() {
+				const grid = document.getElementById('calendarGrid');
+				const today = new Date();
+				today.setHours(0, 0, 0, 0);
+
+				document.getElementById('currentMonth').textContent = `${months[currentMonth]} ${currentYear}`;
+				grid.innerHTML = '';
+
+				// Day headers
+				days.forEach(day => {
+					const header = document.createElement('div');
+					header.className = 'day-header';
+					header.textContent = day;
+					grid.appendChild(header);
+				});
+
+				const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+				const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+				// Empty cells
+				for (let i = 0; i < firstDay; i++) {
+					const empty = document.createElement('div');
+					empty.className = 'day-cell empty';
+					grid.appendChild(empty);
+				}
+
+				// Day cells
+				for (let day = 1; day <= daysInMonth; day++) {
+					const cell = document.createElement('div');
+					cell.className = 'day-cell';
+					cell.textContent = day;
+
+					const cellDate = new Date(currentYear, currentMonth, day);
+					const dayOfWeek = cellDate.getDay();
+
+					if (cellDate < today || dayOfWeek === 0 || dayOfWeek === 6) {
+						cell.classList.add('disabled');
+					} else {
+						cell.addEventListener('click', () => selectDate(cell, cellDate));
+					}
+
+					if (cellDate.getTime() === today.getTime()) {
+						cell.classList.add('today');
+					}
+
+					if (selectedDate && cellDate.getTime() === selectedDate.getTime()) {
+						cell.classList.add('selected');
+					}
+
+					grid.appendChild(cell);
+				}
+			}
+
+			function selectDate(cell, date) {
+				document.querySelectorAll('.day-cell.selected').forEach(c => c.classList.remove('selected'));
+				cell.classList.add('selected');
+				selectedDate = date;
+				updateSelection();
+			}
+
+			// Time slots
+			document.querySelectorAll('.time-slot').forEach(slot => {
+				slot.addEventListener('click', () => {
+					document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+					slot.classList.add('selected');
+					selectedTime = slot.dataset.time;
+					updateSelection();
+				});
+			});
+
+			function updateSelection() {
+				const info = document.getElementById('selectedInfo');
+				const btn = document.getElementById('bookBtn');
+
+				if (selectedDate && selectedTime) {
+					const dateStr = selectedDate.toLocaleDateString('en-ZA', {
+						weekday: 'long',
+						day: 'numeric',
+						month: 'long',
+						year: 'numeric'
+					});
+					const hour = parseInt(selectedTime.split(':')[0]);
+					const timeStr = hour >= 12 ? `${hour > 12 ? hour - 12 : hour}:00 PM` : `${hour}:00 AM`;
+
+					document.getElementById('selectedDisplay').textContent = `${dateStr} at ${timeStr}`;
+					info.classList.add('show');
+					btn.disabled = false;
+				} else {
+					info.classList.remove('show');
+					btn.disabled = true;
+				}
+			}
+
+			// Month navigation
+			document.getElementById('prevMonth').addEventListener('click', () => {
+				const today = new Date();
+				if (currentYear > today.getFullYear() || (currentYear === today.getFullYear() && currentMonth > today.getMonth())) {
+					currentMonth--;
+					if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+					generateCalendar();
+				}
+			});
+
+			document.getElementById('nextMonth').addEventListener('click', () => {
+				currentMonth++;
+				if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+				generateCalendar();
+			});
+
+			// Book button
+			document.getElementById('bookBtn').addEventListener('click', () => {
+				const dateStr = selectedDate.toLocaleDateString('en-ZA', {
+					weekday: 'long',
+					day: 'numeric',
+					month: 'long',
+					year: 'numeric'
+				});
+				const hour = parseInt(selectedTime.split(':')[0]);
+				const timeStr = hour >= 12 ? `${hour > 12 ? hour - 12 : hour}:00 PM` : `${hour}:00 AM`;
+
+				const message = `Hi, I would like to book an appointment on ${dateStr} at ${timeStr}. Please confirm availability. Thank you!`;
+				window.open(`https://wa.me/27725464057?text=${encodeURIComponent(message)}`, '_blank');
+			});
+
+			generateCalendar();
+		</script>
+	</body>
+</html>
