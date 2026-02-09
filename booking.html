@@ -277,6 +277,33 @@
 								</div>
 							</div>
 
+							<!-- Client Details -->
+							<div class="client-details" style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #f0f0f0;">
+								<h4><i class="fas fa-user me-2" style="color: #1F86C7;"></i>Your Details</h4>
+								<div class="mb-3">
+									<input type="text" class="form-control" id="clientName" placeholder="Your Name *" required>
+								</div>
+								<div class="mb-3">
+									<input type="tel" class="form-control" id="clientPhone" placeholder="Phone Number *" required>
+								</div>
+								<div class="mb-3">
+									<input type="email" class="form-control" id="clientEmail" placeholder="Email (optional)">
+								</div>
+								<div class="mb-3">
+									<select class="form-control" id="sessionType">
+										<option value="consultation">Consultation (30min) - R250</option>
+										<option value="initial" selected>Initial Session (1hr) - R650</option>
+										<option value="ongoing">Ongoing Session - R550</option>
+										<option value="group">Group Session - R850/hr</option>
+										<option value="training">Training - R1250/hr</option>
+										<option value="virtual">Virtual Session</option>
+									</select>
+								</div>
+								<div class="mb-3">
+									<textarea class="form-control" id="clientNotes" rows="2" placeholder="Additional notes (optional)"></textarea>
+								</div>
+							</div>
+
 							<!-- Selected Info -->
 							<div class="selected-info" id="selectedInfo">
 								<p><i class="fas fa-calendar-check me-2" style="color: #1F86C7;"></i>
@@ -539,6 +566,19 @@
 
 			// Book button
 			document.getElementById('bookBtn').addEventListener('click', () => {
+				const clientName = document.getElementById('clientName').value.trim();
+				const clientPhone = document.getElementById('clientPhone').value.trim();
+				const clientEmail = document.getElementById('clientEmail').value.trim();
+				const sessionType = document.getElementById('sessionType').value;
+				const sessionTypeText = document.getElementById('sessionType').options[document.getElementById('sessionType').selectedIndex].text;
+				const clientNotes = document.getElementById('clientNotes').value.trim();
+
+				// Validate required fields
+				if (!clientName || !clientPhone) {
+					alert('Please enter your name and phone number.');
+					return;
+				}
+
 				const dateStr = selectedDate.toLocaleDateString('en-ZA', {
 					weekday: 'long',
 					day: 'numeric',
@@ -548,7 +588,28 @@
 				const hour = parseInt(selectedTime.split(':')[0]);
 				const timeStr = hour >= 12 ? `${hour > 12 ? hour - 12 : hour}:00 PM` : `${hour}:00 AM`;
 
-				const message = `Hi, I would like to book an appointment on ${dateStr} at ${timeStr}. Please confirm availability. Thank you!`;
+				// Save booking to localStorage
+				const booking = {
+					id: Date.now(),
+					name: clientName,
+					phone: clientPhone,
+					email: clientEmail,
+					date: selectedDate.toISOString().split('T')[0],
+					dateDisplay: dateStr,
+					time: selectedTime,
+					timeDisplay: timeStr,
+					sessionType: sessionType,
+					sessionTypeText: sessionTypeText,
+					notes: clientNotes,
+					status: 'pending',
+					createdAt: new Date().toISOString()
+				};
+
+				let bookings = JSON.parse(localStorage.getItem('mimschakBookings') || '[]');
+				bookings.push(booking);
+				localStorage.setItem('mimschakBookings', JSON.stringify(bookings));
+
+				const message = `Hi, I'm ${clientName}. I would like to book a ${sessionTypeText} on ${dateStr} at ${timeStr}. My phone: ${clientPhone}. ${clientNotes ? 'Notes: ' + clientNotes : ''} Please confirm availability. Thank you!`;
 				window.open(`https://wa.me/27641533469?text=${encodeURIComponent(message)}`, '_blank');
 			});
 
