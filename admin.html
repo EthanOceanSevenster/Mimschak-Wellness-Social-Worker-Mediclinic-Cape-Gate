@@ -5,222 +5,696 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="robots" content="noindex, nofollow">
 	<link rel="shortcut icon" href="favicon.png">
-	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-	<link href="css/style.css" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 	<title>Admin | Mimschak Wellness</title>
 	<style>
-		.admin-container {
-			min-height: 100vh;
-			background: #f8f9fa;
-		}
-		.login-box {
-			max-width: 400px;
-			margin: 100px auto;
-			padding: 40px;
-			background: white;
-			border-radius: 20px;
-			box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-		}
-		.admin-panel {
-			display: none;
-			padding: 30px 0;
-		}
-		.booking-card {
-			background: white;
-			border-radius: 15px;
-			padding: 20px;
-			margin-bottom: 15px;
-			box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-			border-left: 4px solid #1F86C7;
-		}
-		.booking-card.confirmed {
-			border-left-color: #8BC34A;
-		}
-		.booking-card.cancelled {
-			border-left-color: #dc3545;
-			opacity: 0.7;
-		}
-		.booking-card h5 {
-			margin-bottom: 10px;
-			color: #333;
-		}
-		.booking-card .meta {
-			font-size: 14px;
-			color: #666;
-		}
-		.booking-card .meta i {
-			width: 20px;
-			color: #1F86C7;
-		}
-		.booking-card .actions {
-			margin-top: 15px;
-			padding-top: 15px;
-			border-top: 1px solid #eee;
-		}
-		.booking-card .actions .btn {
-			padding: 5px 15px;
-			font-size: 13px;
-		}
-		.status-badge {
-			display: inline-block;
-			padding: 3px 10px;
-			border-radius: 20px;
-			font-size: 12px;
-			font-weight: 600;
-		}
-		.status-badge.pending {
-			background: #fff3cd;
-			color: #856404;
-		}
-		.status-badge.confirmed {
-			background: #d4edda;
-			color: #155724;
-		}
-		.status-badge.cancelled {
-			background: #f8d7da;
-			color: #721c24;
-		}
-		.stats-card {
-			background: white;
-			border-radius: 15px;
-			padding: 20px;
-			text-align: center;
-			box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-		}
-		.stats-card h3 {
-			font-size: 32px;
-			color: #1F86C7;
-			margin-bottom: 5px;
-		}
-		.stats-card p {
+		* {
 			margin: 0;
-			color: #666;
-			font-size: 14px;
+			padding: 0;
+			box-sizing: border-box;
 		}
-		.filter-bar {
+
+		body {
+			font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+			background: #f3f2f1;
+			min-height: 100vh;
+			color: #323130;
+		}
+
+		/* Microsoft Fluent Design Variables */
+		:root {
+			--ms-blue: #0078d4;
+			--ms-blue-dark: #106ebe;
+			--ms-blue-light: #deecf9;
+			--ms-green: #107c10;
+			--ms-yellow: #ffb900;
+			--ms-red: #d13438;
+			--ms-gray-10: #faf9f8;
+			--ms-gray-20: #f3f2f1;
+			--ms-gray-30: #edebe9;
+			--ms-gray-40: #d2d0ce;
+			--ms-gray-90: #605e5c;
+			--ms-gray-130: #323130;
+			--ms-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,0.132), 0 0.3px 0.9px 0 rgba(0,0,0,0.108);
+			--ms-shadow-lg: 0 6.4px 14.4px 0 rgba(0,0,0,0.132), 0 1.2px 3.6px 0 rgba(0,0,0,0.108);
+		}
+
+		/* Login Screen */
+		.login-container {
+			min-height: 100vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: linear-gradient(135deg, #0078d4 0%, #00bcf2 100%);
+		}
+
+		.login-card {
 			background: white;
-			padding: 15px 20px;
-			border-radius: 10px;
-			margin-bottom: 20px;
+			width: 100%;
+			max-width: 440px;
+			padding: 44px;
+			box-shadow: var(--ms-shadow-lg);
 		}
-		.no-bookings {
+
+		.login-logo {
 			text-align: center;
-			padding: 60px 20px;
-			color: #999;
+			margin-bottom: 32px;
 		}
-		.no-bookings i {
-			font-size: 60px;
-			margin-bottom: 20px;
-			color: #ddd;
+
+		.login-logo .icon {
+			width: 80px;
+			height: 80px;
+			background: var(--ms-blue);
+			border-radius: 4px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin: 0 auto 16px;
 		}
-		.admin-header {
-			background: linear-gradient(135deg, #1F86C7 0%, #6FB6E6 100%);
-			padding: 20px 0;
+
+		.login-logo .icon i {
+			font-size: 36px;
 			color: white;
 		}
-		.admin-header h1 {
-			margin: 0;
+
+		.login-logo h1 {
 			font-size: 24px;
+			font-weight: 600;
+			color: var(--ms-gray-130);
+			margin-bottom: 4px;
+		}
+
+		.login-logo p {
+			color: var(--ms-gray-90);
+			font-size: 14px;
+		}
+
+		.ms-input {
+			width: 100%;
+			padding: 8px 12px;
+			border: 1px solid var(--ms-gray-40);
+			border-radius: 2px;
+			font-size: 14px;
+			font-family: inherit;
+			transition: border-color 0.1s;
+			margin-bottom: 16px;
+		}
+
+		.ms-input:focus {
+			outline: none;
+			border-color: var(--ms-blue);
+			border-bottom-width: 2px;
+		}
+
+		.ms-input::placeholder {
+			color: var(--ms-gray-90);
+		}
+
+		.ms-btn {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+			padding: 0 20px;
+			height: 32px;
+			border: none;
+			border-radius: 2px;
+			font-size: 14px;
+			font-weight: 600;
+			font-family: inherit;
+			cursor: pointer;
+			transition: all 0.1s;
+		}
+
+		.ms-btn-primary {
+			background: var(--ms-blue);
+			color: white;
+			width: 100%;
+		}
+
+		.ms-btn-primary:hover {
+			background: var(--ms-blue-dark);
+		}
+
+		.ms-btn-default {
+			background: white;
+			color: var(--ms-gray-130);
+			border: 1px solid var(--ms-gray-40);
+		}
+
+		.ms-btn-default:hover {
+			background: var(--ms-gray-20);
+		}
+
+		.ms-btn-danger {
+			background: var(--ms-red);
+			color: white;
+		}
+
+		.ms-btn-danger:hover {
+			background: #a4262c;
+		}
+
+		.ms-btn-success {
+			background: var(--ms-green);
+			color: white;
+		}
+
+		.ms-btn-success:hover {
+			background: #0b5a08;
+		}
+
+		.ms-btn-sm {
+			height: 28px;
+			padding: 0 12px;
+			font-size: 12px;
+		}
+
+		.back-link {
+			text-align: center;
+			margin-top: 24px;
+		}
+
+		.back-link a {
+			color: var(--ms-blue);
+			text-decoration: none;
+			font-size: 14px;
+		}
+
+		.back-link a:hover {
+			text-decoration: underline;
+		}
+
+		/* Admin Panel */
+		.admin-panel {
+			display: none;
+		}
+
+		/* Sidebar Navigation */
+		.sidebar {
+			position: fixed;
+			left: 0;
+			top: 0;
+			bottom: 0;
+			width: 48px;
+			background: var(--ms-gray-130);
+			z-index: 100;
+			transition: width 0.2s;
+		}
+
+		.sidebar:hover {
+			width: 200px;
+		}
+
+		.sidebar-logo {
+			height: 48px;
+			display: flex;
+			align-items: center;
+			padding: 0 12px;
+			background: var(--ms-blue);
+		}
+
+		.sidebar-logo i {
+			font-size: 24px;
+			color: white;
+		}
+
+		.sidebar-logo span {
+			color: white;
+			font-weight: 600;
+			margin-left: 12px;
+			white-space: nowrap;
+			opacity: 0;
+			transition: opacity 0.2s;
+		}
+
+		.sidebar:hover .sidebar-logo span {
+			opacity: 1;
+		}
+
+		.sidebar-nav {
+			padding: 8px 0;
+		}
+
+		.sidebar-item {
+			display: flex;
+			align-items: center;
+			padding: 12px;
+			color: rgba(255,255,255,0.7);
+			text-decoration: none;
+			transition: all 0.1s;
+			cursor: pointer;
+		}
+
+		.sidebar-item:hover {
+			background: rgba(255,255,255,0.1);
+			color: white;
+		}
+
+		.sidebar-item.active {
+			background: rgba(255,255,255,0.1);
+			color: white;
+			border-left: 3px solid var(--ms-blue);
+		}
+
+		.sidebar-item i {
+			width: 24px;
+			font-size: 16px;
+			text-align: center;
+		}
+
+		.sidebar-item span {
+			margin-left: 12px;
+			white-space: nowrap;
+			opacity: 0;
+			transition: opacity 0.2s;
+		}
+
+		.sidebar:hover .sidebar-item span {
+			opacity: 1;
+		}
+
+		/* Main Content */
+		.main-content {
+			margin-left: 48px;
+			min-height: 100vh;
+		}
+
+		/* Header */
+		.header {
+			background: white;
+			padding: 16px 24px;
+			box-shadow: var(--ms-shadow);
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			position: sticky;
+			top: 0;
+			z-index: 50;
+		}
+
+		.header h1 {
+			font-size: 20px;
+			font-weight: 600;
+			color: var(--ms-gray-130);
+		}
+
+		.header-actions {
+			display: flex;
+			gap: 8px;
+		}
+
+		/* Stats Cards */
+		.stats-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			gap: 16px;
+			padding: 24px;
+		}
+
+		.stat-card {
+			background: white;
+			padding: 20px;
+			box-shadow: var(--ms-shadow);
+			border-top: 4px solid var(--ms-blue);
+		}
+
+		.stat-card.pending {
+			border-top-color: var(--ms-yellow);
+		}
+
+		.stat-card.confirmed {
+			border-top-color: var(--ms-green);
+		}
+
+		.stat-card.today {
+			border-top-color: #00bcf2;
+		}
+
+		.stat-card h3 {
+			font-size: 42px;
+			font-weight: 300;
+			color: var(--ms-gray-130);
+			margin-bottom: 4px;
+		}
+
+		.stat-card p {
+			font-size: 14px;
+			color: var(--ms-gray-90);
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+		}
+
+		/* Command Bar */
+		.command-bar {
+			background: white;
+			padding: 8px 24px;
+			display: flex;
+			align-items: center;
+			gap: 16px;
+			border-bottom: 1px solid var(--ms-gray-30);
+			flex-wrap: wrap;
+		}
+
+		.command-bar .ms-input {
+			margin-bottom: 0;
+			max-width: 200px;
+		}
+
+		.command-bar-actions {
+			margin-left: auto;
+			display: flex;
+			gap: 8px;
+		}
+
+		/* Booking List */
+		.booking-list {
+			padding: 24px;
+		}
+
+		.booking-item {
+			background: white;
+			margin-bottom: 8px;
+			box-shadow: var(--ms-shadow);
+			border-left: 4px solid var(--ms-blue);
+			transition: box-shadow 0.1s;
+		}
+
+		.booking-item:hover {
+			box-shadow: var(--ms-shadow-lg);
+		}
+
+		.booking-item.confirmed {
+			border-left-color: var(--ms-green);
+		}
+
+		.booking-item.cancelled {
+			border-left-color: var(--ms-red);
+			opacity: 0.7;
+		}
+
+		.booking-header {
+			padding: 16px 20px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			cursor: pointer;
+		}
+
+		.booking-header:hover {
+			background: var(--ms-gray-10);
+		}
+
+		.booking-info {
+			display: flex;
+			align-items: center;
+			gap: 16px;
+		}
+
+		.booking-avatar {
+			width: 40px;
+			height: 40px;
+			background: var(--ms-blue-light);
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: var(--ms-blue);
+			font-weight: 600;
+			font-size: 16px;
+		}
+
+		.booking-name {
+			font-weight: 600;
+			color: var(--ms-gray-130);
+			margin-bottom: 2px;
+		}
+
+		.booking-type {
+			font-size: 12px;
+			color: var(--ms-gray-90);
+		}
+
+		.booking-datetime {
+			text-align: right;
+		}
+
+		.booking-date {
+			font-weight: 600;
+			color: var(--ms-blue);
+		}
+
+		.booking-time {
+			font-size: 12px;
+			color: var(--ms-gray-90);
+		}
+
+		.status-pill {
+			display: inline-block;
+			padding: 4px 12px;
+			border-radius: 12px;
+			font-size: 12px;
+			font-weight: 600;
+			text-transform: uppercase;
+		}
+
+		.status-pill.pending {
+			background: #fff4ce;
+			color: #8a6d00;
+		}
+
+		.status-pill.confirmed {
+			background: #dff6dd;
+			color: #107c10;
+		}
+
+		.status-pill.cancelled {
+			background: #fde7e9;
+			color: #d13438;
+		}
+
+		.booking-details {
+			display: none;
+			padding: 0 20px 20px 76px;
+			border-top: 1px solid var(--ms-gray-30);
+		}
+
+		.booking-details.open {
+			display: block;
+		}
+
+		.detail-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			gap: 16px;
+			margin-bottom: 16px;
+			padding-top: 16px;
+		}
+
+		.detail-item {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.detail-item i {
+			color: var(--ms-gray-90);
+			width: 16px;
+		}
+
+		.detail-item span {
+			font-size: 14px;
+			color: var(--ms-gray-130);
+		}
+
+		.booking-actions {
+			display: flex;
+			gap: 8px;
+			padding-top: 16px;
+			border-top: 1px solid var(--ms-gray-30);
+		}
+
+		/* Empty State */
+		.empty-state {
+			text-align: center;
+			padding: 80px 20px;
+			color: var(--ms-gray-90);
+		}
+
+		.empty-state i {
+			font-size: 64px;
+			color: var(--ms-gray-40);
+			margin-bottom: 16px;
+		}
+
+		.empty-state h3 {
+			font-weight: 600;
+			margin-bottom: 8px;
+			color: var(--ms-gray-130);
+		}
+
+		/* Responsive */
+		@media (max-width: 768px) {
+			.sidebar {
+				width: 0;
+				overflow: hidden;
+			}
+
+			.sidebar.open {
+				width: 200px;
+			}
+
+			.main-content {
+				margin-left: 0;
+			}
+
+			.stats-grid {
+				grid-template-columns: repeat(2, 1fr);
+				padding: 16px;
+			}
+
+			.command-bar {
+				padding: 12px 16px;
+			}
+
+			.booking-list {
+				padding: 16px;
+			}
+
+			.booking-details {
+				padding-left: 20px;
+			}
+
+			.header {
+				padding: 12px 16px;
+			}
+
+			.mobile-menu-btn {
+				display: block;
+			}
+		}
+
+		@media (min-width: 769px) {
+			.mobile-menu-btn {
+				display: none;
+			}
 		}
 	</style>
 </head>
 <body>
-	<div class="admin-container">
-		<!-- Login Box -->
-		<div class="login-box" id="loginBox">
-			<div class="text-center mb-4">
-				<i class="fas fa-lock" style="font-size: 48px; color: #1F86C7;"></i>
-				<h3 class="mt-3" style="color: #333;">Admin Login</h3>
-				<p class="text-muted">Enter password to access bookings</p>
+	<!-- Login Screen -->
+	<div class="login-container" id="loginScreen">
+		<div class="login-card">
+			<div class="login-logo">
+				<div class="icon">
+					<i class="fas fa-calendar-check"></i>
+				</div>
+				<h1>Mimschak Wellness</h1>
+				<p>Admin Portal</p>
 			</div>
-			<div class="mb-3">
-				<input type="password" class="form-control" id="adminPassword" placeholder="Password" onkeypress="if(event.key === 'Enter') login()">
-			</div>
-			<button class="btn btn-primary w-100" onclick="login()">
-				<i class="fas fa-sign-in-alt me-2"></i>Login
+			<input type="password" class="ms-input" id="adminPassword" placeholder="Enter password" onkeypress="if(event.key === 'Enter') login()">
+			<button class="ms-btn ms-btn-primary" onclick="login()">
+				<i class="fas fa-sign-in-alt"></i>
+				Sign in
 			</button>
-			<p class="text-center mt-3 mb-0">
-				<a href="index.html" style="color: #666; font-size: 14px;"><i class="fas fa-arrow-left me-1"></i>Back to Website</a>
-			</p>
+			<div class="back-link">
+				<a href="index.html"><i class="fas fa-arrow-left"></i> Back to website</a>
+			</div>
 		</div>
+	</div>
 
-		<!-- Admin Panel -->
-		<div class="admin-panel" id="adminPanel">
-			<div class="admin-header">
-				<div class="container">
-					<div class="d-flex justify-content-between align-items-center">
-						<h1><i class="fas fa-calendar-alt me-2"></i>Booking Management</h1>
-						<div>
-							<a href="index.html" class="btn btn-light btn-sm me-2"><i class="fas fa-home me-1"></i>Website</a>
-							<button class="btn btn-outline-light btn-sm" onclick="logout()"><i class="fas fa-sign-out-alt me-1"></i>Logout</button>
-						</div>
-					</div>
+	<!-- Admin Panel -->
+	<div class="admin-panel" id="adminPanel">
+		<!-- Sidebar -->
+		<nav class="sidebar" id="sidebar">
+			<div class="sidebar-logo">
+				<i class="fas fa-heartbeat"></i>
+				<span>Mimschak</span>
+			</div>
+			<div class="sidebar-nav">
+				<a class="sidebar-item active">
+					<i class="fas fa-calendar-alt"></i>
+					<span>Bookings</span>
+				</a>
+				<a class="sidebar-item" href="index.html">
+					<i class="fas fa-home"></i>
+					<span>Website</span>
+				</a>
+				<a class="sidebar-item" onclick="logout()">
+					<i class="fas fa-sign-out-alt"></i>
+					<span>Sign out</span>
+				</a>
+			</div>
+		</nav>
+
+		<!-- Main Content -->
+		<div class="main-content">
+			<!-- Header -->
+			<header class="header">
+				<div style="display: flex; align-items: center; gap: 16px;">
+					<button class="ms-btn ms-btn-default mobile-menu-btn" onclick="toggleSidebar()">
+						<i class="fas fa-bars"></i>
+					</button>
+					<h1>Booking Management</h1>
+				</div>
+				<div class="header-actions">
+					<button class="ms-btn ms-btn-default" onclick="exportBookings()">
+						<i class="fas fa-download"></i>
+						Export
+					</button>
+				</div>
+			</header>
+
+			<!-- Stats -->
+			<div class="stats-grid">
+				<div class="stat-card">
+					<h3 id="totalBookings">0</h3>
+					<p>Total Bookings</p>
+				</div>
+				<div class="stat-card pending">
+					<h3 id="pendingBookings">0</h3>
+					<p>Pending</p>
+				</div>
+				<div class="stat-card confirmed">
+					<h3 id="confirmedBookings">0</h3>
+					<p>Confirmed</p>
+				</div>
+				<div class="stat-card today">
+					<h3 id="todayBookings">0</h3>
+					<p>Today</p>
 				</div>
 			</div>
 
-			<div class="container mt-4">
-				<!-- Stats -->
-				<div class="row mb-4">
-					<div class="col-6 col-md-3 mb-3">
-						<div class="stats-card">
-							<h3 id="totalBookings">0</h3>
-							<p>Total Bookings</p>
-						</div>
-					</div>
-					<div class="col-6 col-md-3 mb-3">
-						<div class="stats-card">
-							<h3 id="pendingBookings" style="color: #ffc107;">0</h3>
-							<p>Pending</p>
-						</div>
-					</div>
-					<div class="col-6 col-md-3 mb-3">
-						<div class="stats-card">
-							<h3 id="confirmedBookings" style="color: #8BC34A;">0</h3>
-							<p>Confirmed</p>
-						</div>
-					</div>
-					<div class="col-6 col-md-3 mb-3">
-						<div class="stats-card">
-							<h3 id="todayBookings" style="color: #17a2b8;">0</h3>
-							<p>Today</p>
-						</div>
-					</div>
+			<!-- Command Bar -->
+			<div class="command-bar">
+				<select class="ms-input" id="filterStatus" onchange="renderBookings()" style="max-width: 150px;">
+					<option value="all">All status</option>
+					<option value="pending">Pending</option>
+					<option value="confirmed">Confirmed</option>
+					<option value="cancelled">Cancelled</option>
+				</select>
+				<input type="date" class="ms-input" id="filterDate" onchange="renderBookings()" style="max-width: 180px;">
+				<div class="command-bar-actions">
+					<button class="ms-btn ms-btn-default ms-btn-sm" onclick="document.getElementById('filterDate').value=''; document.getElementById('filterStatus').value='all'; renderBookings();">
+						<i class="fas fa-redo"></i>
+						Reset
+					</button>
+					<button class="ms-btn ms-btn-danger ms-btn-sm" onclick="clearAllBookings()">
+						<i class="fas fa-trash"></i>
+						Clear all
+					</button>
 				</div>
+			</div>
 
-				<!-- Filter Bar -->
-				<div class="filter-bar d-flex flex-wrap align-items-center gap-3">
-					<div>
-						<select class="form-control" id="filterStatus" onchange="renderBookings()">
-							<option value="all">All Status</option>
-							<option value="pending">Pending</option>
-							<option value="confirmed">Confirmed</option>
-							<option value="cancelled">Cancelled</option>
-						</select>
-					</div>
-					<div>
-						<input type="date" class="form-control" id="filterDate" onchange="renderBookings()">
-					</div>
-					<div class="ms-auto">
-						<button class="btn btn-outline-danger btn-sm" onclick="clearAllBookings()">
-							<i class="fas fa-trash me-1"></i>Clear All
-						</button>
-						<button class="btn btn-outline-secondary btn-sm" onclick="exportBookings()">
-							<i class="fas fa-download me-1"></i>Export
-						</button>
-					</div>
-				</div>
-
-				<!-- Bookings List -->
-				<div id="bookingsList">
-					<!-- Generated by JS -->
-				</div>
+			<!-- Booking List -->
+			<div class="booking-list" id="bookingsList">
+				<!-- Generated by JS -->
 			</div>
 		</div>
 	</div>
 
 	<script>
-		// Simple password (change this!)
 		const ADMIN_PASSWORD = 'mimschak2024';
 
 		function login() {
@@ -229,21 +703,25 @@
 				sessionStorage.setItem('adminLoggedIn', 'true');
 				showAdminPanel();
 			} else {
-				alert('Incorrect password');
+				alert('Incorrect password. Please try again.');
 			}
 		}
 
 		function logout() {
 			sessionStorage.removeItem('adminLoggedIn');
-			document.getElementById('loginBox').style.display = 'block';
+			document.getElementById('loginScreen').style.display = 'flex';
 			document.getElementById('adminPanel').style.display = 'none';
 		}
 
 		function showAdminPanel() {
-			document.getElementById('loginBox').style.display = 'none';
+			document.getElementById('loginScreen').style.display = 'none';
 			document.getElementById('adminPanel').style.display = 'block';
 			renderBookings();
 			updateStats();
+		}
+
+		function toggleSidebar() {
+			document.getElementById('sidebar').classList.toggle('open');
 		}
 
 		function getBookings() {
@@ -264,6 +742,15 @@
 			document.getElementById('todayBookings').textContent = bookings.filter(b => b.date === today).length;
 		}
 
+		function toggleDetails(id) {
+			const details = document.getElementById('details-' + id);
+			details.classList.toggle('open');
+		}
+
+		function getInitials(name) {
+			return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+		}
+
 		function renderBookings() {
 			const bookings = getBookings();
 			const filterStatus = document.getElementById('filterStatus').value;
@@ -279,16 +766,15 @@
 				filtered = filtered.filter(b => b.date === filterDate);
 			}
 
-			// Sort by date (newest first)
 			filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
 			const container = document.getElementById('bookingsList');
 
 			if (filtered.length === 0) {
 				container.innerHTML = `
-					<div class="no-bookings">
+					<div class="empty-state">
 						<i class="fas fa-calendar-times"></i>
-						<h4>No Bookings Found</h4>
+						<h3>No bookings found</h3>
 						<p>No bookings match your current filters.</p>
 					</div>
 				`;
@@ -296,48 +782,73 @@
 			}
 
 			container.innerHTML = filtered.map(booking => `
-				<div class="booking-card ${booking.status}">
-					<div class="d-flex justify-content-between align-items-start">
-						<div>
-							<h5><i class="fas fa-user me-2"></i>${booking.name}</h5>
-							<span class="status-badge ${booking.status}">${booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}</span>
+				<div class="booking-item ${booking.status}">
+					<div class="booking-header" onclick="toggleDetails(${booking.id})">
+						<div class="booking-info">
+							<div class="booking-avatar">${getInitials(booking.name)}</div>
+							<div>
+								<div class="booking-name">${booking.name}</div>
+								<div class="booking-type">${booking.sessionTypeText}</div>
+							</div>
 						</div>
-						<div class="text-end">
-							<strong style="color: #1F86C7;">${booking.dateDisplay}</strong><br>
-							<span class="text-muted">${booking.timeDisplay}</span>
+						<div style="display: flex; align-items: center; gap: 16px;">
+							<span class="status-pill ${booking.status}">${booking.status}</span>
+							<div class="booking-datetime">
+								<div class="booking-date">${booking.dateDisplay}</div>
+								<div class="booking-time">${booking.timeDisplay}</div>
+							</div>
+							<i class="fas fa-chevron-down" style="color: var(--ms-gray-90);"></i>
 						</div>
 					</div>
-					<div class="meta mt-3">
-						<p class="mb-1"><i class="fas fa-phone"></i> ${booking.phone}</p>
-						${booking.email ? `<p class="mb-1"><i class="fas fa-envelope"></i> ${booking.email}</p>` : ''}
-						<p class="mb-1"><i class="fas fa-tag"></i> ${booking.sessionTypeText}</p>
-						${booking.notes ? `<p class="mb-0"><i class="fas fa-sticky-note"></i> ${booking.notes}</p>` : ''}
-					</div>
-					<div class="actions">
-						${booking.status === 'pending' ? `
-							<button class="btn btn-success btn-sm" onclick="updateStatus(${booking.id}, 'confirmed')">
-								<i class="fas fa-check me-1"></i>Confirm
+					<div class="booking-details" id="details-${booking.id}">
+						<div class="detail-grid">
+							<div class="detail-item">
+								<i class="fas fa-phone"></i>
+								<span>${booking.phone}</span>
+							</div>
+							${booking.email ? `
+							<div class="detail-item">
+								<i class="fas fa-envelope"></i>
+								<span>${booking.email}</span>
+							</div>
+							` : ''}
+							<div class="detail-item">
+								<i class="fas fa-clock"></i>
+								<span>Booked: ${new Date(booking.createdAt).toLocaleDateString()}</span>
+							</div>
+							${booking.notes ? `
+							<div class="detail-item" style="grid-column: 1 / -1;">
+								<i class="fas fa-sticky-note"></i>
+								<span>${booking.notes}</span>
+							</div>
+							` : ''}
+						</div>
+						<div class="booking-actions">
+							${booking.status === 'pending' ? `
+								<button class="ms-btn ms-btn-success ms-btn-sm" onclick="event.stopPropagation(); updateStatus(${booking.id}, 'confirmed')">
+									<i class="fas fa-check"></i> Confirm
+								</button>
+								<button class="ms-btn ms-btn-danger ms-btn-sm" onclick="event.stopPropagation(); updateStatus(${booking.id}, 'cancelled')">
+									<i class="fas fa-times"></i> Cancel
+								</button>
+							` : ''}
+							${booking.status === 'confirmed' ? `
+								<button class="ms-btn ms-btn-default ms-btn-sm" onclick="event.stopPropagation(); updateStatus(${booking.id}, 'pending')">
+									<i class="fas fa-undo"></i> Mark Pending
+								</button>
+							` : ''}
+							${booking.status === 'cancelled' ? `
+								<button class="ms-btn ms-btn-default ms-btn-sm" onclick="event.stopPropagation(); updateStatus(${booking.id}, 'pending')">
+									<i class="fas fa-redo"></i> Restore
+								</button>
+							` : ''}
+							<a href="https://wa.me/${booking.phone.replace(/\D/g, '')}" target="_blank" class="ms-btn ms-btn-default ms-btn-sm" onclick="event.stopPropagation()">
+								<i class="fab fa-whatsapp"></i> WhatsApp
+							</a>
+							<button class="ms-btn ms-btn-default ms-btn-sm" onclick="event.stopPropagation(); deleteBooking(${booking.id})" style="color: var(--ms-red);">
+								<i class="fas fa-trash"></i>
 							</button>
-							<button class="btn btn-danger btn-sm" onclick="updateStatus(${booking.id}, 'cancelled')">
-								<i class="fas fa-times me-1"></i>Cancel
-							</button>
-						` : ''}
-						${booking.status === 'confirmed' ? `
-							<button class="btn btn-warning btn-sm" onclick="updateStatus(${booking.id}, 'pending')">
-								<i class="fas fa-undo me-1"></i>Mark Pending
-							</button>
-						` : ''}
-						${booking.status === 'cancelled' ? `
-							<button class="btn btn-secondary btn-sm" onclick="updateStatus(${booking.id}, 'pending')">
-								<i class="fas fa-redo me-1"></i>Restore
-							</button>
-						` : ''}
-						<a href="https://wa.me/${booking.phone.replace(/\D/g, '')}" target="_blank" class="btn btn-outline-success btn-sm">
-							<i class="fab fa-whatsapp me-1"></i>WhatsApp
-						</a>
-						<button class="btn btn-outline-danger btn-sm" onclick="deleteBooking(${booking.id})">
-							<i class="fas fa-trash"></i>
-						</button>
+						</div>
 					</div>
 				</div>
 			`).join('');
