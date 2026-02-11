@@ -311,10 +311,15 @@
 								</p>
 							</div>
 
-							<!-- Book Button -->
-							<button class="btn btn-primary book-btn" id="bookBtn" disabled>
-								<i class="fab fa-whatsapp me-2"></i>Book via WhatsApp
-							</button>
+							<!-- Book Buttons -->
+							<div class="d-flex gap-3 flex-wrap" style="margin-top: 30px;">
+								<button class="btn btn-primary book-btn flex-fill" id="bookWebsiteBtn" disabled style="margin-top: 0;">
+									<i class="fas fa-calendar-check me-2"></i>Book via Website
+								</button>
+								<button class="btn btn-secondary book-btn flex-fill" id="bookWhatsAppBtn" disabled style="margin-top: 0; background: #25D366; border-color: #25D366;">
+									<i class="fab fa-whatsapp me-2"></i>Book via WhatsApp
+								</button>
+							</div>
 						</div>
 					</div>
 
@@ -527,7 +532,8 @@
 
 			function updateSelection() {
 				const info = document.getElementById('selectedInfo');
-				const btn = document.getElementById('bookBtn');
+				const bookWebsiteBtn = document.getElementById('bookWebsiteBtn');
+				const bookWhatsAppBtn = document.getElementById('bookWhatsAppBtn');
 
 				if (selectedDate && selectedTime) {
 					const dateStr = selectedDate.toLocaleDateString('en-ZA', {
@@ -541,10 +547,12 @@
 
 					document.getElementById('selectedDisplay').textContent = `${dateStr} at ${timeStr}`;
 					info.classList.add('show');
-					btn.disabled = false;
+					bookWebsiteBtn.disabled = false;
+					bookWhatsAppBtn.disabled = false;
 				} else {
 					info.classList.remove('show');
-					btn.disabled = true;
+					bookWebsiteBtn.disabled = true;
+					bookWhatsAppBtn.disabled = true;
 				}
 			}
 
@@ -564,8 +572,8 @@
 				generateCalendar();
 			});
 
-			// Book button
-			document.getElementById('bookBtn').addEventListener('click', () => {
+			// Function to save booking
+			function saveBooking() {
 				const clientName = document.getElementById('clientName').value.trim();
 				const clientPhone = document.getElementById('clientPhone').value.trim();
 				const clientEmail = document.getElementById('clientEmail').value.trim();
@@ -576,7 +584,7 @@
 				// Validate required fields
 				if (!clientName || !clientPhone) {
 					alert('Please enter your name and phone number.');
-					return;
+					return null;
 				}
 
 				const dateStr = selectedDate.toLocaleDateString('en-ZA', {
@@ -609,8 +617,42 @@
 				bookings.push(booking);
 				localStorage.setItem('mimschakBookings', JSON.stringify(bookings));
 
-				const message = `Hi, I'm ${clientName}. I would like to book a ${sessionTypeText} on ${dateStr} at ${timeStr}. My phone: ${clientPhone}. ${clientNotes ? 'Notes: ' + clientNotes : ''} Please confirm availability. Thank you!`;
-				window.open(`https://wa.me/27641533469?text=${encodeURIComponent(message)}`, '_blank');
+				return { booking, dateStr, timeStr, clientName, sessionTypeText, clientPhone, clientNotes };
+			}
+
+			// Book via Website button
+			document.getElementById('bookWebsiteBtn').addEventListener('click', () => {
+				const result = saveBooking();
+				if (result) {
+					// Show success message
+					document.querySelector('.calendar-container').innerHTML = `
+						<div style="text-align: center; padding: 60px 20px;">
+							<i class="fas fa-check-circle" style="font-size: 80px; color: #107c10; margin-bottom: 20px;"></i>
+							<h2 style="color: #333; margin-bottom: 15px;">Booking Confirmed!</h2>
+							<p style="color: #666; font-size: 18px; margin-bottom: 10px;">
+								<strong>${result.sessionTypeText}</strong>
+							</p>
+							<p style="color: #666; font-size: 16px; margin-bottom: 30px;">
+								${result.dateStr} at ${result.timeStr}
+							</p>
+							<p style="color: #888; font-size: 14px; margin-bottom: 30px;">
+								We will contact you at <strong>${result.clientPhone}</strong> to confirm your appointment.
+							</p>
+							<a href="index.html" class="btn btn-primary" style="padding: 12px 30px;">
+								<i class="fas fa-home me-2"></i>Back to Home
+							</a>
+						</div>
+					`;
+				}
+			});
+
+			// Book via WhatsApp button
+			document.getElementById('bookWhatsAppBtn').addEventListener('click', () => {
+				const result = saveBooking();
+				if (result) {
+					const message = `Hi, I'm ${result.clientName}. I would like to book a ${result.sessionTypeText} on ${result.dateStr} at ${result.timeStr}. My phone: ${result.clientPhone}. ${result.clientNotes ? 'Notes: ' + result.clientNotes : ''} Please confirm availability. Thank you!`;
+					window.open(`https://wa.me/27641533469?text=${encodeURIComponent(message)}`, '_blank');
+				}
 			});
 
 			generateCalendar();

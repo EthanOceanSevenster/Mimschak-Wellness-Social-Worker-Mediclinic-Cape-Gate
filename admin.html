@@ -4,695 +4,429 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="robots" content="noindex, nofollow">
+	<meta name="author" content="Mimschak Wellness">
 	<link rel="shortcut icon" href="favicon.png">
+
+	<!-- Bootstrap CSS -->
+	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+	<link href="css/tiny-slider.css" rel="stylesheet">
+	<link href="css/style.css" rel="stylesheet">
 	<title>Admin | Mimschak Wellness</title>
+
 	<style>
-		* {
-			margin: 0;
-			padding: 0;
-			box-sizing: border-box;
-		}
-
-		body {
-			font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-			background: #f3f2f1;
-			min-height: 100vh;
-			color: #323130;
-		}
-
-		/* Microsoft Fluent Design Variables */
-		:root {
-			--ms-blue: #0078d4;
-			--ms-blue-dark: #106ebe;
-			--ms-blue-light: #deecf9;
-			--ms-green: #107c10;
-			--ms-yellow: #ffb900;
-			--ms-red: #d13438;
-			--ms-gray-10: #faf9f8;
-			--ms-gray-20: #f3f2f1;
-			--ms-gray-30: #edebe9;
-			--ms-gray-40: #d2d0ce;
-			--ms-gray-90: #605e5c;
-			--ms-gray-130: #323130;
-			--ms-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,0.132), 0 0.3px 0.9px 0 rgba(0,0,0,0.108);
-			--ms-shadow-lg: 0 6.4px 14.4px 0 rgba(0,0,0,0.132), 0 1.2px 3.6px 0 rgba(0,0,0,0.108);
-		}
-
-		/* Login Screen */
-		.login-container {
-			min-height: 100vh;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			background: linear-gradient(135deg, #0078d4 0%, #00bcf2 100%);
-		}
-
-		.login-card {
-			background: white;
-			width: 100%;
-			max-width: 440px;
-			padding: 44px;
-			box-shadow: var(--ms-shadow-lg);
-		}
-
-		.login-logo {
-			text-align: center;
-			margin-bottom: 32px;
-		}
-
-		.login-logo .icon {
-			width: 80px;
-			height: 80px;
-			background: var(--ms-blue);
-			border-radius: 4px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			margin: 0 auto 16px;
-		}
-
-		.login-logo .icon i {
-			font-size: 36px;
-			color: white;
-		}
-
-		.login-logo h1 {
-			font-size: 24px;
-			font-weight: 600;
-			color: var(--ms-gray-130);
-			margin-bottom: 4px;
-		}
-
-		.login-logo p {
-			color: var(--ms-gray-90);
-			font-size: 14px;
-		}
-
-		.ms-input {
-			width: 100%;
-			padding: 8px 12px;
-			border: 1px solid var(--ms-gray-40);
-			border-radius: 2px;
-			font-size: 14px;
-			font-family: inherit;
-			transition: border-color 0.1s;
-			margin-bottom: 16px;
-		}
-
-		.ms-input:focus {
-			outline: none;
-			border-color: var(--ms-blue);
-			border-bottom-width: 2px;
-		}
-
-		.ms-input::placeholder {
-			color: var(--ms-gray-90);
-		}
-
-		.ms-btn {
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-			gap: 8px;
-			padding: 0 20px;
-			height: 32px;
-			border: none;
-			border-radius: 2px;
-			font-size: 14px;
-			font-weight: 600;
-			font-family: inherit;
-			cursor: pointer;
-			transition: all 0.1s;
-		}
-
-		.ms-btn-primary {
-			background: var(--ms-blue);
-			color: white;
-			width: 100%;
-		}
-
-		.ms-btn-primary:hover {
-			background: var(--ms-blue-dark);
-		}
-
-		.ms-btn-default {
-			background: white;
-			color: var(--ms-gray-130);
-			border: 1px solid var(--ms-gray-40);
-		}
-
-		.ms-btn-default:hover {
-			background: var(--ms-gray-20);
-		}
-
-		.ms-btn-danger {
-			background: var(--ms-red);
-			color: white;
-		}
-
-		.ms-btn-danger:hover {
-			background: #a4262c;
-		}
-
-		.ms-btn-success {
-			background: var(--ms-green);
-			color: white;
-		}
-
-		.ms-btn-success:hover {
-			background: #0b5a08;
-		}
-
-		.ms-btn-sm {
-			height: 28px;
-			padding: 0 12px;
-			font-size: 12px;
-		}
-
-		.back-link {
-			text-align: center;
-			margin-top: 24px;
-		}
-
-		.back-link a {
-			color: var(--ms-blue);
-			text-decoration: none;
-			font-size: 14px;
-		}
-
-		.back-link a:hover {
-			text-decoration: underline;
-		}
-
-		/* Admin Panel */
-		.admin-panel {
-			display: none;
-		}
-
-		/* Sidebar Navigation */
-		.sidebar {
-			position: fixed;
-			left: 0;
-			top: 0;
-			bottom: 0;
-			width: 48px;
-			background: var(--ms-gray-130);
-			z-index: 100;
-			transition: width 0.2s;
-		}
-
-		.sidebar:hover {
-			width: 200px;
-		}
-
-		.sidebar-logo {
-			height: 48px;
-			display: flex;
-			align-items: center;
-			padding: 0 12px;
-			background: var(--ms-blue);
-		}
-
-		.sidebar-logo i {
-			font-size: 24px;
-			color: white;
-		}
-
-		.sidebar-logo span {
-			color: white;
-			font-weight: 600;
-			margin-left: 12px;
-			white-space: nowrap;
-			opacity: 0;
-			transition: opacity 0.2s;
-		}
-
-		.sidebar:hover .sidebar-logo span {
-			opacity: 1;
-		}
-
-		.sidebar-nav {
-			padding: 8px 0;
-		}
-
-		.sidebar-item {
-			display: flex;
-			align-items: center;
-			padding: 12px;
-			color: rgba(255,255,255,0.7);
-			text-decoration: none;
-			transition: all 0.1s;
-			cursor: pointer;
-		}
-
-		.sidebar-item:hover {
-			background: rgba(255,255,255,0.1);
-			color: white;
-		}
-
-		.sidebar-item.active {
-			background: rgba(255,255,255,0.1);
-			color: white;
-			border-left: 3px solid var(--ms-blue);
-		}
-
-		.sidebar-item i {
-			width: 24px;
-			font-size: 16px;
-			text-align: center;
-		}
-
-		.sidebar-item span {
-			margin-left: 12px;
-			white-space: nowrap;
-			opacity: 0;
-			transition: opacity 0.2s;
-		}
-
-		.sidebar:hover .sidebar-item span {
-			opacity: 1;
-		}
-
-		/* Main Content */
-		.main-content {
-			margin-left: 48px;
-			min-height: 100vh;
-		}
-
-		/* Header */
-		.header {
-			background: white;
-			padding: 16px 24px;
-			box-shadow: var(--ms-shadow);
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			position: sticky;
-			top: 0;
-			z-index: 50;
-		}
-
-		.header h1 {
-			font-size: 20px;
-			font-weight: 600;
-			color: var(--ms-gray-130);
-		}
-
-		.header-actions {
-			display: flex;
-			gap: 8px;
-		}
-
-		/* Stats Cards */
-		.stats-grid {
-			display: grid;
-			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-			gap: 16px;
-			padding: 24px;
-		}
-
 		.stat-card {
 			background: white;
-			padding: 20px;
-			box-shadow: var(--ms-shadow);
-			border-top: 4px solid var(--ms-blue);
+			border-radius: 15px;
+			padding: 25px;
+			box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+			text-align: center;
+			border-top: 4px solid #1F86C7;
 		}
-
-		.stat-card.pending {
-			border-top-color: var(--ms-yellow);
-		}
-
-		.stat-card.confirmed {
-			border-top-color: var(--ms-green);
-		}
-
-		.stat-card.today {
-			border-top-color: #00bcf2;
-		}
+		.stat-card.pending { border-top-color: #ffb900; }
+		.stat-card.confirmed { border-top-color: #107c10; }
+		.stat-card.today { border-top-color: #00bcf2; }
 
 		.stat-card h3 {
 			font-size: 42px;
 			font-weight: 300;
-			color: var(--ms-gray-130);
-			margin-bottom: 4px;
+			color: #333;
+			margin-bottom: 5px;
 		}
-
 		.stat-card p {
-			font-size: 14px;
-			color: var(--ms-gray-90);
+			color: #888;
 			text-transform: uppercase;
+			font-size: 13px;
 			letter-spacing: 0.5px;
+			margin: 0;
 		}
 
-		/* Command Bar */
-		.command-bar {
+		.booking-card {
 			background: white;
-			padding: 8px 24px;
-			display: flex;
-			align-items: center;
-			gap: 16px;
-			border-bottom: 1px solid var(--ms-gray-30);
-			flex-wrap: wrap;
+			border-radius: 15px;
+			box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+			margin-bottom: 12px;
+			border-left: 4px solid #1F86C7;
+			overflow: hidden;
+			transition: box-shadow 0.2s;
 		}
-
-		.command-bar .ms-input {
-			margin-bottom: 0;
-			max-width: 200px;
-		}
-
-		.command-bar-actions {
-			margin-left: auto;
-			display: flex;
-			gap: 8px;
-		}
-
-		/* Booking List */
-		.booking-list {
-			padding: 24px;
-		}
-
-		.booking-item {
-			background: white;
-			margin-bottom: 8px;
-			box-shadow: var(--ms-shadow);
-			border-left: 4px solid var(--ms-blue);
-			transition: box-shadow 0.1s;
-		}
-
-		.booking-item:hover {
-			box-shadow: var(--ms-shadow-lg);
-		}
-
-		.booking-item.confirmed {
-			border-left-color: var(--ms-green);
-		}
-
-		.booking-item.cancelled {
-			border-left-color: var(--ms-red);
-			opacity: 0.7;
-		}
+		.booking-card:hover { box-shadow: 0 8px 30px rgba(0,0,0,0.12); }
+		.booking-card.confirmed { border-left-color: #107c10; }
+		.booking-card.cancelled { border-left-color: #d13438; opacity: 0.7; }
 
 		.booking-header {
-			padding: 16px 20px;
+			padding: 18px 20px;
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
 			cursor: pointer;
+			transition: background 0.15s;
 		}
-
-		.booking-header:hover {
-			background: var(--ms-gray-10);
-		}
-
-		.booking-info {
-			display: flex;
-			align-items: center;
-			gap: 16px;
-		}
+		.booking-header:hover { background: #f8f9fa; }
 
 		.booking-avatar {
-			width: 40px;
-			height: 40px;
-			background: var(--ms-blue-light);
+			width: 45px;
+			height: 45px;
+			background: #E8F4FC;
 			border-radius: 50%;
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			color: var(--ms-blue);
-			font-weight: 600;
+			color: #1F86C7;
+			font-weight: 700;
 			font-size: 16px;
 		}
 
-		.booking-name {
-			font-weight: 600;
-			color: var(--ms-gray-130);
-			margin-bottom: 2px;
-		}
-
-		.booking-type {
-			font-size: 12px;
-			color: var(--ms-gray-90);
-		}
-
-		.booking-datetime {
-			text-align: right;
-		}
-
-		.booking-date {
-			font-weight: 600;
-			color: var(--ms-blue);
-		}
-
-		.booking-time {
-			font-size: 12px;
-			color: var(--ms-gray-90);
-		}
+		.booking-name { font-weight: 600; color: #333; }
+		.booking-type { font-size: 13px; color: #888; }
+		.booking-date { font-weight: 600; color: #1F86C7; }
+		.booking-time { font-size: 12px; color: #888; }
 
 		.status-pill {
 			display: inline-block;
-			padding: 4px 12px;
-			border-radius: 12px;
+			padding: 4px 14px;
+			border-radius: 20px;
 			font-size: 12px;
 			font-weight: 600;
 			text-transform: uppercase;
 		}
-
-		.status-pill.pending {
-			background: #fff4ce;
-			color: #8a6d00;
-		}
-
-		.status-pill.confirmed {
-			background: #dff6dd;
-			color: #107c10;
-		}
-
-		.status-pill.cancelled {
-			background: #fde7e9;
-			color: #d13438;
-		}
+		.status-pill.pending { background: #fff4ce; color: #8a6d00; }
+		.status-pill.confirmed { background: #dff6dd; color: #107c10; }
+		.status-pill.cancelled { background: #fde7e9; color: #d13438; }
 
 		.booking-details {
 			display: none;
-			padding: 0 20px 20px 76px;
-			border-top: 1px solid var(--ms-gray-30);
+			padding: 0 20px 20px 20px;
+			border-top: 1px solid #eee;
 		}
-
-		.booking-details.open {
-			display: block;
-		}
+		.booking-details.open { display: block; }
 
 		.detail-grid {
 			display: grid;
 			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-			gap: 16px;
-			margin-bottom: 16px;
+			gap: 12px;
 			padding-top: 16px;
+			margin-bottom: 16px;
 		}
-
 		.detail-item {
 			display: flex;
 			align-items: center;
 			gap: 8px;
-		}
-
-		.detail-item i {
-			color: var(--ms-gray-90);
-			width: 16px;
-		}
-
-		.detail-item span {
 			font-size: 14px;
-			color: var(--ms-gray-130);
+			color: #555;
 		}
+		.detail-item i { color: #1F86C7; width: 16px; }
 
 		.booking-actions {
 			display: flex;
 			gap: 8px;
-			padding-top: 16px;
-			border-top: 1px solid var(--ms-gray-30);
+			flex-wrap: wrap;
+			padding-top: 14px;
+			border-top: 1px solid #eee;
 		}
 
-		/* Empty State */
 		.empty-state {
 			text-align: center;
 			padding: 80px 20px;
-			color: var(--ms-gray-90);
+			color: #888;
+		}
+		.empty-state i { font-size: 64px; color: #ddd; margin-bottom: 16px; }
+		.empty-state h3 { color: #333; margin-bottom: 8px; }
+
+		.login-wrap {
+			min-height: 50vh;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.login-card {
+			background: white;
+			border-radius: 20px;
+			box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+			padding: 40px;
+			max-width: 440px;
+			width: 100%;
+		}
+		.login-card .icon-wrap {
+			width: 80px;
+			height: 80px;
+			background: #E8F4FC;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin: 0 auto 20px;
+		}
+		.login-card .icon-wrap i { font-size: 32px; color: #1F86C7; }
+
+		.admin-panel { display: none; }
+
+		.filter-bar {
+			background: white;
+			border-radius: 15px;
+			box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+			padding: 20px;
+			margin-bottom: 20px;
 		}
 
-		.empty-state i {
-			font-size: 64px;
-			color: var(--ms-gray-40);
-			margin-bottom: 16px;
+		/* Calendar Styles */
+		.admin-calendar {
+			background: white;
+			border-radius: 15px;
+			box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+			padding: 25px;
+			margin-bottom: 30px;
 		}
-
-		.empty-state h3 {
+		.cal-nav {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 20px;
+		}
+		.cal-nav h4 { margin: 0; color: #333; font-weight: 700; }
+		.cal-nav button {
+			background: #E8F4FC;
+			border: none;
+			border-radius: 10px;
+			padding: 8px 16px;
+			cursor: pointer;
+			color: #1F86C7;
 			font-weight: 600;
-			margin-bottom: 8px;
-			color: var(--ms-gray-130);
+			transition: all 0.2s;
 		}
-
-		/* Responsive */
-		@media (max-width: 768px) {
-			.sidebar {
-				width: 0;
-				overflow: hidden;
-			}
-
-			.sidebar.open {
-				width: 200px;
-			}
-
-			.main-content {
-				margin-left: 0;
-			}
-
-			.stats-grid {
-				grid-template-columns: repeat(2, 1fr);
-				padding: 16px;
-			}
-
-			.command-bar {
-				padding: 12px 16px;
-			}
-
-			.booking-list {
-				padding: 16px;
-			}
-
-			.booking-details {
-				padding-left: 20px;
-			}
-
-			.header {
-				padding: 12px 16px;
-			}
-
-			.mobile-menu-btn {
-				display: block;
-			}
+		.cal-nav button:hover { background: #1F86C7; color: white; }
+		.cal-grid {
+			display: grid;
+			grid-template-columns: repeat(7, 1fr);
+			gap: 6px;
 		}
+		.cal-day-header {
+			text-align: center;
+			font-weight: 700;
+			color: #1F86C7;
+			padding: 8px 0;
+			font-size: 13px;
+		}
+		.cal-day {
+			aspect-ratio: 1;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			border-radius: 10px;
+			font-weight: 600;
+			font-size: 14px;
+			background: #f8f9fa;
+			cursor: pointer;
+			transition: all 0.2s;
+			position: relative;
+		}
+		.cal-day:hover:not(.empty):not(.disabled) { background: #E8F4FC; transform: scale(1.05); }
+		.cal-day.empty { background: transparent; cursor: default; }
+		.cal-day.disabled { color: #ccc; cursor: default; background: transparent; }
+		.cal-day.today { border: 2px solid #1F86C7; }
+		.cal-day.has-bookings { background: #dff6dd; color: #107c10; font-weight: 700; }
+		.cal-day.has-bookings:hover { background: #c8eec5; }
+		.cal-day.selected-day { background: #1F86C7; color: white; }
+		.cal-day.selected-day:hover { background: #106ebe; }
+		.cal-dot {
+			width: 6px;
+			height: 6px;
+			border-radius: 50%;
+			background: #107c10;
+			position: absolute;
+			bottom: 4px;
+		}
+		.cal-day.selected-day .cal-dot { background: white; }
+		.cal-count {
+			font-size: 9px;
+			font-weight: 700;
+			position: absolute;
+			top: 3px;
+			right: 5px;
+			background: #1F86C7;
+			color: white;
+			border-radius: 50%;
+			width: 16px;
+			height: 16px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		.cal-day.selected-day .cal-count { background: white; color: #1F86C7; }
 
-		@media (min-width: 769px) {
-			.mobile-menu-btn {
-				display: none;
+		@media (max-width: 767px) {
+			.booking-header {
+				flex-direction: column;
+				align-items: flex-start;
+				gap: 10px;
 			}
+			.booking-header > div:last-child {
+				align-self: flex-end;
+			}
+			.stat-card h3 { font-size: 32px; }
+			.cal-day { font-size: 12px; }
 		}
 	</style>
 </head>
+
 <body>
-	<!-- Login Screen -->
-	<div class="login-container" id="loginScreen">
-		<div class="login-card">
-			<div class="login-logo">
-				<div class="icon">
-					<i class="fas fa-calendar-check"></i>
-				</div>
-				<h1>Mimschak Wellness</h1>
-				<p>Admin Portal</p>
-			</div>
-			<input type="password" class="ms-input" id="adminPassword" placeholder="Enter password" onkeypress="if(event.key === 'Enter') login()">
-			<button class="ms-btn ms-btn-primary" onclick="login()">
-				<i class="fas fa-sign-in-alt"></i>
-				Sign in
+
+	<!-- Start Header/Navigation -->
+	<nav class="custom-navbar navbar navbar-expand-md" aria-label="Navigation bar">
+		<div class="container">
+			<a class="navbar-brand" href="index.html">Mimschak Wellness<span>.</span></a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
 			</button>
-			<div class="back-link">
-				<a href="index.html"><i class="fas fa-arrow-left"></i> Back to website</a>
+			<div class="collapse navbar-collapse" id="navbarsFurni">
+				<ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+					<li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+					<li><a class="nav-link" href="about.html">About</a></li>
+					<li><a class="nav-link" href="services.html">Services</a></li>
+					<li><a class="nav-link" href="contact.html">Contact</a></li>
+					<li><a class="nav-link" href="booking.html">Booking</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<!-- End Header/Navigation -->
+
+	<!-- Start Hero Section -->
+	<div class="hero">
+		<div class="container">
+			<div class="row justify-content-between">
+				<div class="col-lg-7">
+					<div class="intro-excerpt">
+						<h1>Booking <span class="d-block">Management</span></h1>
+						<p class="mb-4">View and manage all client bookings from one place.</p>
+					</div>
+				</div>
+				<div class="col-lg-5">
+					<div class="hero-img-wrap text-center">
+						<i class="fas fa-calendar-alt" style="font-size: 180px; color: white;"></i>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End Hero Section -->
+
+	<!-- Login Section -->
+	<div class="untree_co-section" id="loginSection">
+		<div class="container">
+			<div class="login-wrap">
+				<div class="login-card text-center">
+					<div class="icon-wrap">
+						<i class="fas fa-lock"></i>
+					</div>
+					<h3 class="mb-2">Admin Login</h3>
+					<p class="text-muted mb-4">Enter your password to access the dashboard</p>
+					<input type="password" class="form-control mb-3" id="adminPassword" placeholder="Enter password" onkeypress="if(event.key === 'Enter') login()">
+					<button class="btn btn-primary w-100" onclick="login()">
+						<i class="fas fa-sign-in-alt me-2"></i>Sign in
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>
 
 	<!-- Admin Panel -->
 	<div class="admin-panel" id="adminPanel">
-		<!-- Sidebar -->
-		<nav class="sidebar" id="sidebar">
-			<div class="sidebar-logo">
-				<i class="fas fa-heartbeat"></i>
-				<span>Mimschak</span>
-			</div>
-			<div class="sidebar-nav">
-				<a class="sidebar-item active">
-					<i class="fas fa-calendar-alt"></i>
-					<span>Bookings</span>
-				</a>
-				<a class="sidebar-item" href="index.html">
-					<i class="fas fa-home"></i>
-					<span>Website</span>
-				</a>
-				<a class="sidebar-item" onclick="logout()">
-					<i class="fas fa-sign-out-alt"></i>
-					<span>Sign out</span>
-				</a>
-			</div>
-		</nav>
+		<div class="untree_co-section">
+			<div class="container">
 
-		<!-- Main Content -->
-		<div class="main-content">
-			<!-- Header -->
-			<header class="header">
-				<div style="display: flex; align-items: center; gap: 16px;">
-					<button class="ms-btn ms-btn-default mobile-menu-btn" onclick="toggleSidebar()">
-						<i class="fas fa-bars"></i>
-					</button>
-					<h1>Booking Management</h1>
+				<!-- Admin Header Row -->
+				<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+					<h2 class="section-title mb-0">Dashboard</h2>
+					<div class="d-flex gap-2">
+						<button class="btn btn-outline-secondary" onclick="exportBookings()">
+							<i class="fas fa-download me-2"></i>Export CSV
+						</button>
+						<button class="btn btn-outline-danger" onclick="logout()">
+							<i class="fas fa-sign-out-alt me-2"></i>Sign out
+						</button>
+					</div>
 				</div>
-				<div class="header-actions">
-					<button class="ms-btn ms-btn-default" onclick="exportBookings()">
-						<i class="fas fa-download"></i>
-						Export
-					</button>
-				</div>
-			</header>
 
-			<!-- Stats -->
-			<div class="stats-grid">
-				<div class="stat-card">
-					<h3 id="totalBookings">0</h3>
-					<p>Total Bookings</p>
+				<!-- Stats -->
+				<div class="row mb-5">
+					<div class="col-6 col-md-3 mb-3">
+						<div class="stat-card">
+							<h3 id="totalBookings">0</h3>
+							<p>Total Bookings</p>
+						</div>
+					</div>
+					<div class="col-6 col-md-3 mb-3">
+						<div class="stat-card pending">
+							<h3 id="pendingBookings">0</h3>
+							<p>Pending</p>
+						</div>
+					</div>
+					<div class="col-6 col-md-3 mb-3">
+						<div class="stat-card confirmed">
+							<h3 id="confirmedBookings">0</h3>
+							<p>Confirmed</p>
+						</div>
+					</div>
+					<div class="col-6 col-md-3 mb-3">
+						<div class="stat-card today">
+							<h3 id="todayBookings">0</h3>
+							<p>Today</p>
+						</div>
+					</div>
 				</div>
-				<div class="stat-card pending">
-					<h3 id="pendingBookings">0</h3>
-					<p>Pending</p>
-				</div>
-				<div class="stat-card confirmed">
-					<h3 id="confirmedBookings">0</h3>
-					<p>Confirmed</p>
-				</div>
-				<div class="stat-card today">
-					<h3 id="todayBookings">0</h3>
-					<p>Today</p>
-				</div>
-			</div>
 
-			<!-- Command Bar -->
-			<div class="command-bar">
-				<select class="ms-input" id="filterStatus" onchange="renderBookings()" style="max-width: 150px;">
-					<option value="all">All status</option>
-					<option value="pending">Pending</option>
-					<option value="confirmed">Confirmed</option>
-					<option value="cancelled">Cancelled</option>
-				</select>
-				<input type="date" class="ms-input" id="filterDate" onchange="renderBookings()" style="max-width: 180px;">
-				<div class="command-bar-actions">
-					<button class="ms-btn ms-btn-default ms-btn-sm" onclick="document.getElementById('filterDate').value=''; document.getElementById('filterStatus').value='all'; renderBookings();">
-						<i class="fas fa-redo"></i>
-						Reset
-					</button>
-					<button class="ms-btn ms-btn-danger ms-btn-sm" onclick="clearAllBookings()">
-						<i class="fas fa-trash"></i>
-						Clear all
-					</button>
+				<!-- Calendar View -->
+				<div class="admin-calendar">
+					<div class="cal-nav">
+						<button onclick="changeCalMonth(-1)"><i class="fas fa-chevron-left me-1"></i>Prev</button>
+						<h4 id="calMonthTitle">February 2026</h4>
+						<button onclick="changeCalMonth(1)">Next<i class="fas fa-chevron-right ms-1"></i></button>
+					</div>
+					<div class="cal-grid" id="adminCalGrid">
+						<!-- Generated by JS -->
+					</div>
 				</div>
-			</div>
 
-			<!-- Booking List -->
-			<div class="booking-list" id="bookingsList">
-				<!-- Generated by JS -->
+				<!-- Filter Bar -->
+				<div class="filter-bar">
+					<div class="row align-items-center">
+						<div class="col-md-3 mb-2 mb-md-0">
+							<select class="form-control" id="filterStatus" onchange="renderBookings()">
+								<option value="all">All status</option>
+								<option value="pending">Pending</option>
+								<option value="confirmed">Confirmed</option>
+								<option value="cancelled">Cancelled</option>
+							</select>
+						</div>
+						<div class="col-md-3 mb-2 mb-md-0">
+							<input type="date" class="form-control" id="filterDate" onchange="renderBookings()">
+						</div>
+						<div class="col-md-6 text-md-end">
+							<button class="btn btn-outline-secondary btn-sm me-2" onclick="document.getElementById('filterDate').value=''; document.getElementById('filterStatus').value='all'; renderBookings();">
+								<i class="fas fa-redo me-1"></i>Reset
+							</button>
+							<button class="btn btn-outline-danger btn-sm" onclick="clearAllBookings()">
+								<i class="fas fa-trash me-1"></i>Clear all
+							</button>
+						</div>
+					</div>
+				</div>
+
+				<!-- Booking List -->
+				<div id="bookingsList">
+					<!-- Generated by JS -->
+				</div>
+
 			</div>
 		</div>
 	</div>
+
+
+	<script src="js/bootstrap.bundle.min.js"></script>
+	<script src="js/tiny-slider.js"></script>
+	<script src="js/custom.js"></script>
 
 	<script>
 		const ADMIN_PASSWORD = 'mimschak2024';
@@ -709,19 +443,16 @@
 
 		function logout() {
 			sessionStorage.removeItem('adminLoggedIn');
-			document.getElementById('loginScreen').style.display = 'flex';
+			document.getElementById('loginSection').style.display = 'block';
 			document.getElementById('adminPanel').style.display = 'none';
 		}
 
 		function showAdminPanel() {
-			document.getElementById('loginScreen').style.display = 'none';
+			document.getElementById('loginSection').style.display = 'none';
 			document.getElementById('adminPanel').style.display = 'block';
+			renderCalendar();
 			renderBookings();
 			updateStats();
-		}
-
-		function toggleSidebar() {
-			document.getElementById('sidebar').classList.toggle('open');
 		}
 
 		function getBookings() {
@@ -774,30 +505,31 @@
 				container.innerHTML = `
 					<div class="empty-state">
 						<i class="fas fa-calendar-times"></i>
-						<h3>No bookings found</h3>
-						<p>No bookings match your current filters.</p>
+						<h3>No bookings yet</h3>
+						<p>Bookings will appear here when clients book through your website.</p>
+						<p style="font-size: 12px; margin-top: 10px; color: #aaa;">Note: This uses browser storage. For bookings made from other devices, please check WhatsApp messages.</p>
 					</div>
 				`;
 				return;
 			}
 
 			container.innerHTML = filtered.map(booking => `
-				<div class="booking-item ${booking.status}">
+				<div class="booking-card ${booking.status}">
 					<div class="booking-header" onclick="toggleDetails(${booking.id})">
-						<div class="booking-info">
+						<div class="d-flex align-items-center gap-3">
 							<div class="booking-avatar">${getInitials(booking.name)}</div>
 							<div>
 								<div class="booking-name">${booking.name}</div>
 								<div class="booking-type">${booking.sessionTypeText}</div>
 							</div>
 						</div>
-						<div style="display: flex; align-items: center; gap: 16px;">
+						<div class="d-flex align-items-center gap-3">
 							<span class="status-pill ${booking.status}">${booking.status}</span>
-							<div class="booking-datetime">
+							<div class="text-end">
 								<div class="booking-date">${booking.dateDisplay}</div>
 								<div class="booking-time">${booking.timeDisplay}</div>
 							</div>
-							<i class="fas fa-chevron-down" style="color: var(--ms-gray-90);"></i>
+							<i class="fas fa-chevron-down" style="color: #ccc;"></i>
 						</div>
 					</div>
 					<div class="booking-details" id="details-${booking.id}">
@@ -825,27 +557,27 @@
 						</div>
 						<div class="booking-actions">
 							${booking.status === 'pending' ? `
-								<button class="ms-btn ms-btn-success ms-btn-sm" onclick="event.stopPropagation(); updateStatus(${booking.id}, 'confirmed')">
-									<i class="fas fa-check"></i> Confirm
+								<button class="btn btn-sm btn-success" onclick="event.stopPropagation(); updateStatus(${booking.id}, 'confirmed')">
+									<i class="fas fa-check me-1"></i>Confirm
 								</button>
-								<button class="ms-btn ms-btn-danger ms-btn-sm" onclick="event.stopPropagation(); updateStatus(${booking.id}, 'cancelled')">
-									<i class="fas fa-times"></i> Cancel
+								<button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); updateStatus(${booking.id}, 'cancelled')">
+									<i class="fas fa-times me-1"></i>Cancel
 								</button>
 							` : ''}
 							${booking.status === 'confirmed' ? `
-								<button class="ms-btn ms-btn-default ms-btn-sm" onclick="event.stopPropagation(); updateStatus(${booking.id}, 'pending')">
-									<i class="fas fa-undo"></i> Mark Pending
+								<button class="btn btn-sm btn-outline-secondary" onclick="event.stopPropagation(); updateStatus(${booking.id}, 'pending')">
+									<i class="fas fa-undo me-1"></i>Mark Pending
 								</button>
 							` : ''}
 							${booking.status === 'cancelled' ? `
-								<button class="ms-btn ms-btn-default ms-btn-sm" onclick="event.stopPropagation(); updateStatus(${booking.id}, 'pending')">
-									<i class="fas fa-redo"></i> Restore
+								<button class="btn btn-sm btn-outline-secondary" onclick="event.stopPropagation(); updateStatus(${booking.id}, 'pending')">
+									<i class="fas fa-redo me-1"></i>Restore
 								</button>
 							` : ''}
-							<a href="https://wa.me/${booking.phone.replace(/\D/g, '')}" target="_blank" class="ms-btn ms-btn-default ms-btn-sm" onclick="event.stopPropagation()">
-								<i class="fab fa-whatsapp"></i> WhatsApp
+							<a href="https://wa.me/${booking.phone.replace(/\D/g, '')}" target="_blank" class="btn btn-sm btn-outline-success" onclick="event.stopPropagation()">
+								<i class="fab fa-whatsapp me-1"></i>WhatsApp
 							</a>
-							<button class="ms-btn ms-btn-default ms-btn-sm" onclick="event.stopPropagation(); deleteBooking(${booking.id})" style="color: var(--ms-red);">
+							<button class="btn btn-sm btn-outline-danger" onclick="event.stopPropagation(); deleteBooking(${booking.id})">
 								<i class="fas fa-trash"></i>
 							</button>
 						</div>
@@ -900,6 +632,110 @@
 			a.href = url;
 			a.download = 'mimschak-bookings-' + new Date().toISOString().split('T')[0] + '.csv';
 			a.click();
+		}
+
+		// Calendar
+		let calMonth = new Date().getMonth();
+		let calYear = new Date().getFullYear();
+		let selectedCalDay = null;
+		const calMonths = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+		const calDays = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+		function changeCalMonth(dir) {
+			calMonth += dir;
+			if (calMonth > 11) { calMonth = 0; calYear++; }
+			if (calMonth < 0) { calMonth = 11; calYear--; }
+			renderCalendar();
+		}
+
+		function renderCalendar() {
+			const grid = document.getElementById('adminCalGrid');
+			const today = new Date();
+			today.setHours(0,0,0,0);
+			document.getElementById('calMonthTitle').textContent = `${calMonths[calMonth]} ${calYear}`;
+
+			// Get booking counts per day
+			const bookings = getBookings();
+			const dayCounts = {};
+			bookings.forEach(b => {
+				if (b.status !== 'cancelled') {
+					dayCounts[b.date] = (dayCounts[b.date] || 0) + 1;
+				}
+			});
+
+			grid.innerHTML = '';
+
+			// Day headers
+			calDays.forEach(d => {
+				const header = document.createElement('div');
+				header.className = 'cal-day-header';
+				header.textContent = d;
+				grid.appendChild(header);
+			});
+
+			const firstDay = new Date(calYear, calMonth, 1).getDay();
+			const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+
+			// Empty cells
+			for (let i = 0; i < firstDay; i++) {
+				const empty = document.createElement('div');
+				empty.className = 'cal-day empty';
+				grid.appendChild(empty);
+			}
+
+			// Day cells
+			for (let day = 1; day <= daysInMonth; day++) {
+				const cell = document.createElement('div');
+				cell.className = 'cal-day';
+
+				const cellDate = new Date(calYear, calMonth, day);
+				const dateStr = cellDate.toISOString().split('T')[0];
+				const count = dayCounts[dateStr] || 0;
+
+				cell.textContent = day;
+
+				if (cellDate.getTime() === today.getTime()) {
+					cell.classList.add('today');
+				}
+
+				if (count > 0) {
+					cell.classList.add('has-bookings');
+					const dot = document.createElement('span');
+					dot.className = 'cal-dot';
+					cell.appendChild(dot);
+					if (count > 1) {
+						const badge = document.createElement('span');
+						badge.className = 'cal-count';
+						badge.textContent = count;
+						cell.appendChild(badge);
+					}
+				}
+
+				if (selectedCalDay === dateStr) {
+					cell.classList.add('selected-day');
+				}
+
+				cell.addEventListener('click', () => {
+					if (selectedCalDay === dateStr) {
+						// Deselect
+						selectedCalDay = null;
+						document.getElementById('filterDate').value = '';
+					} else {
+						selectedCalDay = dateStr;
+						document.getElementById('filterDate').value = dateStr;
+					}
+					renderCalendar();
+					renderBookings();
+				});
+
+				grid.appendChild(cell);
+			}
+		}
+
+		// Clear old demo data (one-time cleanup)
+		if (!localStorage.getItem('mimschakCleanedUp')) {
+			localStorage.removeItem('mimschakBookings');
+			localStorage.setItem('mimschakCleanedUp', 'true');
 		}
 
 		// Check if already logged in
