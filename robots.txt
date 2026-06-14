@@ -1,4 +1,10 @@
 User-agent: *
 Allow: /
+Disallow: /blog.html
+Disallow: /shop.html
+Disallow: /cart.html
+Disallow: /checkout.html
+Disallow: /thankyou.html
+Disallow: /admin.html
 
 Sitemap: https://mimschakwellness.com/sitemap.xml

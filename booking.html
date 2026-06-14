@@ -21,7 +21,64 @@
   <meta property="og:locale" content="en_ZA" />
   <meta property="og:site_name" content="Mimschak Wellness" />
 
-		<!-- Bootstrap CSS -->
+	  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Book a Session | Mimschak Wellness Social Worker" />
+  <meta name="twitter:description" content="Book a session with Phakama Ndamase. In-person at Letada Medical Centre, Kraaifontein or virtual sessions available." />
+  <meta name="twitter:image" content="https://mimschakwellness.com/images/phakama-ndamase-social-worker.png" />
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": "Social Work Counselling Session",
+    "provider": {
+      "@type": "LocalBusiness",
+      "name": "Mimschak Wellness",
+      "telephone": "+27670854853",
+      "url": "https://mimschakwellness.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Letada Medical Centre",
+        "addressLocality": "Windsor Park, Kraaifontein",
+        "addressRegion": "Cape Town",
+        "postalCode": "7530",
+        "addressCountry": "ZA"
+      }
+    },
+    "areaServed": {
+      "@type": "City",
+      "name": "Cape Town"
+    },
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Counselling Sessions",
+      "itemListElement": [
+        {
+          "@type": "Offer",
+          "name": "Initial Consultation",
+          "price": "250",
+          "priceCurrency": "ZAR"
+        },
+        {
+          "@type": "Offer",
+          "name": "First Full Session",
+          "price": "650",
+          "priceCurrency": "ZAR"
+        },
+        {
+          "@type": "Offer",
+          "name": "Follow-up Session",
+          "price": "550",
+          "priceCurrency": "ZAR"
+        }
+      ]
+    }
+  }
+  </script>
+
+	<!-- Bootstrap CSS -->
 		<link href="css/bootstrap.min.css" rel="stylesheet">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 		<link href="css/tiny-slider.css" rel="stylesheet">
