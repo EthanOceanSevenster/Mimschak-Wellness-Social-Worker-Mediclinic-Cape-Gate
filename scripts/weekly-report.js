@@ -1,9 +1,9 @@
 const { google } = require("googleapis");
-const { Resend } = require("resend");
+const nodemailer = require("nodemailer");
 
 const SITE_URL = "https://mimschakwellness.com";
+const GMAIL_ADDRESS = "ethansevenster5@gmail.com";
 const RECIPIENT_EMAIL = "ethansevenster5@gmail.com";
-const SENDER_EMAIL = "reports@mimschakwellness.com";
 
 async function getSearchConsoleData(auth) {
   const searchconsole = google.searchconsole({ version: "v1", auth });
@@ -226,22 +226,23 @@ async function main() {
   // Build email
   const html = buildEmailHTML(data);
 
-  // Send email via Resend
-  const resend = new Resend(process.env.RESEND_API_KEY);
+  // Send email via Gmail SMTP
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: GMAIL_ADDRESS,
+      pass: process.env.GMAIL_APP_PASSWORD,
+    },
+  });
 
-  const { data: emailData, error } = await resend.emails.send({
-    from: SENDER_EMAIL,
-    to: [RECIPIENT_EMAIL],
+  await transporter.sendMail({
+    from: `"Mimschak Wellness Reports" <${GMAIL_ADDRESS}>`,
+    to: RECIPIENT_EMAIL,
     subject: `Mimschak Wellness - Weekly Search Report (${data.startDate} to ${data.endDate})`,
     html,
   });
 
-  if (error) {
-    console.error("Failed to send email:", error);
-    process.exit(1);
-  }
-
-  console.log(`Report sent successfully to ${RECIPIENT_EMAIL}. ID: ${emailData.id}`);
+  console.log(`Report sent successfully to ${RECIPIENT_EMAIL}`);
 }
 
 main().catch((err) => {
