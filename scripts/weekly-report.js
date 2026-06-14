@@ -236,11 +236,26 @@ function buildEmailHTML(data) {
 </html>`;
 }
 
+const GMAIL_APP_PASSWORD = "nouh hfbt avof fgqg";
+
+const SERVICE_ACCOUNT_KEY = {
+  type: "service_account",
+  project_id: "pro-sylph-499415-r3",
+  private_key_id: "3e6f3c733f1c68b179fae326c0f843b8ae4e018b",
+  private_key: "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCzpGQpoZSdqGjQ\n1GjVx0Nzu3KApvpMC3R1uyBVmz4TNmOkimqtRIcnJSNkc7Dn7xM9LtCq9AT1jEds\n+pFPC7tOT04e2oVT+COaz6eJHEUbKJ5xJUyj0v40YT0/B4tELm3kB8ijZ6vyLhCc\nkQkcHLWYnd36KCefuIyDrgpWqrYiehXWtDR1LYm344xLwy9Wv0CKtCezws13RpSP\nAUmdG4xMDCJSIrc31E/zPoJRZB89nItP+xL72cJPalIotWFYGziSvwrqStdqWoHw\n5jXaW9Fykll2SZ870XaseYLaAHh6UWuQ6oL6Oepz3VWkMUv11eoOMXnqPSUIDOyk\nCpUyDs9XAgMBAAECgf9DtzQKfV4ID/NyxJ6/9tz2QzJmTIsNH0RHHMKTgnFjzJzC\n6WpM5ggMOXOd6f5Fb1lRNtRxnIpCBR7ndYxQv5tbaYmJF9YqUN8a/CurA30JP8Z5\n4BWDq4UnOYBcwfs9OEM0Mbrv3aRzJeodGo7Uif3qCZgjM/+7tVVCTdiX0sHVPI5I\nBNuqETPQ4edBS2IfMrUg6DKI7rlpl7XrFguGr2HJ/Aj6Urqr3nGM+6Ee3Vbe9LPE\nRpQhyTw3k4tM4BPsNyUA18k8ueqHju9Zooo1lUL4iweb2vadTmojg9ekyLf3Xrvr\nW6VSQnJEwJtggULjQQonpml2qv3RUa+jUTMA/rkCgYEA20L8QeTlbw3TrAiZ6vY2\nMFQYCN1fhKQ4B+UpcHfVRLv63yERHEMzRX4yHPigEZ+G26os7LBaJcuZ/YTHo8fD\nD4Dy0bz96tB2AFWxotpLr3dr0Weo9ySQg/czxa4OIm2X+r6tS6fPbIDhXe68qm4G\nNZwD34qjWoKgYo3JwY6W38kCgYEA0b33PwKNbooAtCAmP0sYxREqgnkxhOy+oy8G\nXtEZbMV6hElSDQrrBAnNk38/hF71qGzT3ZYjHStxdiDTiQrsiqUQbgV5nangnwfJ\nbPJ4/1nYRVU7qCvC3E3/fRUP4fyScWE/sjQoyXsULGw0mIfFST9FTSOzHMw6IBY+\nmxOzBh8CgYEAx/etjIMvZDseA1XM2mc2QJlRWjRbOuNyXnD3fCUuEgPG5tyHeFkp\nV4WiOp3djnUJTylC05J6hOHNTVNdp9c15NvbmMFeals4Y1HEMhwYzqyBXnfFt7BX\nRKOdSfpV1bxR0VM5RTiEihZ4c2yaEG1LqHTja2pLVO6xS3C4wphCrVECgYEAxrQ5\n8K/yXa7QS9XJZl028jv5EfLPPycq1F5QorNmau4LzBfKbCDT1deTsxDyk+2CvjWb\n4mnCingF3evrfAGlZxRKJHF7birqar9tzJFKoF/1zHmbMw+CZERgr5esnGQ0OMXx\nGlrf6UF5Mzyv93FpLqOKfDI+FiJFTvDEDxbym/ECgYBseCZrk7qz91+e7Ut9LPv+\nOEGWOcA9d4mApDEEl1/DhYcNBbg5wsZydjx4kAEB2W95T+M+jXjI83I5CEb2thrt\nYxzqoS2vith1l5RDHWOoASRMKxuwhosZ6m3yrc8wh87jwy0JVRLYWfoUkFuuFcIp\n/p/tK3wu+YZPCYC38/1I6Q==\n-----END PRIVATE KEY-----\n",
+  client_email: "mimschak@pro-sylph-499415-r3.iam.gserviceaccount.com",
+  client_id: "114758780099048184208",
+  auth_uri: "https://accounts.google.com/o/oauth2/auth",
+  token_uri: "https://oauth2.googleapis.com/token",
+  auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
+  client_x509_cert_url: "https://www.googleapis.com/robot/v1/metadata/x509/mimschak%40pro-sylph-499415-r3.iam.gserviceaccount.com",
+  universe_domain: "googleapis.com",
+};
+
 async function main() {
   // Authenticate with Google using service account
-  const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
   const auth = new google.auth.GoogleAuth({
-    credentials,
+    credentials: SERVICE_ACCOUNT_KEY,
     scopes: ["https://www.googleapis.com/auth/webmasters.readonly"],
   });
 
@@ -263,7 +278,7 @@ async function main() {
     service: "gmail",
     auth: {
       user: GMAIL_ADDRESS,
-      pass: process.env.GMAIL_APP_PASSWORD,
+      pass: GMAIL_APP_PASSWORD,
     },
   });
 
