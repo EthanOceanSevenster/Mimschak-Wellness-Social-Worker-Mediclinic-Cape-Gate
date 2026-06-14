@@ -2,7 +2,7 @@ const { google } = require("googleapis");
 const { Resend } = require("resend");
 
 const SITE_URL = "https://mimschakwellness.com";
-const RECIPIENT_EMAIL = "phakamandamase@gmail.com";
+const RECIPIENT_EMAIL = "ethansevenster5@gmail.com";
 const SENDER_EMAIL = "reports@mimschakwellness.com";
 
 async function getSearchConsoleData(auth) {
