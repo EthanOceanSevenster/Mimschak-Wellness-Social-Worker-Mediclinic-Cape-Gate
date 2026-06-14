@@ -1,0 +1,30 @@
+name: Weekly Search Console Report
+
+on:
+  schedule:
+    # Every Monday at 6:00 UTC (8:00 SAST)
+    - cron: '0 6 * * 1'
+  workflow_dispatch: # Allow manual trigger for testing
+
+jobs:
+  send-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: ./scripts
+        run: npm install
+
+      - name: Send weekly report
+        working-directory: ./scripts
+        env:
+          GOOGLE_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: node weekly-report.js

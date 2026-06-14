@@ -1,0 +1,13 @@
+{
+  "name": "mimschak-weekly-report",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Weekly Google Search Console report for Mimschak Wellness",
+  "scripts": {
+    "report": "node weekly-report.js"
+  },
+  "dependencies": {
+    "googleapis": "^144.0.0",
+    "resend": "^4.0.0"
+  }
+}
