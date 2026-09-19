@@ -78,13 +78,13 @@ function downloadCalendar(booking: Booking) {
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Mimschak Wellness//Bookings//EN",
+    "PRODID:-//Mimshak Wellness//Bookings//EN",
     "BEGIN:VEVENT",
     `UID:${booking.reference}@mimschakwellness.com`,
     `DTSTAMP:${stamp(booking.created_at)}`,
     `DTSTART:${stamp(booking.starts_at)}`,
     `DTEND:${stamp(booking.ends_at)}`,
-    `SUMMARY:${booking.service ?? "Consultation"} - Mimschak Wellness`,
+    `SUMMARY:${booking.service ?? "Consultation"} - Mimshak Wellness`,
     `LOCATION:${
       booking.mode === "online"
         ? "Online video call"

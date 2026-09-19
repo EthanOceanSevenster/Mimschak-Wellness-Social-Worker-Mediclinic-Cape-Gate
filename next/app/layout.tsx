@@ -4,24 +4,24 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://mimschakwellness.com"),
-  title: "Social Worker Kraaifontein | Mimschak Wellness | Phakama Ndamase",
+  title: "Social Worker Kraaifontein | Mimshak Wellness | Phakama Ndamase",
   description:
     "Phakama Ndamase — professional social worker in Kraaifontein, Cape Town. Serving Windsor Park, Brackenfell and surrounding areas from Letada Medical Centre. Counselling, trauma, family support and more.",
   keywords: [
     "social worker Kraaifontein",
     "social worker Cape Town",
     "Phakama Ndamase",
-    "Mimschak Wellness",
+    "Mimshak Wellness",
     "counselling Kraaifontein",
     "trauma counselling Cape Town",
   ],
   alternates: { canonical: "https://mimschakwellness.com/" },
   openGraph: {
-    title: "Social Worker Kraaifontein | Mimschak Wellness | Phakama Ndamase",
+    title: "Social Worker Kraaifontein | Mimshak Wellness | Phakama Ndamase",
     description:
       "Professional social worker in Kraaifontein, Cape Town. Counselling, trauma, family support and more at Letada Medical Centre.",
     url: "https://mimschakwellness.com/",
-    siteName: "Mimschak Wellness",
+    siteName: "Mimshak Wellness",
     locale: "en_ZA",
     type: "website",
   },
@@ -40,7 +40,7 @@ export const viewport: Viewport = {
 const LOCAL_BUSINESS = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  name: "Mimschak Wellness",
+  name: "Mimshak Wellness",
   description:
     "Professional social work practice in Kraaifontein, Cape Town. Counselling, trauma support, family interventions and more.",
   url: "https://mimschakwellness.com",

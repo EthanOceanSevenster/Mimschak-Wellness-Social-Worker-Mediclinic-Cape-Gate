@@ -7,7 +7,7 @@ import { PageHeader, SHELL, SiteFooter, SiteHeader, WhatsAppFloat } from "../chr
 import { AuthForm } from "./auth-form";
 
 export const metadata: Metadata = {
-  title: "Sign in | Mimschak Wellness",
+  title: "Sign in | Mimshak Wellness",
   robots: { index: false, follow: false },
 };
 

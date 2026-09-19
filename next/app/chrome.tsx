@@ -27,7 +27,7 @@ export const FOOTER_SERVICES = [
     page must render without the API being up. */
 export const WHATSAPP_NUMBER = "27641533469";
 
-export function whatsappEnquiry(message = "Hi Mimschak Wellness, I would like to book a session. ") {
+export function whatsappEnquiry(message = "Hi Mimshak Wellness, I would like to book a session. ") {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }
 
@@ -41,10 +41,10 @@ export async function SiteHeader() {
       style={{ background: "color-mix(in srgb, var(--bg) 92%, transparent)" }}
     >
       <div className={`${SHELL} flex items-center justify-between gap-6 py-2.5`}>
-        <Link href="/" aria-label="Mimschak Wellness, home" className="shrink-0">
+        <Link href="/" aria-label="Mimshak Wellness, home" className="shrink-0">
           <Image
             src="/images/logo.png"
-            alt="Mimschak Wellness"
+            alt="Mimshak Wellness"
             width={428}
             height={155}
             priority
@@ -124,7 +124,7 @@ export function SiteFooter() {
         <div>
           <Image
             src="/images/logo.png"
-            alt="Mimschak Wellness"
+            alt="Mimshak Wellness"
             width={428}
             height={155}
             className="h-12 w-auto"
@@ -224,7 +224,7 @@ export function SiteFooter() {
           className="flex flex-col gap-2 text-[0.95rem] sm:flex-row sm:items-center sm:justify-between"
           style={{ color: "var(--text-soft)" }}
         >
-          <p>&copy; {new Date().getFullYear()} Mimschak Wellness. Kraaifontein, Cape Town.</p>
+          <p>&copy; {new Date().getFullYear()} Mimshak Wellness. Kraaifontein, Cape Town.</p>
           <p>Phakama Ndamase &middot; Registered social worker</p>
         </div>
       </div>

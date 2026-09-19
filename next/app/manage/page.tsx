@@ -9,7 +9,7 @@ import { PageHeader, SHELL, SiteFooter, SiteHeader } from "../chrome";
 import { DiaryRow } from "./diary-row";
 
 export const metadata: Metadata = {
-  title: "Diary | Mimschak Wellness",
+  title: "Diary | Mimshak Wellness",
   robots: { index: false, follow: false },
 };
 

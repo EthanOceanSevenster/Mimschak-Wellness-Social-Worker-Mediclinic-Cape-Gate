@@ -377,9 +377,9 @@ export default function HomePage() {
             </div>
 
             <div className="reveal lg:col-span-5" style={{ "--d": "80ms" } as React.CSSProperties}>
-              <h2 className="rule text-3xl sm:text-4xl">About Mimschak Wellness</h2>
+              <h2 className="rule text-3xl sm:text-4xl">About Mimshak Wellness</h2>
               <p className="mt-6 text-lg" style={{ color: "var(--text-soft)" }}>
-                Mimschak Wellness is the private practice of Phakama Ndamase, a registered
+                Mimshak Wellness is the private practice of Phakama Ndamase, a registered
                 social worker holding an Honours degree in Social Work from the University
                 of KwaZulu-Natal.
               </p>

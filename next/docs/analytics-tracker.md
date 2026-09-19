@@ -15,7 +15,7 @@ Put it back once the API has a public HTTPS address.
 ```
 
 The site id `7adc6cec24ce19c8d6ae45c9` is the existing `TrackedSite` record for
-Mimschak Wellness. Keep it — changing it would orphan the visit history
+Mimshak Wellness. Keep it — changing it would orphan the visit history
 already collected.
 
 It goes just before `</head>` on each page. `defer` matters: the tracker must

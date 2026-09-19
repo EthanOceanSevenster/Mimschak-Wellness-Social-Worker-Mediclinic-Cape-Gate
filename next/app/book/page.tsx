@@ -8,7 +8,7 @@ import { PageHeader, SHELL, SiteFooter, SiteHeader, WhatsAppFloat } from "../chr
 import { BookingForm } from "./booking-form";
 
 export const metadata: Metadata = {
-  title: "Book a session | Mimschak Wellness",
+  title: "Book a session | Mimshak Wellness",
   description:
     "Book a counselling, family support or crisis support session with Phakama Ndamase in Kraaifontein, in person or online.",
 };
