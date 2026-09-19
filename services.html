@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -61,7 +61,14 @@
 		<link href="css/tiny-slider.css" rel="stylesheet">
 		<link href="css/style.css" rel="stylesheet">
 		<title>Services | Mimschak Wellness</title>
-	</head>
+	
+  <!-- Meridian analytics. Cookieless and first-party: no cookie, no IP stored,
+       so it needs no consent banner. Reports to the Meridian client dashboard.
+       When Meridian is deployed, change src to the live host. -->
+  <link rel="stylesheet" href="css/refresh.css">
+  <link rel="stylesheet" href="css/motion.css">
+  <link rel="stylesheet" href="css/theme.css">
+</head>
 
 	<body>
 
@@ -96,14 +103,14 @@
 				<div class="container">
 					<div class="row justify-content-between">
 						<div class="col-lg-7">
-							<div class="intro-excerpt">
+							<div class="intro-excerpt" data-reveal>
 								<h1>Professional Services</h1>
 								<p class="mb-4">Comprehensive social work services tailored to support you through life's challenges with compassion and expertise.</p>
 								<p><a href="booking.html" class="btn btn-secondary me-2">Book Consultation</a><a href="#services" class="btn btn-white-outline">View Services</a></p>
 							</div>
 						</div>
 						<div class="col-lg-5">
-							<div class="hero-img-wrap text-center">
+							<div class="hero-img-wrap text-center" data-reveal="right">
 								<i class="fas fa-hand-holding-medical" style="font-size: 180px; color: white;"></i>
 							</div>
 						</div>
@@ -117,7 +124,7 @@
 			<div class="container">
 				<div class="row mb-5">
 					<div class="col-lg-8 mx-auto text-center">
-						<h2 class="section-title">How I Can Help</h2>
+						<h2 class="section-title" data-reveal>How I Can Help</h2>
 						<p>I offer a range of professional social work services to support individuals and families through various challenges. Each service is delivered with compassion, confidentiality, and a commitment to your wellbeing.</p>
 					</div>
 				</div>
@@ -265,7 +272,7 @@
 			<div class="container">
 				<div class="row mb-5">
 					<div class="col-lg-8 mx-auto text-center">
-						<h2 class="section-title">Session Rates</h2>
+						<h2 class="section-title" data-reveal>Session Rates</h2>
 						<p>Transparent, affordable pricing for professional social work services.</p>
 					</div>
 				</div>
@@ -350,7 +357,7 @@
 						</div>
 					</div>
 					<div class="col-lg-6 ps-lg-5">
-						<h2 class="section-title mb-4">What to Expect</h2>
+						<h2 class="section-title mb-4" data-reveal>What to Expect</h2>
 						<p>When you reach out, you can expect a warm, professional, and confidential service tailored to your needs.</p>
 
 						<div class="mt-4">
@@ -395,7 +402,7 @@
 			<div class="container">
 				<div class="row">
 					<div class="col-lg-8 mx-auto text-center">
-						<h2 class="section-title mb-4">Need Support?</h2>
+						<h2 class="section-title mb-4" data-reveal>Need Support?</h2>
 						<p class="mb-5">You don't have to face your challenges alone. Contact me today to discuss how I can help you.</p>
 						<a href="booking.html" class="btn btn-primary btn-lg me-3">Book Consultation</a>
 						<a href="about.html" class="btn btn-secondary btn-lg">About the Practitioner</a>
@@ -502,6 +509,7 @@
 		<script src="js/bootstrap.bundle.min.js"></script>
 		<script src="js/tiny-slider.js"></script>
 		<script src="js/custom.js"></script>
+		<script src="js/motion.js"></script>
 	</body>
 
 </html>

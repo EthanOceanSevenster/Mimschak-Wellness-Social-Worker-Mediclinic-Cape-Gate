@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -61,7 +61,14 @@
 		<link href="css/tiny-slider.css" rel="stylesheet">
 		<link href="css/style.css" rel="stylesheet">
 		<title>About | Mimschak Wellness</title>
-	</head>
+	
+  <!-- Meridian analytics. Cookieless and first-party: no cookie, no IP stored,
+       so it needs no consent banner. Reports to the Meridian client dashboard.
+       When Meridian is deployed, change src to the live host. -->
+  <link rel="stylesheet" href="css/refresh.css">
+  <link rel="stylesheet" href="css/motion.css">
+  <link rel="stylesheet" href="css/theme.css">
+</head>
 
 	<body>
 
@@ -96,14 +103,14 @@
 				<div class="container">
 					<div class="row justify-content-between">
 						<div class="col-lg-7">
-							<div class="intro-excerpt">
+							<div class="intro-excerpt" data-reveal>
 								<h1>About Me</h1>
 								<p class="mb-4">Dedicated to providing compassionate, professional social work services to individuals and families in need of support.</p>
 								<p><a href="booking.html" class="btn btn-secondary me-2">Book Consultation</a><a href="services.html" class="btn btn-white-outline">View Services</a></p>
 							</div>
 						</div>
 						<div class="col-lg-5">
-							<div class="hero-img-wrap text-center">
+							<div class="hero-img-wrap text-center" data-reveal="right">
 								<i class="fas fa-user-tie" style="font-size: 180px; color: white;"></i>
 							</div>
 						</div>
@@ -117,16 +124,16 @@
 			<div class="container">
 				<div class="row justify-content-between align-items-center">
 					<div class="col-lg-6">
-						<h2 class="section-title">Phakama Ndamase</h2>
+						<h2 class="section-title" data-reveal>Phakama Ndamase</h2>
 						<p class="lead mb-4" style="color: #1F86C7;"><strong>Social Worker</strong></p>
 
 						<p>I am a qualified and registered Social Worker committed to supporting individuals, families, and communities through life's challenges. With a solid foundation in social work principles and a compassionate approach, I provide professional services that promote healing, growth, and positive change.</p>
 
 						<p>My practice is based at Letada Medical Centre, where I offer a safe, confidential, and supportive environment for clients seeking assistance with various personal, family, and social issues.</p>
 
-						<div class="row my-5">
+						<div class="row my-5" data-reveal-group>
 							<div class="col-md-6 mb-4">
-								<div class="feature">
+								<div class="feature" data-reveal>
 									<div class="icon">
 										<i class="fas fa-graduation-cap" style="font-size: 24px; color: #1F86C7;"></i>
 									</div>
@@ -136,7 +143,7 @@
 							</div>
 
 							<div class="col-md-6 mb-4">
-								<div class="feature">
+								<div class="feature" data-reveal>
 									<div class="icon">
 										<i class="fas fa-id-card" style="font-size: 24px; color: #1F86C7;"></i>
 									</div>
@@ -146,7 +153,7 @@
 							</div>
 
 							<div class="col-md-6 mb-4">
-								<div class="feature">
+								<div class="feature" data-reveal>
 									<div class="icon">
 										<i class="fas fa-hospital" style="font-size: 24px; color: #1F86C7;"></i>
 									</div>
@@ -156,7 +163,7 @@
 							</div>
 
 							<div class="col-md-6 mb-4">
-								<div class="feature">
+								<div class="feature" data-reveal>
 									<div class="icon">
 										<i class="fas fa-heart" style="font-size: 24px; color: #1F86C7;"></i>
 									</div>
@@ -166,7 +173,7 @@
 							</div>
 
 							<div class="col-md-6 mb-4">
-								<div class="feature">
+								<div class="feature" data-reveal>
 									<div class="icon">
 										<i class="fas fa-video" style="font-size: 24px; color: #1F86C7;"></i>
 									</div>
@@ -226,7 +233,7 @@
 						</div>
 					</div>
 					<div class="col-lg-6 ps-lg-5">
-						<h2 class="section-title mb-4">My Approach</h2>
+						<h2 class="section-title mb-4" data-reveal>My Approach</h2>
 						<p>I believe that every person has the strength and capacity for positive change. My role is to provide the support, guidance, and tools needed to help you navigate challenges and achieve your goals.</p>
 
 						<p>Using a client-centered approach, I work collaboratively with individuals and families to understand their unique circumstances and develop tailored interventions that address their specific needs.</p>
@@ -248,7 +255,7 @@
 			<div class="container">
 				<div class="row">
 					<div class="col-lg-8 mx-auto text-center">
-						<h2 class="section-title mb-4">Ready to Begin Your Journey?</h2>
+						<h2 class="section-title mb-4" data-reveal>Ready to Begin Your Journey?</h2>
 						<p class="mb-5">Taking the first step can be the hardest part. I'm here to support you every step of the way.</p>
 						<a href="booking.html" class="btn btn-primary btn-lg me-3">Book Consultation</a>
 						<a href="tel:0641533469" class="btn btn-secondary btn-lg"><i class="fas fa-phone me-2"></i>064 153 3469</a>
@@ -355,6 +362,7 @@
 		<script src="js/bootstrap.bundle.min.js"></script>
 		<script src="js/tiny-slider.js"></script>
 		<script src="js/custom.js"></script>
+		<script src="js/motion.js"></script>
 	</body>
 
 </html>

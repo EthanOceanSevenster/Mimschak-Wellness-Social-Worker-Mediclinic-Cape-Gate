@@ -1,0 +1,176 @@
+@import "tailwindcss";
+
+/* Brand, carried over from the existing site: blue #1F86C7, green #8BC34A,
+   Inter. Dark mode follows the operating system, as on the current site. */
+@theme {
+  --font-sans: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+:root {
+  --bg: #ffffff;
+  --bg-soft: #f7fafc;
+  --surface: #ffffff;
+  --tint: #e8f4fc;
+  --text: #2b3440;
+  --text-soft: #5a6672;
+  --line: #e3e9ef;
+  --brand: #1f86c7;
+  --brand-dark: #15608f;
+  /* Filled buttons need their own pair. White on the brand blue is 3.97:1 —
+     it fails WCAG AA, and these are the most important controls on the page.
+     #1a75ad is the closest blue to the brand that clears 4.5:1 (5.01:1). */
+  --btn-bg: #1a75ad;
+  --btn-ink: #ffffff;
+  /* WhatsApp. The mark itself must stay #25d366 or it stops reading as
+     WhatsApp, but white on that green is 1.98:1 — nowhere near AA. So the
+     brand green is used only for the icon-only float, and buttons that
+     carry a text label use a darker green: 5.39:1 with white. */
+  --wa: #25d366;
+  --wa-btn: #177a41;
+  --wa-ink: #ffffff;
+  --green: #8bc34a;
+  --green-dark: #5fa53a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #101820;
+    --bg-soft: #16212b;
+    --surface: #1a2732;
+    --tint: #22323f;
+    --text: #e7eef4;
+    --text-soft: #a8b7c4;
+    --line: #2a3a48;
+    --brand: #4aa6e0;
+    --brand-dark: #6fbdee;
+    /* On a dark page the readable button is a light fill with dark ink:
+       6.58:1, against 2.68:1 for white on the same blue. */
+    --btn-bg: #4aa6e0;
+    --btn-ink: #0c1a24;
+    /* Dark mode flips to a light fill with dark ink, as the blue buttons
+       do: 7.20:1, against 1.98:1 for white on the brand green. */
+    --wa-btn: #3fbf6a;
+    --wa-ink: #05210f;
+    --green: #9ed15f;
+    --green-dark: #9ed15f;
+  }
+}
+
+* {
+  border-color: var(--line);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* These MUST sit in @layer base. Tailwind 4 puts its utilities in a cascade
+   layer, and unlayered CSS beats any layered CSS no matter how low its
+   specificity — so an unlayered `h1 { color }` here silently overrode
+   `text-white` on the hero heading and rendered it dark on a dark photo.
+   :where() did not fix that, because the problem was layer order, not
+   specificity. Inside @layer base, utilities win as intended. */
+@layer base {
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 17px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+    color: var(--text);
+  }
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid var(--green);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* A short rule above a section heading — the one repeated marker on the page. */
+.rule::before {
+  content: "";
+  display: block;
+  width: 28px;
+  height: 2px;
+  background: var(--green-dark);
+  margin-bottom: 1.1rem;
+}
+
+/* Scroll reveal. Falls back to visible if the observer never runs. */
+/* Only hidden once .js is set by the client component. No JS, no hiding. */
+html.js .reveal {
+  opacity: 0;
+  transform: translate3d(0, 16px, 0);
+  transition: opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+              transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition-delay: var(--d, 0ms);
+}
+
+html.js .reveal.shown {
+  opacity: 1;
+  transform: none;
+}
+
+
+/* Floating WhatsApp button. Brand green and glyph kept exactly as WhatsApp
+   specifies them, and as the original site had them — the mark is only
+   recognisable in its own colours. Note white on #25d366 is 1.98:1, under
+   the 3:1 WCAG asks of a meaningful graphic; #128c7e would clear it at
+   4.14:1 but reads as a different product. */
+.whatsapp-float {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  z-index: 50;
+  display: flex;
+  width: 60px;
+  height: 60px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--wa);
+  color: #fff;
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.28);
+  transition: background-color 0.25s ease, transform 0.25s ease;
+  animation: whatsapp-bob 3s ease-in-out infinite;
+}
+
+.whatsapp-float:hover {
+  background: #128c7e; /* WhatsApp dark brand green */
+  transform: scale(1.08);
+  animation-play-state: paused;
+}
+
+@keyframes whatsapp-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@media (max-width: 640px) {
+  .whatsapp-float {
+    right: 16px;
+    bottom: 16px;
+    width: 52px;
+    height: 52px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal { opacity: 1 !important; transform: none !important; }
+  .hero-video { display: none; }
+}

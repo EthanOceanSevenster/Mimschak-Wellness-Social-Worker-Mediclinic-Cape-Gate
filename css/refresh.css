@@ -1,0 +1,329 @@
+/* ===========================================================================
+   Mimschak Wellness — look and feel refresh
+   ---------------------------------------------------------------------------
+   Layered after style.css. The base theme is a repurposed furniture template;
+   this fixes what does not survive that repurposing, without rewriting it.
+
+   The biggest single change is body text from 14px to 17px. Fourteen is a
+   template default, not a reading size — and this practice serves bereavement,
+   trauma and family clients, which skews older and more stressed than average.
+   Small type is the first thing that fails those readers.
+   =========================================================================== */
+
+:root {
+  --mw-blue: #1f86c7;
+  --mw-blue-dark: #15608f;
+  --mw-green: #8bc34a;
+  --mw-green-dark: #5fa53a;
+  --mw-tint: #e8f4fc;
+  --mw-ink: #2b3440;
+  --mw-ink-soft: #5a6672;
+  --mw-line: #e3e9ef;
+  --mw-shadow: none;
+  --mw-radius: 4px;
+}
+
+/* ------------------------------------------------------------- typography */
+body {
+  font-size: 17px;
+  /* Unitless, so it scales with the element instead of being pinned to 28px
+     no matter how large the text gets. */
+  line-height: 1.7;
+  color: var(--mw-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+p {
+  margin-bottom: 1.1rem;
+}
+
+/* Fluid scale — no jumps between breakpoints, and headings stay in
+   proportion to each other rather than each being set by hand. */
+h1, .h1 { font-size: clamp(2.1rem, 1.3rem + 3.4vw, 3.4rem); line-height: 1.12; letter-spacing: -0.02em; }
+h2, .h2 { font-size: clamp(1.6rem, 1.15rem + 1.9vw, 2.4rem);  line-height: 1.2;  letter-spacing: -0.015em; }
+h3, .h3 { font-size: clamp(1.13rem, 1rem + 0.5vw, 1.35rem);   line-height: 1.35; }
+h4, .h4 { font-size: 1.1rem; line-height: 1.4; }
+
+h1, h2, h3, h4 {
+  font-weight: 700;
+  color: var(--mw-ink);
+}
+
+/* Section headings get a short green rule above them — a quiet, repeatable
+   marker that tells the reader a new section has started. */
+.section-title {
+  position: relative;
+  padding-top: 1.1rem;
+  color: var(--mw-ink);
+}
+
+.section-title::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 28px;
+  height: 2px;
+  background: var(--mw-green-dark);
+}
+
+.text-muted {
+  color: var(--mw-ink-soft) !important;
+}
+
+/* --------------------------------------------------------------- sections */
+/* 7rem everywhere made every section weigh the same. Slightly tighter, with
+   an alternating tint so the page reads as distinct bands. */
+.product-section,
+.why-choose-section,
+.we-help-section,
+.untree_co-section {
+  padding: clamp(3.5rem, 2rem + 6vw, 6rem) 0;
+}
+
+.why-choose-section {
+  background: linear-gradient(180deg, #fbfdff 0%, #ffffff 100%);
+  border-top: 1px solid var(--mw-line);
+  border-bottom: 1px solid var(--mw-line);
+}
+
+/* ------------------------------------------------------------------- hero */
+.hero {
+  position: relative;
+  background-size: cover !important;
+  background-position: center !important;
+}
+
+/* White text sat directly on a photograph. A scrim guarantees the headline is
+   readable whatever the image happens to be doing behind it. */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(14, 40, 60, 0.86) 0%,
+    rgba(14, 40, 60, 0.62) 62%,
+    rgba(14, 40, 60, 0.42) 100%
+  );
+  pointer-events: none;
+}
+
+.hero .container {
+  position: relative;
+  z-index: 3;
+}
+
+.hero .intro-excerpt {
+  max-width: 560px;
+}
+
+.hero h1 {
+  text-shadow: 0 2px 18px rgba(8, 34, 54, 0.3);
+  margin-bottom: 1.1rem;
+}
+
+.hero p {
+  color: rgba(255, 255, 255, 0.93);
+  font-size: 1.1rem;
+  max-width: 48ch;
+  margin-bottom: 1.8rem;
+}
+
+/* A soft halo so the portrait separates from the photograph behind it. */
+.hero .hero-img-wrap img {
+  box-shadow:
+    0 0 0 10px rgba(255, 255, 255, 0.1),
+    0 22px 50px rgba(8, 34, 54, 0.35);
+}
+
+/* ------------------------------------------------------------------ cards */
+/* The service tiles were bare centred text. Making them real cards gives the
+   section structure and makes each one an obvious, clickable-looking unit. */
+.product-section .product-item {
+  height: 100%;
+  background: transparent;
+  border: 1px solid var(--mw-line);
+  border-radius: 4px;
+  box-shadow: none;
+  padding: 1.9rem 1.5rem !important;
+}
+
+.product-section .product-item .product-title {
+  margin-bottom: 0.5rem;
+}
+
+/* Equal-height cards regardless of copy length. */
+.product-section .row > [class*="col-"] {
+  display: flex;
+}
+.product-section .row > [class*="col-"] > .product-item {
+  width: 100%;
+}
+.product-section .row > .col-lg-3:first-child {
+  display: block;
+}
+
+/* -------------------------------------------------- why-choose feature grid */
+/* Five items in a two-column Bootstrap grid leaves a lone card on the last
+   row. A flow grid keeps them even at every width. */
+.why-choose-section .row.my-5 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2.5rem !important;
+  margin-bottom: 2.5rem !important;
+}
+
+.why-choose-section .row.my-5 > [class*="col-"] {
+  width: 100%;
+  max-width: none;
+  flex: none;
+  padding: 0;
+}
+
+.why-choose-section .feature {
+  height: 100%;
+  background: transparent;
+  border: 0;
+  border-top: 2px solid var(--mw-line);
+  border-radius: 0;
+  padding: 1.15rem 0 0;
+}
+
+.why-choose-section .feature .icon {
+  display: block;
+  width: auto;
+  height: auto;
+  margin-bottom: 0.7rem;
+  background: none;
+  border-radius: 0;
+  line-height: 1;
+}
+
+.why-choose-section .feature h3 {
+  margin-bottom: 0.4rem;
+}
+
+.why-choose-section .feature p {
+  margin-bottom: 0;
+  font-size: 0.97rem;
+  color: var(--mw-ink-soft);
+}
+
+/* ------------------------------------------------------------ service list */
+/* Twelve items in one column is a wall. Two columns with a green tick reads
+   as a scannable list of what is on offer. */
+.custom-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 0.15rem 2rem;
+}
+
+.custom-list li {
+  position: relative;
+  padding-left: 1.75rem;
+  padding-block: 0.32rem;
+  line-height: 1.45;
+  /* Keeps a two-word item from splitting awkwardly across lines. */
+  text-wrap: pretty;
+}
+
+.custom-list li::before {
+  content: "00c";
+  font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", sans-serif;
+  font-weight: 900;
+  position: absolute;
+  left: 0;
+  top: 0.5rem;
+  font-size: 0.78rem;
+  line-height: 1;
+  color: var(--mw-green-dark);
+}
+
+/* ---------------------------------------------------------------- buttons */
+.btn {
+  font-size: 0.97rem;
+  padding: 13px 30px;
+  border-radius: 999px;
+  line-height: 1.2;
+}
+
+/* The primary action was the same dark grey as body text. Brand blue makes
+   "Book Consultation" read as the thing to do. */
+.btn.btn-secondary {
+  background: var(--mw-blue);
+  border-color: var(--mw-blue);
+  color: #fff;
+}
+.btn.btn-secondary:hover {
+  background: var(--mw-blue-dark);
+  border-color: var(--mw-blue-dark);
+  color: #fff;
+}
+
+.btn.btn-white-outline {
+  border: 2px solid rgba(255, 255, 255, 0.75);
+  background: transparent;
+  color: #fff;
+}
+.btn.btn-white-outline:hover {
+  background: #fff;
+  border-color: #fff;
+  color: var(--mw-blue-dark);
+}
+
+/* --------------------------------------------------------------- utilities */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Links inside body copy were underlined globally, including on cards and
+   buttons. Keep the underline where it means "link", drop it where it does not. */
+.product-item a,
+.feature a,
+.btn,
+.navbar a,
+.footer-section a {
+  text-decoration: none;
+}
+
+@media (max-width: 991.98px) {
+  .hero {
+    text-align: left;
+  }
+  .hero .hero-img-wrap {
+    margin-top: 2.5rem;
+  }
+}
+
+/* ------------------------------------------------------- hero background video */
+/* Sits under the scrim (.hero::before, z-index above it) and above the
+   background photograph, so removing the element falls back to the photo
+   with no layout shift. */
+.hero {
+  overflow: hidden;
+}
+
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero::before {
+  z-index: 1;
+}
+
+/* Autoplaying video is exactly what a reduced-motion preference is asking us
+   not to do. Hidden entirely; the still photograph shows instead. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-video {
+    display: none;
+  }
+}

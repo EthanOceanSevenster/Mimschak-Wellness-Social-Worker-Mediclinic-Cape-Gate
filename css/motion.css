@@ -1,0 +1,235 @@
+/* ===========================================================================
+   Mimschak Wellness — motion and polish layer
+   ---------------------------------------------------------------------------
+   Loaded after style.css so it can refine without editing the base theme.
+
+   Tone: this is a social worker's practice. People arrive here anxious, in
+   crisis, or on someone else's advice. So the motion is deliberately slow,
+   short-travel and never bouncy — it should feel like the page settling, not
+   performing. Nothing moves more than 18px, nothing overshoots, nothing loops
+   in the corner of your eye while you are trying to read.
+
+   Accessibility is not an afterthought here. Vestibular disorders, anxiety and
+   ADHD are all over-represented in this audience, so prefers-reduced-motion is
+   honoured completely: content renders in its final state, no exceptions.
+   =========================================================================== */
+
+:root {
+  --mw-blue: #1f86c7;
+  --mw-blue-dark: #1a7ab5;
+  --mw-green: #8bc34a;
+  --mw-tint: #e8f4fc;
+  --mw-ink: #333333;
+
+  /* Slow and decelerating. No overshoot anywhere in this file. */
+  --mw-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --mw-dur: 0.7s;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ---------------------------------------------------------------- reveals */
+/* Elements start slightly down and transparent, then settle when scrolled to.
+   Only ever plays once — re-animating on every pass is distracting. */
+[data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+  transition:
+    opacity var(--mw-dur) var(--mw-ease),
+    transform var(--mw-dur) var(--mw-ease);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+[data-reveal="left"]  { transform: translate3d(-18px, 0, 0); }
+[data-reveal="right"] { transform: translate3d(18px, 0, 0); }
+[data-reveal="fade"]  { transform: none; }
+
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  will-change: auto;
+}
+
+/* Without JavaScript nothing would ever get .is-visible, so the whole page
+   would be invisible. This guarantees content regardless. */
+.no-js [data-reveal] {
+  opacity: 1;
+  transform: none;
+}
+
+/* ----------------------------------------------------------------- header */
+.custom-navbar {
+  transition:
+    background-color 0.35s var(--mw-ease),
+    box-shadow 0.35s var(--mw-ease),
+    padding 0.35s var(--mw-ease);
+}
+
+/* The navbar is white, not blue — it only needs to gain weight on scroll, not
+   change colour. Deepening the shadow is enough to lift it off the content. */
+.custom-navbar.is-scrolled {
+  box-shadow: 0 4px 22px rgba(16, 42, 66, 0.13);
+  background: rgba(255, 255, 255, 0.94) !important;
+  backdrop-filter: blur(10px);
+}
+
+/* No underline rules here on purpose: style.css already draws a green one via
+   .custom-navbar-nav li a:before. Adding a second would double it up. */
+
+/* ------------------------------------------------------------------ cards */
+.feature,
+.product-item,
+.testimonial-item,
+.post-entry {
+  transition:
+    transform 0.4s var(--mw-ease),
+    box-shadow 0.4s var(--mw-ease);
+}
+
+.product-item:hover,
+.post-entry:hover {
+  transform: translateY(-2px);
+  border-color: #cfd9e2;
+}
+
+.feature:hover {
+  border-top-color: var(--mw-green);
+}
+
+.feature .icon {
+  transition: transform 0.4s var(--mw-ease);
+}
+
+
+/* ---------------------------------------------------------------- buttons */
+.btn {
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 0.25s var(--mw-ease),
+    box-shadow 0.25s var(--mw-ease),
+    background-color 0.25s var(--mw-ease);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(31, 134, 199, 0.24);
+}
+
+.btn:active {
+  transform: translateY(0);
+  transition-duration: 0.08s;
+}
+
+/* -------------------------------------------------------------- hero image */
+.hero-img-wrap img {
+  transition: transform 0.8s var(--mw-ease), box-shadow 0.8s var(--mw-ease);
+}
+
+.hero-img-wrap img:hover {
+  transform: scale(1.02);
+  box-shadow: 0 18px 44px rgba(16, 42, 66, 0.22);
+}
+
+/* --------------------------------------------------------- focus visibility */
+/* The base theme has no visible keyboard focus. That is a genuine barrier,
+   not a style preference, so it is fixed here rather than left. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--mw-green);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+.custom-navbar a:focus-visible {
+  outline-color: #ffffff;
+}
+
+/* Lets a keyboard user jump the navigation. Visible only when focused. */
+.mw-skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 1080;
+  padding: 0.75rem 1.25rem;
+  background: var(--mw-blue);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 0 0 6px 0;
+}
+
+.mw-skip-link:focus {
+  left: 0;
+  color: #fff;
+}
+
+/* ------------------------------------------------------- back to top button */
+.mw-to-top {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 1040;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--mw-blue);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(16, 42, 66, 0.22);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition:
+    opacity 0.3s var(--mw-ease),
+    transform 0.3s var(--mw-ease),
+    visibility 0.3s;
+}
+
+.mw-to-top.is-shown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.mw-to-top:hover {
+  background: var(--mw-blue-dark);
+}
+
+/* ============================ reduced motion ==============================
+   Everything above becomes inert. Content is shown in its final state; no
+   transitions, no transforms, no smooth scrolling. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+
+  [data-reveal],
+  [data-reveal].is-visible {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .feature:hover,
+  .product-item:hover,
+  .post-entry:hover,
+  .btn:hover,
+  .hero-img-wrap img:hover,
+  

@@ -6,7 +6,7 @@
 * License: https://creativecommons.org/licenses/by/3.0/
 */ -->
 <!doctype html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -23,7 +23,14 @@
 		<link href="css/tiny-slider.css" rel="stylesheet">
 		<link href="css/style.css" rel="stylesheet">
 		<title>Checkout | Mimschak Wellness</title>
-	</head>
+	
+  <!-- Meridian analytics. Cookieless and first-party: no cookie, no IP stored,
+       so it needs no consent banner. Reports to the Meridian client dashboard.
+       When Meridian is deployed, change src to the live host. -->
+  <link rel="stylesheet" href="css/refresh.css">
+  <link rel="stylesheet" href="css/motion.css">
+  <link rel="stylesheet" href="css/theme.css">
+</head>
 
 	<body>
 
@@ -64,7 +71,7 @@
 				<div class="container">
 					<div class="row justify-content-between">
 						<div class="col-lg-5">
-							<div class="intro-excerpt">
+							<div class="intro-excerpt" data-reveal>
 								<h1>Checkout</h1>
 							</div>
 						</div>
@@ -87,7 +94,7 @@
 		      </div>
 		      <div class="row">
 		        <div class="col-md-6 mb-5 mb-md-0">
-		          <h2 class="h3 mb-3 text-black">Billing Details</h2>
+		          <h2 class="h3 mb-3 text-black" data-reveal>Billing Details</h2>
 		          <div class="p-3 p-lg-5 border bg-white">
 		            <div class="form-group">
 		              <label for="c_country" class="text-black">Country <span class="text-danger">*</span></label>
@@ -256,7 +263,7 @@
 
 		          <div class="row mb-5">
 		            <div class="col-md-12">
-		              <h2 class="h3 mb-3 text-black">Coupon Code</h2>
+		              <h2 class="h3 mb-3 text-black" data-reveal>Coupon Code</h2>
 		              <div class="p-3 p-lg-5 border bg-white">
 
 		                <label for="c_code" class="text-black mb-3">Enter your coupon code if you have one</label>
@@ -273,7 +280,7 @@
 
 		          <div class="row mb-5">
 		            <div class="col-md-12">
-		              <h2 class="h3 mb-3 text-black">Your Order</h2>
+		              <h2 class="h3 mb-3 text-black" data-reveal>Your Order</h2>
 		              <div class="p-3 p-lg-5 border bg-white">
 		                <table class="table site-block-order-table mb-5">
 		                  <thead>
@@ -400,6 +407,7 @@
 		<script src="js/bootstrap.bundle.min.js"></script>
 		<script src="js/tiny-slider.js"></script>
 		<script src="js/custom.js"></script>
+		<script src="js/motion.js"></script>
 	</body>
 
 </html>

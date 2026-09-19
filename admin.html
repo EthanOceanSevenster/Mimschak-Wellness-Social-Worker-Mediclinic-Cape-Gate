@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -268,6 +268,13 @@
 			.cal-day { font-size: 12px; }
 		}
 	</style>
+
+  <!-- Meridian analytics. Cookieless and first-party: no cookie, no IP stored,
+       so it needs no consent banner. Reports to the Meridian client dashboard.
+       When Meridian is deployed, change src to the live host. -->
+  <link rel="stylesheet" href="css/refresh.css">
+  <link rel="stylesheet" href="css/motion.css">
+  <link rel="stylesheet" href="css/theme.css">
 </head>
 
 <body>
@@ -297,13 +304,13 @@
 		<div class="container">
 			<div class="row justify-content-between">
 				<div class="col-lg-7">
-					<div class="intro-excerpt">
+					<div class="intro-excerpt" data-reveal>
 						<h1>Booking <span class="d-block">Management</span></h1>
 						<p class="mb-4">View and manage all client bookings from one place.</p>
 					</div>
 				</div>
 				<div class="col-lg-5">
-					<div class="hero-img-wrap text-center">
+					<div class="hero-img-wrap text-center" data-reveal="right">
 						<i class="fas fa-calendar-alt" style="font-size: 180px; color: white;"></i>
 					</div>
 				</div>
@@ -338,7 +345,7 @@
 
 				<!-- Admin Header Row -->
 				<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-					<h2 class="section-title mb-0">Dashboard</h2>
+					<h2 class="section-title mb-0" data-reveal>Dashboard</h2>
 					<div class="d-flex gap-2">
 						<button class="btn btn-outline-secondary" onclick="exportBookings()">
 							<i class="fas fa-download me-2"></i>Export CSV
@@ -427,6 +434,7 @@
 	<script src="js/bootstrap.bundle.min.js"></script>
 	<script src="js/tiny-slider.js"></script>
 	<script src="js/custom.js"></script>
+		<script src="js/motion.js"></script>
 
 	<script>
 		const ADMIN_PASSWORD = 'mimschak2024';

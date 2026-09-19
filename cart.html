@@ -6,7 +6,7 @@
 * License: https://creativecommons.org/licenses/by/3.0/
 */ -->
 <!doctype html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -23,7 +23,14 @@
 		<link href="css/tiny-slider.css" rel="stylesheet">
 		<link href="css/style.css" rel="stylesheet">
 		<title>Cart | Mimschak Wellness</title>
-	</head>
+	
+  <!-- Meridian analytics. Cookieless and first-party: no cookie, no IP stored,
+       so it needs no consent banner. Reports to the Meridian client dashboard.
+       When Meridian is deployed, change src to the live host. -->
+  <link rel="stylesheet" href="css/refresh.css">
+  <link rel="stylesheet" href="css/motion.css">
+  <link rel="stylesheet" href="css/theme.css">
+</head>
 
 	<body>
 
@@ -64,7 +71,7 @@
 				<div class="container">
 					<div class="row justify-content-between">
 						<div class="col-lg-5">
-							<div class="intro-excerpt">
+							<div class="intro-excerpt" data-reveal>
 								<h1>Cart</h1>
 							</div>
 						</div>
@@ -100,7 +107,7 @@
                             <img src="images/product-1.png" alt="Image" class="img-fluid">
                           </td>
                           <td class="product-name">
-                            <h2 class="h5 text-black">Product 1</h2>
+                            <h2 class="h5 text-black" data-reveal>Product 1</h2>
                           </td>
                           <td>$49.00</td>
                           <td>
@@ -124,7 +131,7 @@
                             <img src="images/product-2.png" alt="Image" class="img-fluid">
                           </td>
                           <td class="product-name">
-                            <h2 class="h5 text-black">Product 2</h2>
+                            <h2 class="h5 text-black" data-reveal>Product 2</h2>
                           </td>
                           <td>$49.00</td>
                           <td>
@@ -265,6 +272,7 @@
 		<script src="js/bootstrap.bundle.min.js"></script>
 		<script src="js/tiny-slider.js"></script>
 		<script src="js/custom.js"></script>
+		<script src="js/motion.js"></script>
 	</body>
 
 </html>

@@ -1,0 +1,23 @@
+# Dependencies and build output
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+
+# Environment. .env.local holds the API address and practice slug; it differs
+# per environment and must never be committed.
+.env*.local
+
+# Playwright output. shots.mjs writes a few hundred PNGs — they are evidence
+# for a review, not source.
+shots/
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+yarn-error.log*

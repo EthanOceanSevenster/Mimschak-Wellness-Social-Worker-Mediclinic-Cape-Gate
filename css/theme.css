@@ -1,0 +1,230 @@
+/* ===========================================================================
+   Mimschak Wellness — dark mode and header sizing
+   ---------------------------------------------------------------------------
+   Loaded last so it can win over the base theme and the refresh layer.
+
+   Dark mode follows the visitor's operating system and nothing else. No
+   toggle, no stored preference — which makes this pure CSS: no flash of the
+   wrong theme on load, nothing to persist, no script to go wrong. Someone
+   running their phone in dark mode gets a dark site without being asked.
+
+   The base template hardcodes colours in ~40 inline style attributes. Rather
+   than editing every one, they are matched by substring on the style
+   attribute — [style*="background: #fff"] and friends — with !important,
+   which is the one thing that reliably beats an inline style. Ugly, but the
+   client's HTML stays untouched and nothing breaks if a page is edited later.
+
+   Dark is not an inverted light. Pure white on pure black vibrates and is
+   tiring to read; these are soft off-whites on a blue-tinted charcoal, which
+   suits a practice people visit while distressed.
+   =========================================================================== */
+
+:root {
+  --mw-bg: #ffffff;
+  --mw-bg-soft: #f7fafc;
+  --mw-surface: #ffffff;
+  --mw-surface-2: #e8f4fc;
+  --mw-text: #2b3440;
+  --mw-text-soft: #5a6672;
+  --mw-border: #e3e9ef;
+  --mw-brand: #1f86c7;
+  --mw-accent: #8bc34a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    --mw-bg: #101820;
+    --mw-bg-soft: #16212b;
+    --mw-surface: #1a2732;
+    --mw-surface-2: #22323f;
+    --mw-text: #e7eef4;
+    --mw-text-soft: #a8b7c4;
+    --mw-border: #2a3a48;
+    /* Lifted from #1f86c7: the brand blue is too dark to read on charcoal. */
+    --mw-brand: #4aa6e0;
+    --mw-accent: #9ed15f;
+  }
+
+  /* ----------------------------------------------------------- base swaps */
+  body {
+    background: var(--mw-bg) !important;
+    color: var(--mw-text);
+  }
+
+  h1, h2, h3, h4, h5, .section-title {
+    color: var(--mw-text);
+  }
+
+  p, li, .text-muted {
+    color: var(--mw-text-soft) !important;
+  }
+
+  a {
+    color: var(--mw-brand);
+  }
+
+  /* --------------------------------------------------------------- navbar */
+  .custom-navbar {
+    background: #16212b !important;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
+  }
+
+  .custom-navbar.is-scrolled {
+    background: rgba(22, 33, 43, 0.95) !important;
+  }
+
+  .custom-navbar .custom-navbar-nav li a {
+    color: var(--mw-text) !important;
+  }
+
+  .custom-navbar .custom-navbar-nav li a:hover {
+    color: var(--mw-brand) !important;
+  }
+
+  .custom-navbar .navbar-toggler {
+    border-color: var(--mw-brand);
+  }
+
+  .custom-navbar .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(74, 166, 224, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  }
+
+  .custom-navbar .navbar-brand img {
+    filter: brightness(1.12);
+  }
+
+  /* ------------------------------------------------------------- surfaces */
+  .why-choose-section {
+    background: linear-gradient(180deg, #131d26 0%, var(--mw-bg) 100%);
+    border-color: var(--mw-border);
+  }
+
+  .product-section .product-item {
+    background: transparent;
+    border-color: var(--mw-border);
+    box-shadow: none;
+  }
+
+  .why-choose-section .feature {
+    background: transparent;
+    border-top-color: var(--mw-border);
+    box-shadow: none;
+  }
+
+  /* --------------------------------- inline styles from the base template */
+  [style*="background: #fff"],
+  [style*="background: white"],
+  [style*="background:#fff"] {
+    background: var(--mw-surface) !important;
+    box-shadow: none !important;
+    border: 1px solid var(--mw-border) !important;
+  }
+
+  [style*="background: #E8F4FC"],
+  [style*="background: #e8f4fc"] {
+    background: var(--mw-surface-2) !important;
+  }
+
+  [style*="background-color: #f5f5f5"] {
+    background-color: #131d26 !important;
+    color: var(--mw-text) !important;
+  }
+
+  [style*="background: #f8f9fa"] {
+    background: var(--mw-bg-soft) !important;
+  }
+
+  /* Icons hardcoded to the light-mode brand blue need lifting too. */
+  [style*="color: #1F86C7"],
+  [style*="color: #1f86c7"] {
+    color: var(--mw-brand) !important;
+  }
+
+  /* ---------------------------------------------------------------- forms */
+  .form-control,
+  .form-select,
+  textarea,
+  input {
+    background: var(--mw-surface);
+    border-color: var(--mw-border);
+    color: var(--mw-text);
+  }
+
+  .form-control::placeholder {
+    color: #6f7f8d;
+  }
+
+  .form-control:focus {
+    background: var(--mw-surface);
+    color: var(--mw-text);
+    border-color: var(--mw-brand);
+    box-shadow: 0 0 0 3px rgba(74, 166, 224, 0.2);
+  }
+
+  /* --------------------------------------------------------------- footer */
+  .footer-section {
+    background: #0d151c !important;
+    color: var(--mw-text-soft);
+  }
+
+  .footer-section a {
+    color: var(--mw-text-soft);
+  }
+
+  .footer-section a:hover {
+    color: var(--mw-brand);
+  }
+
+  /* The hero sits on a photograph either way; darken the scrim so the
+     headline keeps the same contrast against a darker page. */
+  .hero::before {
+    background: linear-gradient(
+      90deg,
+      rgba(6, 22, 34, 0.92) 0%,
+      rgba(6, 22, 34, 0.74) 62%,
+      rgba(6, 22, 34, 0.52) 100%
+    );
+  }
+}
+
+/* ================================================== header and logo sizing */
+/* The logo file is 465x170 (2.74:1). The template pins it inline at
+   height:50px, which very nearly filled the bar. max-height takes that
+   decision back and keeps air above and below. */
+.custom-navbar {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.custom-navbar .navbar-brand {
+  display: inline-flex;
+  align-items: center;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-right: 1rem;
+}
+
+.custom-navbar .navbar-brand img {
+  height: auto !important;
+  max-height: 42px;
+  width: auto;
+  display: block;
+}
+
+/* The template sets nav links at 14px with opacity .7 — too quiet and too
+   small once body text moved to 17px. These are the primary wayfinding on
+   the site and should read as such. */
+.custom-navbar .custom-navbar-nav li a {
+  font-size: 16px !important;
+  font-weight: 500;
+  opacity: 1 !important;
+  padding: 8px 14px !important;
+}
+
+@media (max-width: 767.98px) {
+  .custom-navbar .navbar-brand img {
+    max-height: 34px;
+  }
+}

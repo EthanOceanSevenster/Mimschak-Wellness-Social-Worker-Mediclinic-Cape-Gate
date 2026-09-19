@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -263,7 +263,14 @@
 				}
 			}
 		</style>
-	</head>
+	
+  <!-- Meridian analytics. Cookieless and first-party: no cookie, no IP stored,
+       so it needs no consent banner. Reports to the Meridian client dashboard.
+       When Meridian is deployed, change src to the live host. -->
+  <link rel="stylesheet" href="css/refresh.css">
+  <link rel="stylesheet" href="css/motion.css">
+  <link rel="stylesheet" href="css/theme.css">
+</head>
 
 	<body>
 
@@ -298,13 +305,13 @@
 			<div class="container">
 				<div class="row justify-content-between">
 					<div class="col-lg-7">
-						<div class="intro-excerpt">
+						<div class="intro-excerpt" data-reveal>
 							<h1>Book Your <span class="d-block">Appointment</span></h1>
 							<p class="mb-4">Select a date and time that works for you.</p>
 						</div>
 					</div>
 					<div class="col-lg-5">
-						<div class="hero-img-wrap text-center">
+						<div class="hero-img-wrap text-center" data-reveal="right">
 							<i class="fas fa-calendar-check" style="font-size: 180px; color: white;"></i>
 						</div>
 					</div>
@@ -518,6 +525,7 @@
 		<script src="js/bootstrap.bundle.min.js"></script>
 		<script src="js/tiny-slider.js"></script>
 		<script src="js/custom.js"></script>
+		<script src="js/motion.js"></script>
 
 		<script>
 			let selectedDate = null;
@@ -696,7 +704,7 @@
 					document.querySelector('.calendar-container').innerHTML = `
 						<div style="text-align: center; padding: 60px 20px;">
 							<i class="fas fa-check-circle" style="font-size: 80px; color: #107c10; margin-bottom: 20px;"></i>
-							<h2 style="color: #333; margin-bottom: 15px;">Booking Confirmed!</h2>
+							<h2 style="color: #333; margin-bottom: 15px;" data-reveal>Booking Confirmed!</h2>
 							<p style="color: #666; font-size: 18px; margin-bottom: 10px;">
 								<strong>${result.sessionTypeText}</strong>
 							</p>

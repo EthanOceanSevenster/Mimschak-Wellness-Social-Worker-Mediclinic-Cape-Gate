@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -66,7 +66,14 @@
 		<link href="css/tiny-slider.css" rel="stylesheet">
 		<link href="css/style.css" rel="stylesheet">
 		<title>Social Worker Kraaifontein | Mimschak Wellness | Phakama Ndamase</title>
-	</head>
+	
+  <!-- Meridian analytics. Cookieless and first-party: no cookie, no IP stored,
+       so it needs no consent banner. Reports to the Meridian client dashboard.
+       When Meridian is deployed, change src to the live host. -->
+  <link rel="stylesheet" href="css/refresh.css">
+  <link rel="stylesheet" href="css/motion.css">
+  <link rel="stylesheet" href="css/theme.css">
+</head>
 
 	<body>
 
@@ -99,21 +106,26 @@
 
 		<!-- Start Hero Section -->
 			<div class="hero">
+			<!-- Background video. Drop a file at video/hero.mp4 (and optionally
+			     video/hero.webm) and it plays automatically. If neither exists the
+			     browser fires onerror, the element removes itself, and the existing
+			     background photograph shows through as before. Muted + playsinline
+			     is what allows autoplay on mobile Safari. -->
+			<video class="hero-video" autoplay muted loop playsinline preload="metadata"
+			       aria-hidden="true" tabindex="-1" onerror="this.remove()">
+				<source src="video/hero.webm" type="video/webm">
+				<source src="video/hero.mp4" type="video/mp4">
+			</video>
 				<div class="container">
 					<div class="row justify-content-between">
-						<div class="col-lg-7">
-							<div class="intro-excerpt">
+						<div class="col-lg-8">
+							<div class="intro-excerpt" data-reveal>
 								<h1>Professional <span class="d-block">Social Work Services</span></h1>
 								<p class="mb-4">Compassionate support for individuals and families through life's challenges. Providing a safe, confidential space for healing and growth.</p>
 								<p><a href="booking.html" class="btn btn-secondary me-2">Book Consultation</a><a href="services.html" class="btn btn-white-outline">View Services</a></p>
 							</div>
 						</div>
-						<div class="col-lg-5">
-							<div class="hero-img-wrap text-center">
-								<img src="images/phakama-ndamase-social-worker.png" alt="Phakama Ndamase - Professional Social Worker in Kraaifontein, Cape Town" class="img-fluid" style="border-radius: 50%; width: 300px; height: 300px; object-fit: cover; border: 5px solid rgba(255,255,255,0.3);">
-							</div>
 						</div>
-					</div>
 				</div>
 			</div>
 		<!-- End Hero Section -->
@@ -125,7 +137,7 @@
 
 					<!-- Start Column 1 -->
 					<div class="col-md-12 col-lg-3 mb-5 mb-lg-0">
-						<h2 class="mb-4 section-title">How I Can Help You</h2>
+						<h2 class="mb-4 section-title" data-reveal>How I Can Help You</h2>
 						<p class="mb-4">I provide professional social work services to help you navigate difficult times with compassion, understanding, and expertise.</p>
 						<p><a href="services.html" class="btn">All Services</a></p>
 					</div>
@@ -177,12 +189,12 @@
 			<div class="container">
 				<div class="row justify-content-between">
 					<div class="col-lg-6">
-						<h2 class="section-title">Why Choose Me</h2>
+						<h2 class="section-title" data-reveal>Why Choose Me</h2>
 						<p>With professional qualifications and years of experience, I provide a safe and supportive environment for your healing journey.</p>
 
-						<div class="row my-5">
+						<div class="row my-5" data-reveal-group>
 							<div class="col-6 col-md-6">
-								<div class="feature">
+								<div class="feature" data-reveal>
 									<div class="icon">
 										<i class="fas fa-lock" style="font-size: 24px; color: #1F86C7;"></i>
 									</div>
@@ -192,7 +204,7 @@
 							</div>
 
 							<div class="col-6 col-md-6">
-								<div class="feature">
+								<div class="feature" data-reveal>
 									<div class="icon">
 										<i class="fas fa-user-graduate" style="font-size: 24px; color: #1F86C7;"></i>
 									</div>
@@ -202,7 +214,7 @@
 							</div>
 
 							<div class="col-6 col-md-6">
-								<div class="feature">
+								<div class="feature" data-reveal>
 									<div class="icon">
 										<i class="fas fa-hands-helping" style="font-size: 24px; color: #1F86C7;"></i>
 									</div>
@@ -212,7 +224,7 @@
 							</div>
 
 							<div class="col-6 col-md-6">
-								<div class="feature">
+								<div class="feature" data-reveal>
 									<div class="icon">
 										<i class="fas fa-hospital" style="font-size: 24px; color: #1F86C7;"></i>
 									</div>
@@ -222,7 +234,7 @@
 							</div>
 
 							<div class="col-6 col-md-6">
-								<div class="feature">
+								<div class="feature" data-reveal>
 									<div class="icon">
 										<i class="fas fa-video" style="font-size: 24px; color: #1F86C7;"></i>
 									</div>
@@ -260,7 +272,7 @@
 						</div>
 					</div>
 					<div class="col-lg-6 ps-lg-5">
-						<h2 class="section-title mb-4">Supporting You Through Life's Challenges</h2>
+						<h2 class="section-title mb-4" data-reveal>Supporting You Through Life's Challenges</h2>
 						<p>Whether you're dealing with personal struggles, family difficulties, or life transitions, professional support can make a meaningful difference. I provide evidence-based interventions tailored to your unique needs.</p>
 
 						<ul class="list-unstyled custom-list my-4">
@@ -304,7 +316,7 @@
 						</div>
 					</div>
 					<div class="col-lg-6 ps-lg-5">
-						<h2 class="section-title mb-4">About Mimschak Wellness</h2>
+						<h2 class="section-title mb-4" data-reveal>About Mimschak Wellness</h2>
 						<p>Mimschak Wellness was founded with a simple yet profound mission: to provide accessible, professional social work services that empower individuals and families to overcome life's challenges.</p>
 						<p>Based at Letada Medical Centre, our practice offers a safe, confidential environment where clients can explore their concerns and work towards meaningful change. We believe that everyone deserves compassionate, evidence-based support during difficult times.</p>
 						<p>Whether you're facing personal struggles, family difficulties, or navigating major life transitions, we're here to walk alongside you on your journey to wellness and healing.</p>
@@ -320,7 +332,7 @@
 			<div class="container">
 				<div class="row mb-5">
 					<div class="col-lg-8 mx-auto text-center">
-						<h2 class="section-title">Conveniently Located</h2>
+						<h2 class="section-title" data-reveal>Conveniently Located</h2>
 						<p>Our practice is based at Letada Medical Centre, offering a professional, accessible, and comfortable environment for your consultations.</p>
 					</div>
 				</div>
@@ -362,7 +374,7 @@
 			<div class="container">
 				<div class="row">
 					<div class="col-lg-8 mx-auto text-center">
-						<h2 class="section-title mb-4" style="color: white;">Ready to Take the First Step?</h2>
+						<h2 class="section-title mb-4" style="color: white;" data-reveal>Ready to Take the First Step?</h2>
 						<p class="mb-5" style="color: rgba(255,255,255,0.9);">You don't have to face your challenges alone. Contact me today to schedule a confidential consultation. Together, we can work towards positive change in your life.</p>
 						<a href="booking.html" class="btn btn-white-outline btn-lg me-3">Book Consultation</a>
 						<a href="tel:0641533469" class="btn btn-secondary btn-lg"><i class="fas fa-phone me-2"></i>064 153 3469</a>
@@ -592,6 +604,7 @@
 		<script src="js/bootstrap.bundle.min.js"></script>
 		<script src="js/tiny-slider.js"></script>
 		<script src="js/custom.js"></script>
+		<script src="js/motion.js"></script>
 	</body>
 
 </html>
