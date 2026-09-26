@@ -68,6 +68,36 @@ const AREAS = [
   "Spiritual guidance",
 ];
 
+/* Phakama's biography, as she supplied it. Kept as data so the wording can be
+   edited without touching the layout below. */
+const BIO_BEFORE_LIST = [
+  "Phakama Ndamase is a qualified and experienced social worker whose career is grounded in compassion, professionalism, and a deep commitment to improving the well-being of individuals, families, and communities.",
+  "She began her professional journey in 2007 at the Pietermaritzburg Child and Youth Care Centre. In this role, she supported and managed Child Care Workers through counselling, performance management, and rehabilitative interventions. She also facilitated group programmes for children experiencing challenges such as substance abuse, low self-esteem, bereavement, academic difficulties, teenage pregnancy, and the need for age-appropriate sexual health education.",
+  "Later in 2007, Phakama joined the Child and Family Welfare Society of Pietermaritzburg, where she worked until 2013. She gained extensive experience in statutory social work and family reunification services. Her responsibilities included attending court proceedings, managing child-protection cases, and counselling parents experiencing parenting difficulties, abusive behavioural patterns, and other family-related challenges.",
+  "This work exposed her to some of South Africa’s most complex social challenges, including poverty, HIV/AIDS, sexual and physical abuse, neglect, substance abuse, and family breakdown. These experiences strengthened her understanding of community needs and shaped her compassionate, person-centred approach to social work.",
+  "In 2013, Phakama established her private practice and began working with ICAS, an employee wellness organisation serving government departments and the corporate sector. Through this partnership, she has supported employees experiencing workplace and personal challenges, including:",
+];
+
+const ICAS_SUPPORT = [
+  "Workplace conflict and employee–manager relationship difficulties",
+  "Stress, anxiety, and poor work performance",
+  "Family and marital difficulties",
+  "Grief and bereavement",
+  "Substance abuse",
+  "Financial challenges",
+  "HIV/AIDS, cancer, and other chronic illnesses",
+  "Trauma following robberies, accidents, workplace incidents, and employee deaths",
+];
+
+const BIO_AFTER_LIST = [
+  "Phakama provides individual counselling, group interventions, workplace wellness presentations, trauma support, and critical-incident debriefing. Her interventions help individuals regain emotional stability, strengthen coping skills, and improve their functioning in their personal and professional lives.",
+  "Since 2014, she has also provided hospital-based social work services at Medical Towers Hospital in Isipingo, Durban. Doctors refer patients to her for psychosocial support relating to stress, substance abuse, relationship difficulties, financial concerns, chronic illness, and child-welfare matters.",
+  "Her corporate wellness experience includes providing counselling and wellness services to employees at organisations such as Unilever and Tongaat Hulett. She has also facilitated wellness talks and debriefing sessions following traumatic workplace events.",
+  "In addition to her clinical and workplace experience, Phakama serves as a social work supervisor at the University of South Africa. She has had the privilege of mentoring second-, third-, and fourth-year social work students through workshops and small-group supervision. This role enables her to share her practical experience while helping to develop confident, ethical, and compassionate future professionals.",
+  "Phakama is passionate about providing accessible support through face-to-face and telephonic counselling. She believes in creating a safe, respectful, and non-judgemental space where individuals can express themselves, develop healthy coping strategies, and work towards meaningful change.",
+  "For Phakama, social work is more than a profession—it is a calling. Her purpose is to serve, empower, and uplift others while supporting their emotional, social, family, and workplace well-being.",
+];
+
 /* The hero footage is sunlight through leaves: average RGB around
    (150, 160, 115) and highlights blown out at luminance 253, so white copy
    is unreadable over it untouched. It used to sit under a flat
@@ -354,11 +384,13 @@ export default function HomePage() {
         </section>
 
         {/* ----------------------------------------------------------- about */}
-        {/* Three columns across the full width: portrait, story, practice
-            details — rather than one narrow column with whitespace beside it. */}
+        {/* Portrait sidebar beside the story. The biography runs long, so on
+            large screens the portrait stays in view as it scrolls past rather
+            than leaving an empty column beside the text. The sticky offset
+            clears the sticky site header. On phones it all stacks. */}
         <section id="about" className="scroll-mt-28 py-24 sm:py-32">
           <div className={`${SHELL} grid items-start gap-x-16 gap-y-12 lg:grid-cols-12`}>
-            <div className="reveal lg:col-span-3">
+            <aside className="reveal lg:sticky lg:top-28 lg:col-span-3">
               <Image
                 src="/images/phakama.png"
                 alt="Phakama Ndamase, registered social worker"
@@ -374,60 +406,115 @@ export default function HomePage() {
                 <br />
                 Registered social worker
               </p>
-            </div>
+            </aside>
 
-            <div className="reveal lg:col-span-5" style={{ "--d": "80ms" } as React.CSSProperties}>
-              <h2 className="rule text-3xl sm:text-4xl">About Mimshak Wellness</h2>
-              <p className="mt-6 text-lg" style={{ color: "var(--text-soft)" }}>
-                Mimshak Wellness is the private practice of Phakama Ndamase, a registered
-                social worker holding an Honours degree in Social Work from the University
-                of KwaZulu-Natal.
-              </p>
-              <p className="mt-5 text-lg" style={{ color: "var(--text-soft)" }}>
-                The practice offers counselling, trauma and crisis intervention, family
-                mediation and employee wellness support — in person at Letada Medical
-                Centre in Windsor Park, Kraaifontein, or online by video call.
-              </p>
-            </div>
+            <div className="grid gap-x-16 gap-y-12 lg:col-span-9 lg:grid-cols-9">
+              <div className="reveal lg:col-span-5" style={{ "--d": "80ms" } as React.CSSProperties}>
+                <h2 className="rule text-3xl sm:text-4xl">About Mimshak Wellness</h2>
+                <p className="mt-6 text-lg" style={{ color: "var(--text-soft)" }}>
+                  Mimshak Wellness is the private practice of Phakama Ndamase, a registered
+                  social worker holding an Honours degree in Social Work from the University
+                  of KwaZulu-Natal.
+                </p>
+                <p className="mt-5 text-lg" style={{ color: "var(--text-soft)" }}>
+                  The practice offers counselling, trauma and crisis intervention, family
+                  mediation and employee wellness support — in person at Letada Medical
+                  Centre in Windsor Park, Kraaifontein, or online by video call.
+                </p>
+              </div>
 
-            <dl
-              className="reveal grid gap-7 self-start rounded-lg border p-8 lg:col-span-4"
-              style={{ background: "var(--surface)", "--d": "160ms" } as React.CSSProperties}
-            >
-              <div>
-                <dt
-                  className="text-xs font-semibold uppercase tracking-[0.18em]"
-                  style={{ color: "var(--text-soft)" }}
-                >
-                  Where
-                </dt>
-                <dd className="mt-2">
-                  Letada Medical Centre
-                  <br />
-                  Windsor Park, Kraaifontein
-                  <br />
-                  Cape Town, 7530
-                </dd>
-              </div>
-              <div>
-                <dt
-                  className="text-xs font-semibold uppercase tracking-[0.18em]"
-                  style={{ color: "var(--text-soft)" }}
-                >
-                  Hours
-                </dt>
-                <dd className="mt-2">Monday to Friday, 08:00 &ndash; 17:00</dd>
-              </div>
-              <div>
-                <dt
-                  className="text-xs font-semibold uppercase tracking-[0.18em]"
-                  style={{ color: "var(--text-soft)" }}
-                >
-                  Fees
-                </dt>
-                <dd className="mt-2">R250 &ndash; R1 250 depending on the service</dd>
-              </div>
-            </dl>
+              <dl
+                className="reveal grid gap-7 self-start rounded-lg border p-8 lg:col-span-4"
+                style={{ background: "var(--surface)", "--d": "160ms" } as React.CSSProperties}
+              >
+                <div>
+                  <dt
+                    className="text-xs font-semibold uppercase tracking-[0.18em]"
+                    style={{ color: "var(--text-soft)" }}
+                  >
+                    Where
+                  </dt>
+                  <dd className="mt-2">
+                    Letada Medical Centre
+                    <br />
+                    Windsor Park, Kraaifontein
+                    <br />
+                    Cape Town, 7530
+                  </dd>
+                </div>
+                <div>
+                  <dt
+                    className="text-xs font-semibold uppercase tracking-[0.18em]"
+                    style={{ color: "var(--text-soft)" }}
+                  >
+                    Hours
+                  </dt>
+                  <dd className="mt-2">Monday to Friday, 08:00 &ndash; 17:00</dd>
+                </div>
+                <div>
+                  <dt
+                    className="text-xs font-semibold uppercase tracking-[0.18em]"
+                    style={{ color: "var(--text-soft)" }}
+                  >
+                    Fees
+                  </dt>
+                  <dd className="mt-2">R250 &ndash; R1 250 depending on the service</dd>
+                </div>
+              </dl>
+
+              {/* Full biography. Prose is held to a readable measure; the
+                  bullet list may run a little wider since its lines are short. */}
+              <article
+                aria-labelledby="bio-heading"
+                className="reveal border-t pt-14 lg:col-span-9"
+              >
+                <h2 id="bio-heading" className="rule text-3xl sm:text-4xl">
+                  About Phakama Ndamase
+                </h2>
+                <div className="max-w-[46rem]">
+                  {BIO_BEFORE_LIST.map((para, i) => (
+                    <p
+                      key={para}
+                      className={`${i === 0 ? "mt-6" : "mt-5"} text-lg`}
+                      style={{ color: "var(--text-soft)" }}
+                    >
+                      {para}
+                    </p>
+                  ))}
+
+                  <ul className="mt-6 grid list-none gap-x-10 sm:grid-cols-2">
+                    {ICAS_SUPPORT.map((item) => (
+                      <li key={item} className="flex gap-4 border-b py-3">
+                        <span
+                          aria-hidden="true"
+                          className="mt-[0.6em] h-1.5 w-1.5 shrink-0 rounded-full"
+                          style={{ background: "var(--green-dark)" }}
+                        />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {BIO_AFTER_LIST.map((para, i) => (
+                    <p
+                      key={para}
+                      className={`${i === 0 ? "mt-8" : "mt-5"} text-lg`}
+                      style={{ color: "var(--text-soft)" }}
+                    >
+                      {para}
+                    </p>
+                  ))}
+
+                  <p className="mt-10 text-[0.95rem]" style={{ color: "var(--text-soft)" }}>
+                    <span className="font-semibold" style={{ color: "var(--text)" }}>
+                      Phakama Ndamase
+                    </span>
+                    <br />
+                    Social Worker
+                  </p>
+                </div>
+              </article>
+            </div>
           </div>
         </section>
 
