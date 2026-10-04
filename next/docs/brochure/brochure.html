@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<title>Mimshack Wellness | Social Work Services</title>
+<!--
+  Mimshack Wellness brochure. Source for Mimshack-Wellness-Brochure.pdf.
+  Build it with:  node docs/brochure/build.cjs   (from the next/ folder)
+
+  Every fact here comes from the website, Phakama's bio (the About section)
+  or the Counselling and Therapy Consent Form. Keep fees and contact details
+  in step with those when they change.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 0; }
+
+  :root {
+    --ink: #1f2a36;
+    --soft: #56626e;
+    --line: #dbe3ea;
+    --blue: #15608f;
+    --navy: #0f3d5c;
+    --green: #5fa53a;
+    --green-light: #b9e08f;
+    --tint: #eaf4fb;
+    --cream: #f5f8fa;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-family: Inter, "Segoe UI", Arial, sans-serif; color: var(--ink); font-size: 10.2pt; line-height: 1.55; }
+  a { color: inherit; text-decoration: none; }
+
+  .page { width: 210mm; height: 297mm; position: relative; overflow: hidden; break-after: page; }
+  .page:last-child { break-after: auto; }
+  .inner { padding: 18mm 18mm 0; }
+
+  h1, h2, h3 { font-family: Fraunces, Georgia, serif; font-weight: 600; color: var(--navy); line-height: 1.15; letter-spacing: -0.01em; }
+  h2 { font-size: 23pt; margin-top: 2.5mm; }
+  h3 { font-size: 12.5pt; }
+  .eyebrow { font-size: 7.8pt; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--green); }
+  .lead { font-size: 11.5pt; color: var(--soft); margin-top: 4mm; max-width: 160mm; }
+  .icon { width: 9mm; height: 9mm; flex: none; border-radius: 50%; background: var(--tint); color: var(--blue); display: flex; align-items: center; justify-content: center; }
+  .icon svg { width: 5mm; height: 5mm; }
+
+  .foot { position: absolute; left: 18mm; right: 18mm; bottom: 9mm; display: flex; justify-content: space-between; font-size: 7.5pt; color: var(--soft); border-top: 0.6pt solid var(--line); padding-top: 2.5mm; }
+
+  /* ---------------------------------------------------------------- cover */
+  .cover-photo { height: 176mm; background: url(assets/cover.jpg) center / cover; position: relative; }
+  .cover-photo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(15,61,92,.30) 0%, rgba(15,61,92,.55) 45%, rgba(9,37,56,.92) 100%); }
+  .cover-text { position: absolute; left: 18mm; right: 18mm; bottom: 15mm; z-index: 1; color: #fff; }
+  .cover-text .eyebrow { color: var(--green-light); }
+  .cover-text h1 { color: #fff; font-size: 33pt; margin-top: 4mm; max-width: 155mm; }
+  .cover-text .sub { font-size: 12.5pt; margin-top: 5mm; max-width: 140mm; color: rgba(255,255,255,.93); }
+  .cover-brand { position: absolute; top: 176mm; bottom: 17mm; left: 0; right: 0; padding: 0 18mm; display: flex; align-items: center; justify-content: space-between; gap: 10mm; }
+  .cover-brand img { width: 112mm; display: block; }
+  .cover-brand .who { text-align: right; font-size: 9.5pt; color: var(--soft); }
+  .cover-brand .who strong { display: block; font-family: Fraunces, Georgia, serif; font-size: 14pt; font-weight: 600; color: var(--navy); }
+  .cover-strip { position: absolute; left: 0; right: 0; bottom: 0; background: var(--navy); color: #fff; padding: 6.5mm 18mm; display: flex; justify-content: space-between; font-size: 9.2pt; }
+  .cover-strip span { display: flex; align-items: center; gap: 2.2mm; }
+  .cover-strip svg { width: 4mm; height: 4mm; color: var(--green-light); }
+
+  /* ---------------------------------------------------------------- about */
+  .about-head { display: grid; grid-template-columns: 62mm 1fr; gap: 10mm; align-items: center; }
+  .portrait { width: 62mm; height: 62mm; border-radius: 50%; overflow: hidden; background: #fff; box-shadow: 0 0 0 2.2mm var(--tint); }
+  .portrait img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  .cred { margin-top: 3mm; font-size: 9.5pt; color: var(--soft); }
+  .cred b { color: var(--ink); font-weight: 600; }
+  .bio { margin-top: 13mm; columns: 2; column-gap: 9mm; }
+  .bio p { margin-bottom: 3.5mm; break-inside: avoid; }
+  .quote { margin-top: 8mm; padding: 6mm 9mm; background: var(--cream); border-left: 1.2mm solid var(--green); font-family: Fraunces, Georgia, serif; font-size: 14pt; color: var(--navy); line-height: 1.35; }
+  .timeline { margin-top: 16mm; }
+  .timeline ol { list-style: none; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4mm; margin-top: 5mm; position: relative; }
+  .timeline ol::before { content: ""; position: absolute; left: 0; right: 0; top: 2mm; border-top: 0.8pt solid var(--line); }
+  .timeline li { position: relative; padding-top: 7mm; font-size: 8.8pt; color: var(--soft); line-height: 1.4; }
+  .timeline li::before { content: ""; position: absolute; top: 0.6mm; left: 0; width: 3mm; height: 3mm; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 1mm #fff; }
+  .timeline li b { display: block; color: var(--navy); font-size: 10pt; margin-bottom: 1mm; }
+
+  /* ------------------------------------------------------------- services */
+  .cards { margin-top: 9mm; display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+  .card { border: 0.6pt solid var(--line); border-radius: 3mm; padding: 6mm; display: flex; gap: 4.5mm; }
+  .card p { font-size: 9.6pt; color: var(--soft); margin-top: 1.2mm; }
+  .card.wide { grid-column: 1 / -1; background: var(--navy); border-color: var(--navy); color: #fff; padding: 7mm; }
+  .card.wide h3 { color: #fff; }
+  .card.wide p { color: rgba(255,255,255,.88); }
+  .card.wide .icon { background: rgba(255,255,255,.12); color: var(--green-light); }
+  .areas { margin-top: 10mm; }
+  .areas ul { list-style: none; columns: 2; column-gap: 9mm; margin-top: 4mm; }
+  .areas li { padding: 2.2mm 0 2.2mm 6mm; border-bottom: 0.6pt solid var(--line); position: relative; break-inside: avoid; }
+  .areas li::before { content: ""; position: absolute; left: 0.5mm; top: 4.6mm; width: 1.8mm; height: 1.8mm; border-radius: 50%; background: var(--green); }
+
+  /* ------------------------------------------------------ getting started */
+  .steps { margin-top: 7mm; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6mm; }
+  .step .n { width: 8mm; height: 8mm; border-radius: 50%; background: var(--blue); color: #fff; font-weight: 700; font-size: 10pt; display: flex; align-items: center; justify-content: center; }
+  .step h3 { margin-top: 3mm; font-size: 11.5pt; }
+  .step p { font-size: 9.3pt; color: var(--soft); margin-top: 1mm; }
+  .why { margin-top: 11mm; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4mm; }
+  .why div { font-size: 8.6pt; color: var(--soft); line-height: 1.4; }
+  .why b { display: block; color: var(--navy); font-size: 9.6pt; margin: 2.5mm 0 0.8mm; }
+  .facts { margin-top: 11mm; display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+  .fact { background: var(--cream); border-radius: 3mm; padding: 6mm; }
+  .fact dl { margin-top: 3mm; display: grid; gap: 2mm; font-size: 9.5pt; }
+  .fact .row { display: flex; justify-content: space-between; gap: 4mm; border-bottom: 0.6pt solid var(--line); padding-bottom: 1.8mm; }
+  .fact dd { font-weight: 600; white-space: nowrap; }
+  .fact .note { font-size: 8.6pt; color: var(--soft); margin-top: 3mm; }
+  .fact .place { font-size: 9.5pt; margin-top: 3mm; }
+  .fact .place p + p { margin-top: 2mm; }
+  .fact .place span { color: var(--soft); display: block; font-size: 8.4pt; }
+  .contact { position: absolute; left: 0; right: 0; bottom: 0; background: var(--navy); color: #fff; padding: 11mm 18mm 8mm; }
+  .contact .eyebrow { color: var(--green-light); }
+  .contact h2 { color: #fff; font-size: 21pt; }
+  .contact blockquote { margin-top: 3mm; font-family: Fraunces, Georgia, serif; font-size: 11.5pt; color: rgba(255,255,255,.88); max-width: 150mm; line-height: 1.4; }
+  .contact blockquote cite { font-family: Inter, sans-serif; font-style: normal; font-size: 8.4pt; color: var(--green-light); margin-left: 2mm; }
+  .contact .ways { margin-top: 6mm; display: grid; grid-template-columns: 1fr 1fr; gap: 3.5mm; }
+  .contact .way.email { grid-column: 1 / -1; }
+  .contact .way { background: rgba(255,255,255,.08); border-radius: 3mm; padding: 3.5mm 5mm; min-width: 0; }
+  .contact .way small { display: block; font-size: 7.6pt; letter-spacing: 0.14em; text-transform: uppercase; color: var(--green-light); font-weight: 600; }
+  .contact .way a { display: block; margin-top: 1mm; font-weight: 600; font-size: 10.5pt; white-space: nowrap; }
+  .contact .fine { margin-top: 5mm; font-size: 7.4pt; color: rgba(255,255,255,.65); }
+</style>
+</head>
+<body>
+
+<!-- ================================================================ 1 cover -->
+<section class="page">
+  <div class="cover-photo">
+    <div class="cover-text">
+      <p class="eyebrow">Counselling &nbsp;·&nbsp; Family support &nbsp;·&nbsp; Crisis support</p>
+      <h1>Compassionate support through life&rsquo;s challenges</h1>
+      <p class="sub">A safe, confidential space for healing and growth &mdash; in person in Kraaifontein, Cape Town, or online, wherever you are.</p>
+    </div>
+  </div>
+
+  <div class="cover-brand">
+    <img src="assets/logo.png" alt="Mimshack Wellness">
+    <div class="who"><strong>Phakama Ndamase</strong>Social Worker<br>In person and online</div>
+  </div>
+
+  <div class="cover-strip">
+    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></svg><a href="https://wa.me/27641533469">064 153 3469 &nbsp;Call or WhatsApp</a></span>
+    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5a14.5 14.5 0 0 1 0 19 14.5 14.5 0 0 1 0-19Z"/></svg><a href="https://www.mimschakwellness.com">www.mimschakwellness.com</a></span>
+    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>Letada Medical Centre, Kraaifontein</span>
+  </div>
+</section>
+
+<!-- ================================================================ 2 about -->
+<section class="page">
+  <div class="inner">
+    <div class="about-head">
+      <div class="portrait"><img src="assets/phakama.jpg" alt="Phakama Ndamase"></div>
+      <div>
+        <p class="eyebrow">Meet your social worker</p>
+        <h2>Phakama Ndamase</h2>
+        <p class="cred"><b>UKZN (Honours) BA in Social Work</b><br>Practice number 089 000 0495425</p>
+        <p class="lead" style="margin-top:4mm">Nearly two decades of experience supporting individuals, families, workplaces and communities.</p>
+      </div>
+    </div>
+
+    <div class="bio">
+      <p>Phakama Ndamase is a qualified and experienced social worker whose career is grounded in compassion, professionalism, and a deep commitment to improving the well-being of individuals, families and communities.</p>
+      <p>She began her career in 2007 at the Pietermaritzburg Child and Youth Care Centre, and then spent six years at the Child and Family Welfare Society of Pietermaritzburg in statutory social work, child protection and family reunification.</p>
+      <p>In 2013 she established her private practice and began working with ICAS, an employee wellness organisation serving government departments and the corporate sector. Since 2014 she has also provided hospital-based social work services at Medical Towers Hospital in Isipingo, Durban.</p>
+      <p>As a social work supervisor at the University of South Africa, she mentors the next generation of social workers. With every client, she creates a safe, respectful and non-judgemental space to develop healthy coping strategies and work towards meaningful change.</p>
+    </div>
+
+    <p class="quote">For Phakama, social work is more than a profession &mdash; it is a calling.</p>
+
+    <div class="timeline">
+      <p class="eyebrow">Experience</p>
+      <ol>
+        <li><b>2007</b>Pietermaritzburg Child and Youth Care Centre</li>
+        <li><b>2007 &ndash; 2013</b>Child and Family Welfare Society of Pietermaritzburg</li>
+        <li><b>2013</b>Private practice and ICAS employee wellness</li>
+        <li><b>2014</b>Medical Towers Hospital, Isipingo</li>
+        <li><b>Supervisor</b>Social work students, University of South Africa</li>
+      </ol>
+    </div>
+  </div>
+  <div class="foot"><span>Mimshack Wellness &middot; Phakama Ndamase, Social Worker</span><span>2</span></div>
+</section>
+
+<!-- ============================================================= 3 services -->
+<section class="page">
+  <div class="inner">
+    <p class="eyebrow">Services</p>
+    <h2>Support for you, your family and your workplace</h2>
+    <p class="lead">Whether you are dealing with personal struggles, family difficulties or life transitions, professional support can make a meaningful difference.</p>
+
+    <div class="cards">
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-3.2-.6L3 21l1.7-5a8.2 8.2 0 0 1-.7-3.4 8.4 8.4 0 0 1 9-8.4 8.4 8.4 0 0 1 8 7.3Z"/></svg></div>
+        <div><h3>Counselling</h3><p>Individual support for stress, anxiety and emotional wellbeing, at your pace.</p></div>
+      </div>
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="3.2"/><path d="M22 20v-2a4 4 0 0 0-3-3.9"/><path d="M16 3.6a4 4 0 0 1 0 6.8"/></svg></div>
+        <div><h3>Family support</h3><p>Family interventions and mediation, working towards healthier relationships.</p></div>
+      </div>
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 9.6c0 5.4-5.7 9.1-8.1 10.2a1.7 1.7 0 0 1-1.4 0C8.9 18.7 3.2 15 3.2 9.6a4.6 4.6 0 0 1 8.8-1.9 4.6 4.6 0 0 1 8.8 1.9Z"/></svg></div>
+        <div><h3>Crisis support</h3><p>Trauma, bereavement and abuse support, when you need it most.</p></div>
+      </div>
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6.5" width="13" height="11" rx="2"/><path d="m15.5 11 6-3v8l-6-3"/></svg></div>
+        <div><h3>Online sessions</h3><p>Counselling by video call or telephone, for support from anywhere.</p></div>
+      </div>
+      <div class="card wide">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="7" width="19" height="13" rx="2"/><path d="M8.5 7V5a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v2M2.5 12.5h19"/></svg></div>
+        <div>
+          <h3>Employee wellness, for employers</h3>
+          <p>Counselling for employees facing workplace and personal challenges, group interventions, workplace wellness presentations, trauma support and critical-incident debriefing after robberies, accidents and other traumatic workplace events.</p>
+          <p style="margin-top:2mm">Experience includes employee wellness services through ICAS, and counselling and wellness services for employees of organisations such as Unilever and Tongaat Hulett.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="areas">
+      <p class="eyebrow">Phakama can support you with</p>
+      <ul>
+        <li>Stress and anxiety management</li>
+        <li>Family interventions and mediation</li>
+        <li>Marital and divorce-related support</li>
+        <li>Bereavement and loss counselling</li>
+        <li>Trauma and crisis intervention</li>
+        <li>Support for abuse and domestic violence</li>
+        <li>Substance abuse counselling</li>
+        <li>HIV/AIDS support and guidance</li>
+        <li>Professional social work assessments</li>
+        <li>Spiritual guidance</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>Mimshack Wellness &middot; Phakama Ndamase, Social Worker</span><span>3</span></div>
+</section>
+
+<!-- ====================================================== 4 getting started -->
+<section class="page">
+  <div class="inner">
+    <p class="eyebrow">Getting started</p>
+    <h2>What to expect</h2>
+
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3>Get in touch</h3><p>Call or WhatsApp 064 153 3469, or send an email, to arrange your first appointment.</p></div>
+      <div class="step"><div class="n">2</div><h3>Your first session</h3><p>The first session is a 60-minute assessment, where you discuss your concerns and goals together.</p></div>
+      <div class="step"><div class="n">3</div><h3>Ongoing support</h3><p>After the assessment, sessions may be weekly or every two weeks, depending on your needs.</p></div>
+    </div>
+
+    <div class="why">
+      <div><span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg></span><b>Confidential</b>Your privacy is protected, within the limits set by law.</div>
+      <div><span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2.5 8 12 13l9.5-5L12 3Z"/><path d="M6.5 10.4V15c0 1.7 2.5 3 5.5 3s5.5-1.3 5.5-3v-4.6"/></svg></span><b>Qualified</b>UKZN Honours degree in Social Work.</div>
+      <div><span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7-4.3-7-9.2A3.9 3.9 0 0 1 12 8.6a3.9 3.9 0 0 1 7 2.7c0 4.9-7 9.2-7 9.2Z"/></svg></span><b>Compassionate</b>A caring, non-judgemental approach.</div>
+      <div><span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg></span><b>Professional setting</b>Letada Medical Centre, Kraaifontein.</div>
+      <div><span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6.5" width="13" height="11" rx="2"/><path d="m15.5 11 6-3v8l-6-3"/></svg></span><b>In person or online</b>Video call sessions from anywhere.</div>
+    </div>
+
+    <div class="facts">
+      <div class="fact">
+        <h3>Fees</h3>
+        <dl>
+          <div class="row"><dt>Initial assessment session</dt><dd>R750</dd></div>
+          <div class="row"><dt>Each following 60-minute session</dt><dd>R650</dd></div>
+        </dl>
+        <p class="note">Payment by EFT. Payment for the first session is made before that session.</p>
+      </div>
+      <div class="fact">
+        <h3>Where and when</h3>
+        <div class="place">
+          <p>Letada Medical Centre<br>Windsor Park, Kraaifontein, Cape Town, 7530</p>
+          <p><span>Hours</span>Monday to Friday, 08:00 &ndash; 17:00</p>
+          <p><span>Online</span>Sessions by video call, wherever you are</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="contact">
+    <p class="eyebrow">Take the first step</p>
+    <h2>Book your first session</h2>
+    <blockquote>&ldquo;Taking the first step towards healing takes courage. I&rsquo;m here to walk alongside you on your journey to wellbeing.&rdquo;<cite>&mdash; Phakama Ndamase</cite></blockquote>
+    <div class="ways">
+      <div class="way"><small>Call or WhatsApp</small><a href="https://wa.me/27641533469">064 153 3469</a></div>
+      <div class="way"><small>Website</small><a href="https://www.mimschakwellness.com">www.mimschakwellness.com</a></div>
+      <div class="way email"><small>Email</small><a href="mailto:phakama.ndamase@mimschakwellness.com">phakama.ndamase@mimschakwellness.com</a></div>
+    </div>
+    <p class="fine">Mimshack Wellness does not provide an emergency service. If you are in immediate danger, contact local emergency services or go to the nearest emergency department.</p>
+  </div>
+</section>
+
+</body>
+</html>
