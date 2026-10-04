@@ -4,6 +4,10 @@ node_modules/
 out/
 *.tsbuildinfo
 
+# Local client form entries. Only written when no database is connected,
+# and they are real people's details: never commit them.
+.data/
+
 # Environment. .env.local holds the API address and practice slug; it differs
 # per environment and must never be committed.
 .env*.local
