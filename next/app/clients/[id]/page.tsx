@@ -23,13 +23,14 @@ export default async function ClientPage({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ back?: string }>;
 }) {
-  // Signed out: the sign-in lives on the list page.
-  if (!(await hasAdminAccess())) redirect("/clients");
+  // Signed out: the one sign-in, then back to the list.
+  if (!(await hasAdminAccess())) redirect("/login?next=/clients");
 
   const { id } = await params;
-  // Only ever a path within the entries list, never another site.
+  // Only ever the admin page or the client list, never another site.
   const { back } = await searchParams;
-  const backHref = back && /^\/clients(\?[^\s]*)?$/.test(back) ? back : "/clients";
+  const backHref = back && /^\/(clients|manage)(\?[^\s]*)?$/.test(back) ? back : "/clients";
+  const backLabel = backHref.startsWith("/manage") ? "Admin" : "All client entries";
   let entry;
   try {
     entry = await getEntry(id);
@@ -50,7 +51,7 @@ export default async function ClientPage({
               href={backHref}
               className="text-[0.95rem] font-semibold underline underline-offset-4 hover:text-[var(--brand)]"
             >
-              {"\u2190"} All client entries
+              {"\u2190"} {backLabel}
             </Link>
           </nav>
           <EntryCard entry={entry} />

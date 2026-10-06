@@ -89,14 +89,20 @@ export function AuthForm({
         )}
 
         <label className="grid gap-2">
-          <span className="text-[0.95rem] font-medium">Email</span>
+          <span className="text-[0.95rem] font-medium">
+            {tab === "signin" ? "Email or username" : "Email"}
+          </span>
+          {/* Signing in also takes the practice username, so the field is
+              plain text there; creating an account still needs an email. */}
           <input
             required
-            type="email"
+            type={tab === "signin" ? "text" : "email"}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className={FIELD}
-            autoComplete="email"
+            autoComplete={tab === "signin" ? "username" : "email"}
+            autoCapitalize="none"
+            spellCheck={false}
           />
           {tab === "register" && (
             <span className="text-[0.95rem]" style={{ color: "var(--text-soft)" }}>

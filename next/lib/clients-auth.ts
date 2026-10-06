@@ -5,22 +5,24 @@ import { cookies } from "next/headers";
 import { getUser, looksLikeOwner } from "./session";
 
 /**
- * Two ways into the client form entries. Server only.
+ * The practice's sign-in. Server only.
  *
- * The practice owner's own email and password (the site's Django sign-in,
- * used for the booking diary too) is the first and the one meant for daily
- * use: hasAdminAccess() accepts it, so one sign-in covers both the diary and
- * the client list, the moment the booking backend is back online.
+ * There is one sign-in page, /login. It accepts either of two things:
  *
- * The username and password below are the fallback: the client form has to
- * take entries, and the practice has to be able to read them, whether or not
- * that separate backend is up. Set CLIENTS_USERNAME and CLIENTS_PASSWORD in
- * the environment to turn it on. The username is matched ignoring case and
- * surrounding spaces, so "Phakama " still works; the password must match
- * exactly.
+ *  - The practice username and password (CLIENTS_USERNAME and
+ *    CLIENTS_PASSWORD in the environment). These are checked here, by this
+ *    site, so they work whether or not the separate booking backend is up.
+ *  - An email and password for an account on that booking backend, which an
+ *    owner account also passes, once that backend is online.
  *
- * The cookie holds an HMAC keyed by the password, never the password itself.
- * Changing either value therefore signs everyone out of the fallback.
+ * Either one makes hasAdminAccess() true, which opens the admin page
+ * (/manage) with sessions and clients together, the client pages, and the
+ * signature and signed-PDF routes. /api/auth/logout ends both.
+ *
+ * The username is matched ignoring case and surrounding spaces, so
+ * "Phakama " still works; the password must match exactly. The cookie holds
+ * an HMAC keyed by the password, never the password itself, so changing
+ * either value signs everyone out.
  */
 
 export const CLIENTS_COOKIE = "mw_clients";
@@ -59,8 +61,8 @@ export function credentialsMatch(attemptUser: string, attemptPassword: string): 
   return userOk && passwordOk;
 }
 
-/** The fallback cookie alone, regardless of any Django session. */
-async function hasClientsCookie(): Promise<boolean> {
+/** The practice cookie alone, regardless of any booking-backend session. */
+export async function hasPracticeCookie(): Promise<boolean> {
   if (!passwordConfigured()) return false;
   const value = (await cookies()).get(CLIENTS_COOKIE)?.value ?? "";
   const expected = sessionToken();
@@ -69,13 +71,23 @@ async function hasClientsCookie(): Promise<boolean> {
   );
 }
 
-/**
- * Whether this view of the client form entries may be shown: either the
- * practice owner is signed in on the booking system, or they hold the
- * fallback cookie. Used by /clients, /clients/[id] and the signature and
- * signed-PDF routes, so all of them open under either sign-in.
- */
+/** Whether the admin pages may be shown: either sign-in described above. */
 export async function hasAdminAccess(): Promise<boolean> {
-  if (await hasClientsCookie()) return true;
+  if (await hasPracticeCookie()) return true;
   return looksLikeOwner(await getUser());
+}
+
+/** The cookie that records a practice sign-in, for a route to set. */
+export function practiceCookie() {
+  return {
+    name: CLIENTS_COOKIE,
+    value: sessionToken(),
+    options: {
+      httpOnly: true,
+      sameSite: "lax" as const,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: CLIENTS_COOKIE_MAX_AGE,
+    },
+  };
 }

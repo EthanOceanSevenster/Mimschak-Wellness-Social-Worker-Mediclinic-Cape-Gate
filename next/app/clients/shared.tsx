@@ -1,7 +1,5 @@
 import { headers } from "next/headers";
 
-import { PageHeader, SHELL, SiteFooter, SiteHeader } from "../chrome";
-
 /** Shared by the entries list (/clients) and a client's own page (/clients/[id]). */
 
 export const LEGEND = "text-xs font-semibold uppercase tracking-[0.18em]";
@@ -37,22 +35,4 @@ export async function formLink(): Promise<string> {
   const local = host.startsWith("localhost") || host.startsWith("127.");
   const proto = h.get("x-forwarded-proto") ?? (local ? "http" : "https");
   return `${proto}://${host}/form`;
-}
-
-/** The page frame shown while signed out or not yet set up. */
-export function Locked({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <SiteHeader />
-      <main id="main">
-        <PageHeader title="Client form entries" />
-        <section className="py-14 sm:py-20">
-          <div className={SHELL}>
-            <div className="max-w-md">{children}</div>
-          </div>
-        </section>
-      </main>
-      <SiteFooter />
-    </>
-  );
 }

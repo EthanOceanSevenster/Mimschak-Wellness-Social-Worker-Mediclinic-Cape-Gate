@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import {
   cleanQuery,
@@ -9,13 +10,12 @@ import {
   type EntrySearch,
 } from "@/lib/client-entries";
 import { bankingReady, FORM_SERVICES, fullName, modeLabel, serviceLabel } from "@/lib/client-form";
-import { hasAdminAccess, passwordConfigured } from "@/lib/clients-auth";
+import { hasAdminAccess } from "@/lib/clients-auth";
 
 import { PageHeader, SHELL, SiteFooter, SiteHeader } from "../chrome";
 import { CopyButton } from "../copy-button";
 import { CHILD_STYLE, OK_STYLE } from "./entry-card";
-import { ClientsLoginForm } from "./login-form";
-import { BUTTON, COUNT, DAY, formLink, Locked } from "./shared";
+import { BUTTON, COUNT, DAY, formLink } from "./shared";
 
 export const metadata: Metadata = {
   title: "Client form entries | Mimshack Wellness",
@@ -89,38 +89,12 @@ function Pagination({ result, search }: { result: EntryPage; search: EntrySearch
 export default async function ClientsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; q?: string; service?: string; page?: string }>;
+  searchParams: Promise<{ q?: string; service?: string; page?: string }>;
 }) {
   const params = await searchParams;
 
-  // Checked first: signed in as the practice owner on the booking system (the
-  // same email and password as /login and the Diary) always gets straight in,
-  // whether or not the fallback sign-in below is even set up.
-  if (!(await hasAdminAccess())) {
-    if (!passwordConfigured()) {
-      return (
-        <Locked>
-          <p style={{ color: "var(--text-soft)" }}>
-            Sign in at{" "}
-            <Link href="/login" className="underline underline-offset-4">
-              /login
-            </Link>{" "}
-            with the practice&rsquo;s email and password to see client form entries.
-          </p>
-          <p className="mt-4" style={{ color: "var(--text-soft)" }}>
-            To also allow a fallback username and password here, independent of that sign-in, add{" "}
-            <code>CLIENTS_USERNAME</code> and <code>CLIENTS_PASSWORD</code> (at least 8
-            characters) to the site&rsquo;s environment variables and redeploy.
-          </p>
-        </Locked>
-      );
-    }
-    return (
-      <Locked>
-        <ClientsLoginForm failed={Boolean(params.error)} />
-      </Locked>
-    );
-  }
+  // One sign-in for the whole admin area: /login, then back here.
+  if (!(await hasAdminAccess())) redirect("/login?next=/clients");
 
   const search: EntrySearch = {
     q: cleanQuery(params.q) || undefined,
@@ -159,6 +133,14 @@ export default async function ClientsPage({
       <SiteHeader />
 
       <main id="main">
+        <div className={`${SHELL} pt-6`}>
+          <Link
+            href="/manage"
+            className="text-[0.95rem] font-semibold underline underline-offset-4 hover:text-[var(--brand)]"
+          >
+            {"\u2190"} Admin
+          </Link>
+        </div>
         <PageHeader
           title="Client form entries"
           lead="Every signed consent form, newest first. Search by name, email, phone or ID number."
@@ -191,7 +173,7 @@ export default async function ClientsPage({
                 </a>
               </div>
             </div>
-            <form action="/api/clients/logout" method="post">
+            <form action="/api/auth/logout" method="post">
               <button
                 type="submit"
                 className={`${BUTTON} border hover:border-[var(--brand)]`}

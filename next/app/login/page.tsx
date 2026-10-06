@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
+import { hasPracticeCookie } from "@/lib/clients-auth";
 import { getUser, looksLikeOwner } from "@/lib/session";
 
 import { PageHeader, SHELL, SiteFooter, SiteHeader, WhatsAppFloat } from "../chrome";
@@ -19,13 +20,16 @@ export default async function LoginPage({
   searchParams: Promise<{ next?: string; tab?: string }>;
 }) {
   const { next, tab } = await searchParams;
-  const user = await getUser();
-  if (user) redirect(next ?? (looksLikeOwner(user) ? "/manage" : "/bookings"));
 
   // Only same-site paths, so ?next= cannot be used to bounce someone off site.
   // Null means "decide after sign-in", which is the only point at which we
   // know whether this is the practice or a client.
   const destination = next && next.startsWith("/") && !next.startsWith("//") ? next : null;
+
+  // Already signed in: straight on, rather than showing the form again.
+  if (await hasPracticeCookie()) redirect(destination ?? "/manage");
+  const user = await getUser();
+  if (user) redirect(destination ?? (looksLikeOwner(user) ? "/manage" : "/bookings"));
 
   return (
     <>

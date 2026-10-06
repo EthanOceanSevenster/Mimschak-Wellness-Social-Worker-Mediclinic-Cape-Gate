@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { hasPracticeCookie } from "@/lib/clients-auth";
 import { getUser, looksLikeOwner } from "@/lib/session";
 
 /* One shell for every section and every page, so the whole site lines up on
@@ -33,7 +34,10 @@ export function whatsappEnquiry(message = "Hi Mimshak Wellness, I would like to 
 
 export async function SiteHeader() {
   const user = await getUser();
-  const owner = looksLikeOwner(user);
+  // Signed in with the practice username counts as the practice too: see
+  // lib/clients-auth.ts. Either way the menu shows the one Admin page.
+  const owner = looksLikeOwner(user) || (await hasPracticeCookie());
+  const signedIn = Boolean(user) || owner;
 
   return (
     <header
@@ -64,14 +68,14 @@ export async function SiteHeader() {
             </a>
           ))}
 
-          {user ? (
+          {signedIn ? (
             <>
               <Link
                 href={owner ? "/manage" : "/bookings"}
                 className="rounded px-4 py-2 text-base font-medium transition-colors hover:text-[var(--brand)]"
                 style={{ color: "var(--text)" }}
               >
-                {owner ? "Diary" : "My bookings"}
+                {owner ? "Admin" : "My bookings"}
               </Link>
               <form action="/api/auth/logout" method="post">
                 <button
