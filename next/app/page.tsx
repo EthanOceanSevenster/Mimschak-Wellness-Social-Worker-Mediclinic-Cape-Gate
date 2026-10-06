@@ -258,7 +258,7 @@ export default function HomePage() {
         </section>
 
         {/* -------------------------------------------------------- services */}
-        <section id="services" className="scroll-mt-28 py-24 sm:py-32">
+        <section id="services" className="scroll-mt-28 py-24 sm:py-32" style={{ background: "var(--tint)" }}>
           <div className={SHELL}>
             <SectionIntro title="How I can help you">
               Professional social work services to help you navigate difficult times with
@@ -269,8 +269,8 @@ export default function HomePage() {
               {SERVICES.map((service, i) => (
                 <article
                   key={service.title}
-                  className="reveal relative overflow-hidden rounded-xl border p-10 text-center"
-                  style={{ "--d": `${i * 80}ms`, background: "var(--bg-soft)" } as React.CSSProperties}
+                  className="reveal card-lift relative overflow-hidden rounded-xl p-10 text-center"
+                  style={{ "--d": `${i * 80}ms` } as React.CSSProperties}
                 >
                   <span
                     aria-hidden="true"
@@ -330,7 +330,7 @@ export default function HomePage() {
         </section>
 
         {/* ----------------------------------------------------------- areas */}
-        <section className="py-24 sm:py-32">
+        <section className="band-mint py-24 sm:py-32">
           <div className={SHELL}>
             <SectionIntro title={<>Supporting you through life&rsquo;s challenges</>}>
               Whether you are dealing with personal struggles, family difficulties or life
@@ -429,8 +429,8 @@ export default function HomePage() {
               </div>
 
               <dl
-                className="reveal grid gap-7 self-start rounded-lg border p-8 lg:col-span-4"
-                style={{ background: "var(--surface)", "--d": "160ms" } as React.CSSProperties}
+                className="reveal on-navy grid gap-7 self-start rounded-xl p-8 lg:col-span-4"
+                style={{ "--d": "160ms" } as React.CSSProperties}
               >
                 <div>
                   <dt

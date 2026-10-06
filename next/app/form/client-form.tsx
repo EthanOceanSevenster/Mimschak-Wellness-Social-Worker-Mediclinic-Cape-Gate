@@ -345,8 +345,7 @@ export function ClientForm({ prefill = {} }: { prefill?: FormPrefill }) {
   return (
     <form
       onSubmit={submit}
-      className="grid gap-9 rounded-lg border p-6 sm:p-10"
-      style={{ background: "var(--surface)" }}
+      className="card-lift grid gap-9 rounded-xl p-6 sm:p-10"
     >
       <div className="grid gap-2 text-[0.95rem]" style={SOFT}>
         <p>
@@ -362,7 +361,7 @@ export function ClientForm({ prefill = {} }: { prefill?: FormPrefill }) {
 
       {/* ------------------------------------------------------- 1. details */}
       <fieldset className="grid min-w-0 gap-4">
-        <legend className={SECTION_LEGEND} style={SOFT}>
+        <legend className={SECTION_LEGEND} style={{ color: "var(--green-dark)" }}>
           Step 1 of 5 — Your details
         </legend>
         <div className="grid gap-4 sm:grid-cols-2">
@@ -423,7 +422,7 @@ export function ClientForm({ prefill = {} }: { prefill?: FormPrefill }) {
 
       {/* ------------------------------------------------------- 2. address */}
       <fieldset className="grid min-w-0 gap-4">
-        <legend className={SECTION_LEGEND} style={SOFT}>
+        <legend className={SECTION_LEGEND} style={{ color: "var(--green-dark)" }}>
           Step 2 of 5 — Your home address
         </legend>
         <TextField
@@ -470,7 +469,7 @@ export function ClientForm({ prefill = {} }: { prefill?: FormPrefill }) {
 
       {/* ------------------------------------------------------- 3. service */}
       <fieldset className="grid min-w-0 gap-4">
-        <legend className={SECTION_LEGEND} style={SOFT}>
+        <legend className={SECTION_LEGEND} style={{ color: "var(--green-dark)" }}>
           Step 3 of 5 — What you would like help with
         </legend>
         <p className="-mt-1 text-[0.95rem]" style={SOFT}>
@@ -526,7 +525,7 @@ export function ClientForm({ prefill = {} }: { prefill?: FormPrefill }) {
 
       {/* ------------------------------------------------- 4. permissions */}
       <fieldset className="grid min-w-0 gap-5">
-        <legend className={SECTION_LEGEND} style={SOFT}>
+        <legend className={SECTION_LEGEND} style={{ color: "var(--green-dark)" }}>
           Step 4 of 5 — Permissions
         </legend>
         <p className="-mt-1 text-[0.95rem]" style={SOFT}>
@@ -558,7 +557,7 @@ export function ClientForm({ prefill = {} }: { prefill?: FormPrefill }) {
 
       {/* ---------------------------------------------- 5. consent, signature */}
       <fieldset className="grid min-w-0 gap-5">
-        <legend className={SECTION_LEGEND} style={SOFT}>
+        <legend className={SECTION_LEGEND} style={{ color: "var(--green-dark)" }}>
           Step 5 of 5 — Consent and signature
         </legend>
 

@@ -26,14 +26,14 @@ export function FormPageContent({ prefill }: { prefill: FormPrefill }) {
         {/* Form beside a sidebar, as on /book, so the form keeps a comfortable
             width without leaving the right of the page empty. The sidebar
             stacks under the form on phones. */}
-        <section className="py-14 sm:py-20">
+        <section className="py-14 sm:py-20" style={{ background: "var(--tint)" }}>
           <div className={`${SHELL} grid items-start gap-14 lg:grid-cols-12`}>
             <div className="relative lg:col-span-8">
               <ClientForm prefill={prefill} />
             </div>
 
             <aside className="lg:col-span-4">
-              <div className="rounded-lg border p-7" style={{ background: "var(--bg-soft)" }}>
+              <div className="card-lift rounded-xl p-7">
                 <h2 className="text-lg">What happens next</h2>
                 <ol className="mt-5 grid gap-4 text-[0.95rem]">
                   {steps.map((step, i) => (

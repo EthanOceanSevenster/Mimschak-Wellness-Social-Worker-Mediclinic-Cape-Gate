@@ -198,6 +198,40 @@ html.js .reveal.shown {
   color: #ffffff;
 }
 .band-navy h1, .band-navy h2, .band-navy h3 { color: #ffffff; }
+
+/* Anything on navy (the bands, the footer, the navy cards) reads its colours
+   from these, so text written with var(--text-soft) and the rest stays
+   legible there without touching each element. */
+.band-navy,
+.on-navy {
+  --text: #ffffff;
+  --text-soft: rgb(255 255 255 / 0.78);
+  --heading: #ffffff;
+  --line: rgb(255 255 255 / 0.16);
+  --brand: var(--leaf);
+  --surface: rgb(255 255 255 / 0.06);
+  --bg-soft: rgb(255 255 255 / 0.06);
+}
+.on-navy {
+  background: linear-gradient(125deg, var(--navy-2), var(--navy) 60%, #12507a);
+  color: #ffffff;
+}
+.on-navy h1, .on-navy h2, .on-navy h3, .on-navy h4 { color: #ffffff; }
+
+/* A light green band, as behind the brochure's support tags. */
+.band-mint { background: linear-gradient(180deg, var(--mint), #f6fbf1); }
+.band-mint .chip-mint { background: #ffffff; box-shadow: 0 1px 2px rgb(61 107 31 / 0.12); }
+
+/* The thin blue-to-green line along the top of every page. */
+.site-header::before {
+  content: "";
+  display: block;
+  height: 4px;
+  background: linear-gradient(90deg, #1f86c7, #1a75ad 45%, #8bc34a);
+}
+
+/* White cards that lift off a coloured section. */
+.card-lift { background: var(--surface); box-shadow: 0 10px 30px -18px rgb(14 58 87 / 0.35); }
 .band-navy::before,
 .band-navy::after {
   content: "";
@@ -221,6 +255,7 @@ html.js .reveal.shown {
   background: rgb(139 195 74 / 0.85);
 }
 .band-soft { color: rgb(255 255 255 / 0.82); }
+@media (prefers-color-scheme: dark) { .band-mint { background: var(--mint); } }
 .eyebrow-leaf { color: var(--leaf); }
 
 /* Round icon badge in the logo's blue, as on the brochure's service tiles. */

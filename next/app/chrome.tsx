@@ -43,7 +43,7 @@ export async function SiteHeader() {
 
   return (
     <header
-      className="sticky top-0 z-40 border-b backdrop-blur"
+      className="site-header sticky top-0 z-40 border-b backdrop-blur"
       style={{ background: "color-mix(in srgb, var(--bg) 92%, transparent)" }}
     >
       <div className={`${SHELL} flex items-center justify-between gap-6 py-2.5`}>
@@ -127,18 +127,21 @@ export async function SiteHeader() {
 
 export function SiteFooter() {
   return (
-    <footer className="border-t pb-10 pt-16">
+    <footer className="on-navy pb-10 pt-16">
       <div
         className={`${SHELL} grid gap-x-16 gap-y-12 md:grid-cols-2 lg:grid-cols-[1.8fr_1fr_1fr_1.3fr]`}
       >
         <div>
-          <Image
-            src="/images/logo.png"
-            alt="Mimshak Wellness"
-            width={428}
-            height={155}
-            className="h-12 w-auto"
-          />
+          {/* The logo is blue on transparent, so on navy it sits on a white tile. */}
+          <span className="inline-block rounded-xl bg-white px-3 py-2">
+            <Image
+              src="/images/logo.png"
+              alt="Mimshak Wellness"
+              width={428}
+              height={155}
+              className="h-12 w-auto"
+            />
+          </span>
           <p className="mt-6 max-w-xs text-[0.95rem]" style={{ color: "var(--text-soft)" }}>
             A private social work practice in Kraaifontein, Cape Town. In person or online,
             wherever you are.
