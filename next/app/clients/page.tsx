@@ -16,7 +16,7 @@ import { PageHeader, SHELL, SiteFooter, SiteHeader } from "../chrome";
 import { mailConfigured } from "@/lib/mailer";
 import { SendFormPanel } from "../send-form-panel";
 import { CHILD_STYLE, OK_STYLE } from "./entry-card";
-import { BUTTON, COUNT, DAY, formLink } from "./shared";
+import { BUTTON, COUNT, DAY } from "./shared";
 
 export const metadata: Metadata = {
   title: "Client form entries | Mimshack Wellness",
@@ -120,7 +120,6 @@ export default async function ClientsPage({
     }
   }
 
-  const link = await formLink();
   const here = listHref(search, result?.page ?? search.page ?? 1);
   const first = result && result.total > 0 ? (result.page - 1) * result.pageSize + 1 : 0;
   const last = result ? Math.min(result.page * result.pageSize, result.total) : 0;
@@ -146,7 +145,7 @@ export default async function ClientsPage({
         {/* ------------------------------------------------- send the form */}
         <section className="border-b py-6" style={{ background: "var(--bg-soft)" }}>
           <div className={SHELL}>
-            <SendFormPanel formUrl={link} emailReady={mailConfigured()} />
+            <SendFormPanel emailReady={mailConfigured()} />
           </div>
         </section>
 

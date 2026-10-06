@@ -382,7 +382,7 @@ export async function buildConsentPdf(entry: SignedEntry): Promise<Uint8Array> {
   // ------------------------------------------------ e-signature record
   w.panel("Electronic signature record", [
     `Completed and signed online by ${name} at www.mimschakwellness.com/form on ${WHEN.format(signed)} at ${TIME.format(signed)} (South African time).`,
-    `The client ticked to agree to the consent statement${entry.agreePayment ? ", and to the fees, payment terms and cancellation policy" : ""}, and drew the signature shown above.`,
+    `The client opened the consent form, ticked to agree to it${entry.agreePayment ? ", and to the fees, payment terms and cancellation policy" : ""}, and drew the signature shown above.`,
     `Form reference: ${entry.id}.  Wording version: ${entry.termsVersion}.`,
     `Also provided online - home address: ${entry.street}, ${entry.suburb}, ${entry.city}, ${entry.postalCode}. Help requested: ${serviceLabel(entry)}. Sessions: ${modeLabel(entry.mode)}.`,
   ]);

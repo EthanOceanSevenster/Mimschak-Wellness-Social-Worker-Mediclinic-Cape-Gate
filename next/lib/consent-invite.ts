@@ -23,15 +23,38 @@ function splitName(name = ""): { first?: string; surname?: string } {
   return { first, surname: rest.length ? rest.join(" ") : undefined };
 }
 
-/** The live form link, carrying what is known so the form opens filled in. */
-export function inviteLink(formUrl: string, who: InviteFor): string {
-  const url = new URL(formUrl);
+/** Splits "Thandi Mokoena" into what the form's two name fields take. */
+export function prefillFor(who: InviteFor): {
+  firstName: string;
+  surname: string;
+  email: string;
+  phone: string;
+} {
   const { first, surname } = splitName(who.name);
-  if (first) url.searchParams.set("first", first.slice(0, 80));
-  if (surname) url.searchParams.set("surname", surname.slice(0, 80));
-  if (who.email && isEmail(who.email)) url.searchParams.set("email", who.email.trim());
-  if (who.phone?.trim()) url.searchParams.set("phone", who.phone.trim().slice(0, 30));
-  return url.toString();
+  return {
+    firstName: (first ?? "").slice(0, 80),
+    surname: (surname ?? "").slice(0, 80),
+    email: who.email && isEmail(who.email) ? who.email.trim() : "",
+    phone: (who.phone ?? "").trim().slice(0, 30),
+  };
+}
+
+export function hasPrefill(who: InviteFor): boolean {
+  const p = prefillFor(who);
+  return Boolean(p.firstName || p.surname || p.email || p.phone);
+}
+
+/**
+ * The link to send: /f/<code> when there are details to fill in, so no email
+ * or phone ever appears in it, or plain /form when there are none.
+ */
+export function formLinkFor(siteUrl: string, code?: string): string {
+  return new URL(code ? `/f/${code}` : "/form", siteUrl).toString();
+}
+
+/** A link as a person reads it: no https://, no trailing slash. */
+export function displayLink(link: string): string {
+  return link.replace(/^https?:\/\//, "").replace(/\/$/, "");
 }
 
 export function inviteText(link: string, who: InviteFor): string {
@@ -87,7 +110,7 @@ export function inviteHtml(link: string, who: InviteFor, siteUrl: string): strin
           </td>
         </tr></table>
         <p ${p}>It takes about ten minutes. Once you have signed, you can download a copy for your records, and the banking details for payment are shown.</p>
-        <p ${p}>If the button does not work, copy this link into your browser:<br><a href="${href}" style="color:#1a75ad;word-break:break-all;">${href}</a></p>
+        <p ${p}>If the button does not work, go to <a href="${href}" style="color:#1a75ad;">${escapeHtml(displayLink(link))}</a></p>
         <p ${p}>If you have any questions, reply to this email or WhatsApp ${PRACTICE_PHONE}.</p>
         <p style="margin:0 0 4px 0;font-size:15px;line-height:23px;color:#2b3440;">Kind regards,</p>
       </td></tr>

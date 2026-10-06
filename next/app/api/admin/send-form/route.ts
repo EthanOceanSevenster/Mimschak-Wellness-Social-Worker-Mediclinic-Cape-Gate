@@ -1,15 +1,17 @@
 import { NextResponse } from "next/server";
 
+import { createInvite } from "@/lib/client-entries";
 import { hasAdminAccess } from "@/lib/clients-auth";
-import { INVITE_SUBJECT, inviteHtml, inviteLink, inviteText, isEmail } from "@/lib/consent-invite";
+import { formLinkFor, INVITE_SUBJECT, inviteHtml, inviteText, isEmail, prefillFor } from "@/lib/consent-invite";
 import { MailNotConfigured, sendMail } from "@/lib/mailer";
 
 /**
  * Emails the consent form to one client, from the Admin page's send panel.
  *
  * Signed-in practice only: otherwise anyone could make the site send email.
- * The link is built here from the address this request came in on, so it
- * always points at the live site that sent it.
+ * The link is a short /f/<code> one, made here on the address this request
+ * came in on, so it points at the live site and never shows the client's
+ * email or phone.
  */
 export async function POST(request: Request) {
   if (!(await hasAdminAccess())) {
@@ -30,9 +32,9 @@ export async function POST(request: Request) {
   }
 
   const site = new URL("/", request.url).toString();
-  const link = inviteLink(new URL("/form", request.url).toString(), who);
 
   try {
+    const link = formLinkFor(site, await createInvite(prefillFor(who)));
     await sendMail({
       to: who.email,
       subject: INVITE_SUBJECT,

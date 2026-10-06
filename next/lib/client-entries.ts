@@ -1,4 +1,4 @@
-import { randomBytes, randomUUID } from "node:crypto";
+import { randomBytes, randomInt, randomUUID } from "node:crypto";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
@@ -38,6 +38,7 @@ export const TOKEN_DAYS = 30;
 
 const DATABASE_URL = process.env.DATABASE_URL ?? process.env.POSTGRES_URL;
 const LOCAL_FILE = path.join(process.cwd(), ".data", "client-form-entries.json");
+const LOCAL_INVITES = path.join(process.cwd(), ".data", "client-form-invites.json");
 
 export class StorageNotConfigured extends Error {
   constructor() {
@@ -129,6 +130,17 @@ function database() {
     .then(() => sql`
       CREATE INDEX IF NOT EXISTS client_form_entries_service_created_idx
       ON client_form_entries (service, created_at DESC, id DESC)
+    `)
+    // Short links sent to clients: a code, and the details it fills in.
+    .then(() => sql`
+      CREATE TABLE IF NOT EXISTS client_form_invites (
+        code TEXT PRIMARY KEY,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+        first_name TEXT NOT NULL DEFAULT '',
+        surname TEXT NOT NULL DEFAULT '',
+        email TEXT NOT NULL DEFAULT '',
+        phone TEXT NOT NULL DEFAULT ''
+      )
     `)
     .catch((error) => {
     // Let the next request try again rather than failing forever.
@@ -469,4 +481,76 @@ export async function getSignedEntryByToken(token: string): Promise<SignedEntry 
     WHERE download_token = ${token} AND created_at >= ${new Date(cutoff).toISOString()}
   `) as Row[];
   return rows[0] ? { ...fromRow(rows[0]), signature: rows[0].signature ?? "" } : null;
+}
+
+/* ------------------------------------------------------------------ invites */
+
+/** What a short link fills in on the form for the client. */
+export type InvitePrefill = { firstName: string; surname: string; email: string; phone: string };
+
+// No 0/O, 1/l/I: a code read aloud or retyped from a phone cannot be misread.
+const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+const CODE_LENGTH = 8;
+
+function newCode(): string {
+  return Array.from({ length: CODE_LENGTH }, () => CODE_ALPHABET[randomInt(CODE_ALPHABET.length)]).join("");
+}
+
+export function isInviteCode(code: string): boolean {
+  return new RegExp(`^[${CODE_ALPHABET}]{${CODE_LENGTH}}$`).test(code);
+}
+
+async function readLocalInvites(): Promise<Record<string, InvitePrefill>> {
+  try {
+    return JSON.parse(await fs.readFile(LOCAL_INVITES, "utf8")) as Record<string, InvitePrefill>;
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * Saves who a link is for and returns its short code, so the link a client
+ * receives is /f/<code> rather than one carrying their email and phone.
+ */
+export async function createInvite(prefill: InvitePrefill): Promise<string> {
+  if (useLocalFile()) {
+    const all = await readLocalInvites();
+    let code = newCode();
+    while (all[code]) code = newCode();
+    all[code] = prefill;
+    await fs.mkdir(path.dirname(LOCAL_INVITES), { recursive: true });
+    await fs.writeFile(LOCAL_INVITES, JSON.stringify(all, null, 2));
+    return code;
+  }
+
+  const { sql, ready } = database();
+  await ready;
+  // 56^8 codes: a clash is vanishingly rare, but a retry costs nothing.
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const code = newCode();
+    const rows = (await sql`
+      INSERT INTO client_form_invites (code, first_name, surname, email, phone)
+      VALUES (${code}, ${prefill.firstName}, ${prefill.surname}, ${prefill.email}, ${prefill.phone})
+      ON CONFLICT (code) DO NOTHING
+      RETURNING code
+    `) as { code: string }[];
+    if (rows[0]) return rows[0].code;
+  }
+  throw new Error("Could not create a link code.");
+}
+
+/** The details a short link fills in, or null for an unknown code. */
+export async function getInvite(code: string): Promise<InvitePrefill | null> {
+  if (!isInviteCode(code)) return null;
+  if (useLocalFile()) return (await readLocalInvites())[code] ?? null;
+
+  const { sql, ready } = database();
+  await ready;
+  const rows = (await sql`
+    SELECT first_name, surname, email, phone FROM client_form_invites WHERE code = ${code}
+  `) as { first_name: string; surname: string; email: string; phone: string }[];
+  const row = rows[0];
+  return row
+    ? { firstName: row.first_name, surname: row.surname, email: row.email, phone: row.phone }
+    : null;
 }

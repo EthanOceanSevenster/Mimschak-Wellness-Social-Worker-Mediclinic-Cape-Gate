@@ -5,11 +5,9 @@ import { useId, useRef, useState } from "react";
 import {
   BANKING,
   bankingReady,
-  CANCELLATION_TERMS,
   CONSENT_AGREE,
   CONSENT_TEXT,
   CONTACT_METHODS,
-  DOC_INTRO,
   DOC_TITLE,
   FEES,
   FORM_MODES,
@@ -17,11 +15,9 @@ import {
   LIMITS,
   OTHER_SERVICE,
   PAYMENT_AGREE,
-  PAYMENT_TERMS,
   PERMISSION_LABELS,
   PERMISSIONS,
   POP_CONTACT,
-  SERVICE_SECTIONS,
   validateEntry,
   type PermissionAnswer,
   type PermissionKey,
@@ -114,17 +110,22 @@ function Tick({
   label,
   checked,
   onChange,
+  disabled = false,
 }: {
   label: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
+  disabled?: boolean;
 }) {
   return (
-    <label className="mt-5 flex cursor-pointer items-start gap-3 font-medium">
+    <label
+      className={`mt-5 flex items-start gap-3 font-medium ${disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
+    >
       <input
         type="checkbox"
         required
         checked={checked}
+        disabled={disabled}
         onChange={(e) => onChange(e.target.checked)}
         className="mt-1 h-5 w-5 shrink-0 accent-[var(--brand)]"
       />
@@ -203,6 +204,7 @@ export function ClientForm({ prefill = {} }: { prefill?: FormPrefill }) {
   const [permissions, setPermissions] = useState(NO_PERMISSIONS);
   const [agreePayment, setAgreePayment] = useState(false);
   const [agreeConsent, setAgreeConsent] = useState(false);
+  const [readConsent, setReadConsent] = useState(false);
   const [isMinor, setIsMinor] = useState(false);
   const [minorName, setMinorName] = useState("");
   const [minorRelationship, setMinorRelationship] = useState("");
@@ -348,12 +350,13 @@ export function ClientForm({ prefill = {} }: { prefill?: FormPrefill }) {
     >
       <div className="grid gap-2 text-[0.95rem]" style={SOFT}>
         <p>
-          This is the Mimshack Wellness <strong style={{ color: "var(--text)" }}>{DOC_TITLE}</strong>.{" "}
-          {DOC_INTRO}
+          This is the Mimshack Wellness <strong style={{ color: "var(--text)" }}>{DOC_TITLE}</strong>.
+          Fill in your details in steps 1 to 4. In step 5 you read the consent form, agree to it and
+          sign.
         </p>
         <p>
-          Please complete all five steps. Every field is required unless it is marked optional.
-          Once you sign, you can download a signed copy for your records.
+          Every field is required unless it is marked optional. Once you sign, you can download a
+          signed copy for your records.
         </p>
       </div>
 
@@ -521,96 +524,34 @@ export function ClientForm({ prefill = {} }: { prefill?: FormPrefill }) {
 
       <hr />
 
-      {/* ----------------------------------------------- 4. about the service */}
+      {/* ------------------------------------------------- 4. permissions */}
       <fieldset className="grid min-w-0 gap-5">
         <legend className={SECTION_LEGEND} style={SOFT}>
-          Step 4 of 5 — About the service
+          Step 4 of 5 — Permissions
         </legend>
         <p className="-mt-1 text-[0.95rem]" style={SOFT}>
-          Please read the information below carefully. If anything is unclear, ask Phakama before
-          you sign.
+          Please answer each question.
         </p>
-
-        <div className={`${CARD} grid gap-6`} style={CARD_STYLE}>
-          {SERVICE_SECTIONS.map((section) => (
-            <section key={section.title}>
-              <h3 className="text-lg">{section.title}</h3>
-              <div className="mt-2 grid gap-2.5 text-[0.95rem] [overflow-wrap:anywhere]" style={SOFT}>
-                {section.paragraphs.map((p) => (
-                  <p key={p}>{p}</p>
-                ))}
-              </div>
-            </section>
-          ))}
-        </div>
-
-        <div className={`${CARD} grid gap-5`} style={CARD_STYLE}>
-          <section>
-            <h3 className="text-lg">Fees and payment</h3>
-            <dl className="mt-3 grid gap-2 text-[0.95rem]">
-              {FEES.map((fee) => (
-                <div key={fee.label} className="flex justify-between gap-4 border-b pb-2">
-                  <dt>{fee.label}</dt>
-                  <dd className="font-semibold tabular-nums">{fee.amount}</dd>
-                </div>
-              ))}
-            </dl>
-            <ul className="mt-3 grid list-disc gap-1.5 pl-5 text-[0.95rem]" style={SOFT}>
-              {PAYMENT_TERMS.map((t) => (
-                <li key={t}>{t}</li>
-              ))}
-            </ul>
-          </section>
-
-          {bankingReady() && (
-            <section>
-              <h4 className="text-[0.95rem] font-semibold">Banking details</h4>
-              <div className="mt-3">
-                <BankingDetails />
-              </div>
-            </section>
-          )}
-
-          <section>
-            <h3 className="text-lg">Cancellation and postponement</h3>
-            <ul className="mt-2 grid list-disc gap-1.5 pl-5 text-[0.95rem]" style={SOFT}>
-              {CANCELLATION_TERMS.map((t) => (
-                <li key={t}>{t}</li>
-              ))}
-            </ul>
-          </section>
-
-          <Tick label={PAYMENT_AGREE} checked={agreePayment} onChange={setAgreePayment} />
-        </div>
-
-        <div className={`${CARD} grid gap-6`} style={CARD_STYLE}>
-          <div>
-            <h3 className="text-lg">Additional permissions</h3>
-            <p className="mt-1 text-[0.95rem]" style={SOFT}>
-              Please answer each question.
-            </p>
-          </div>
-          {PERMISSIONS.map((permission, i) => (
-            <fieldset key={permission.key} className="grid gap-3">
-              <legend className="text-[0.95rem] font-medium">
-                {i + 1}. {permission.text}
-              </legend>
-              <div className="mt-3">
-                <Choices
-                  name={permission.key}
-                  options={(permission.allowNotApplicable
-                    ? (["yes", "no", "na"] as const)
-                    : (["yes", "no"] as const)
-                  ).map((a) => ({ value: a, label: PERMISSION_LABELS[a] }))}
-                  value={permissions[permission.key]}
-                  onChange={(v) =>
-                    setPermissions((p) => ({ ...p, [permission.key]: v as PermissionAnswer }))
-                  }
-                />
-              </div>
-            </fieldset>
-          ))}
-        </div>
+        {PERMISSIONS.map((permission, i) => (
+          <fieldset key={permission.key} className="grid gap-3">
+            <legend className="text-[0.95rem] font-medium">
+              {i + 1}. {permission.text}
+            </legend>
+            <div className="mt-3">
+              <Choices
+                name={permission.key}
+                options={(permission.allowNotApplicable
+                  ? (["yes", "no", "na"] as const)
+                  : (["yes", "no"] as const)
+                ).map((a) => ({ value: a, label: PERMISSION_LABELS[a] }))}
+                value={permissions[permission.key]}
+                onChange={(v) =>
+                  setPermissions((p) => ({ ...p, [permission.key]: v as PermissionAnswer }))
+                }
+              />
+            </div>
+          </fieldset>
+        ))}
       </fieldset>
 
       <hr />
@@ -621,12 +562,52 @@ export function ClientForm({ prefill = {} }: { prefill?: FormPrefill }) {
           Step 5 of 5 — Consent and signature
         </legend>
 
+        {/* The full document lives at /consent, in a new tab, so the form
+            stays short and nothing typed here is lost while reading it. The
+            agree box unlocks once it has been opened. rel="opener" keeps the
+            link back, so "Back to the form" there can simply close the tab. */}
         <div className={CARD} style={CARD_STYLE}>
-          <h3 className="text-lg">Consent</h3>
+          <h3 className="text-lg">Read the consent form</h3>
           <p className="mt-2 text-[0.95rem]" style={SOFT}>
+            It explains the service, confidentiality and its limits, records and privacy, practical
+            arrangements, fees and payment, and cancellation. Please read it before you agree and
+            sign.
+          </p>
+          <a
+            href="/consent"
+            target="_blank"
+            rel="opener"
+            onClick={() => setReadConsent(true)}
+            className="mt-4 inline-block rounded-full px-6 py-3 text-[0.95rem] font-semibold"
+            style={{ background: "var(--btn-bg)", color: "var(--btn-ink)" }}
+          >
+            Read the consent form
+          </a>
+          <p className={`mt-3 ${HINT}`} style={readConsent ? { color: "var(--green-dark)" } : SOFT}>
+            {readConsent
+              ? "\u2713 Opened. When you have read it, tick the box below."
+              : "The tick box below unlocks once you have opened the consent form."}
+          </p>
+
+          <p className="mt-5 border-t pt-5 text-[0.95rem]" style={SOFT}>
             {CONSENT_TEXT}
           </p>
-          <Tick label={CONSENT_AGREE} checked={agreeConsent} onChange={setAgreeConsent} />
+          <Tick
+            label={CONSENT_AGREE}
+            checked={agreeConsent}
+            onChange={setAgreeConsent}
+            disabled={!readConsent}
+          />
+        </div>
+
+        <div className={CARD} style={CARD_STYLE}>
+          <h3 className="text-lg">Fees and payment</h3>
+          <p className="mt-2 text-[0.95rem]" style={SOFT}>
+            {FEES.map((fee) => `${fee.label}: ${fee.amount}.`).join(" ")} Payment for the first
+            session must be made before that session. The banking details are in the consent form,
+            and are shown again once you submit.
+          </p>
+          <Tick label={PAYMENT_AGREE} checked={agreePayment} onChange={setAgreePayment} />
         </div>
 
         <div className="grid gap-3">

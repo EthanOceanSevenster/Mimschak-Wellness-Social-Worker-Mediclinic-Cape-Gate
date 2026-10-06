@@ -42,7 +42,7 @@ export const CONTACT_METHODS = [
  * changes. Otherwise an old signature would appear to cover words the client
  * never saw.
  */
-export const TERMS_VERSION = "2026-10-04";
+export const TERMS_VERSION = "2026-10-06";
 
 export const DOC_TITLE = "Counselling and Therapy Consent Form";
 
@@ -104,7 +104,7 @@ export const CANCELLATION_TERMS = [
 ];
 
 export const PAYMENT_AGREE =
-  "I agree to the fees, the payment terms and the cancellation policy above.";
+  "I agree to the fees, payment terms and cancellation policy in the consent form.";
 
 /** Where a client sends proof of payment. */
 export const POP_CONTACT = {
@@ -151,7 +151,7 @@ export const PERMISSION_LABELS: Record<Exclude<PermissionAnswer, "">, string> = 
 export const CONSENT_TEXT =
   "I have had an opportunity to ask questions. I understand the nature of counselling, confidentiality and its limits, record keeping and the practical arrangements above. I consent to participate in counselling with Mimshack Wellness. I understand that I may withdraw consent and discuss how this affects ongoing care.";
 
-export const CONSENT_AGREE = "I have read and agree to the consent statement above.";
+export const CONSENT_AGREE = "I have read the consent form and agree to it.";
 
 /**
  * Shown in the form and on the screen after the client submits. Until the
@@ -362,7 +362,10 @@ export function validateEntry(
     }
   }
   if (!value.agreeConsent) {
-    return { ok: false, error: "Please tick the box to confirm that you agree to the consent statement." };
+    return {
+      ok: false,
+      error: "Please open and read the consent form in step 5, then tick the box to agree to it.",
+    };
   }
   if (value.isMinor) {
     if (!between(value.minorName, 2, LIMITS.name * 2)) {
