@@ -11,24 +11,24 @@ const sans = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swa
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://mimschakwellness.com"),
-  title: "Social Worker Kraaifontein | Mimshak Wellness | Phakama Ndamase",
+  title: "Social Worker Kraaifontein | Mimshack Wellness | Phakama Ndamase",
   description:
     "Phakama Ndamase — professional social worker in Kraaifontein, Cape Town. Serving Windsor Park, Brackenfell and surrounding areas from Letada Medical Centre. Counselling, trauma, family support and more.",
   keywords: [
     "social worker Kraaifontein",
     "social worker Cape Town",
     "Phakama Ndamase",
-    "Mimshak Wellness",
+    "Mimshack Wellness",
     "counselling Kraaifontein",
     "trauma counselling Cape Town",
   ],
   alternates: { canonical: "https://mimschakwellness.com/" },
   openGraph: {
-    title: "Social Worker Kraaifontein | Mimshak Wellness | Phakama Ndamase",
+    title: "Social Worker Kraaifontein | Mimshack Wellness | Phakama Ndamase",
     description:
       "Professional social worker in Kraaifontein, Cape Town. Counselling, trauma, family support and more at Letada Medical Centre.",
     url: "https://mimschakwellness.com/",
-    siteName: "Mimshak Wellness",
+    siteName: "Mimshack Wellness",
     locale: "en_ZA",
     type: "website",
   },
@@ -47,12 +47,12 @@ export const viewport: Viewport = {
 const LOCAL_BUSINESS = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  name: "Mimshak Wellness",
+  name: "Mimshack Wellness",
   description:
     "Professional social work practice in Kraaifontein, Cape Town. Counselling, trauma support, family interventions and more.",
   url: "https://mimschakwellness.com",
   telephone: "+27641533469",
-  email: "phakamandamase@gmail.com",
+  email: "phakama.ndamase@mimschakwellness.com",
   address: {
     "@type": "PostalAddress",
     streetAddress: "Letada Medical Centre",

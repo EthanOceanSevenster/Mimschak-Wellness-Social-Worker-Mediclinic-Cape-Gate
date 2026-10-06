@@ -9,7 +9,7 @@ import { PageHeader, SHELL, SiteFooter, SiteHeader, WhatsAppFloat, whatsappEnqui
 import { BookingRow, NextSession } from "./booking-card";
 
 export const metadata: Metadata = {
-  title: "My bookings | Mimshak Wellness",
+  title: "My bookings | Mimshack Wellness",
   robots: { index: false, follow: false },
 };
 
@@ -54,7 +54,7 @@ export default async function MyBookingsPage() {
                   you need to check it.
                 </p>
                 <a
-                  href={whatsappEnquiry("Hi Mimshak Wellness, I would like to check my booking. ")}
+                  href={whatsappEnquiry("Hi Mimshack Wellness, I would like to check my booking. ")}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-6 inline-block rounded-full px-7 py-3.5 font-semibold"
@@ -141,7 +141,7 @@ export default async function MyBookingsPage() {
                       </p>
                       <a
                         href={whatsappEnquiry(
-                          "Hi Mimshak Wellness, I need to change my booking. ",
+                          "Hi Mimshack Wellness, I need to change my booking. ",
                         )}
                         target="_blank"
                         rel="noopener noreferrer"

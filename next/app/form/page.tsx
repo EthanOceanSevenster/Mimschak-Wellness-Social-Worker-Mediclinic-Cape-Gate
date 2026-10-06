@@ -7,7 +7,7 @@ import { FormPageContent } from "./form-page";
 
 export const metadata: Metadata = {
   title: "Counselling consent form | Mimshack Wellness",
-  description: "Send your details to Phakama Ndamase at Mimshak Wellness.",
+  description: "Send your details to Phakama Ndamase at Mimshack Wellness.",
   // Shared by link, not found by search.
   robots: { index: false, follow: false },
 };

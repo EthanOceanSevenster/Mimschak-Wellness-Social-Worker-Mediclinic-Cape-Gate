@@ -30,7 +30,7 @@ export const FOOTER_SERVICES = [
     page must render without the API being up. */
 export const WHATSAPP_NUMBER = "27641533469";
 
-export function whatsappEnquiry(message = "Hi Mimshak Wellness, I would like to book a session. ") {
+export function whatsappEnquiry(message = "Hi Mimshack Wellness, I would like to book a session. ") {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }
 
@@ -47,12 +47,12 @@ export async function SiteHeader() {
       style={{ background: "color-mix(in srgb, var(--bg) 92%, transparent)" }}
     >
       <div className={`${SHELL} flex items-center justify-between gap-6 py-2.5`}>
-        <Link href="/" aria-label="Mimshak Wellness, home" className="shrink-0">
+        <Link href="/" aria-label="Mimshack Wellness, home" className="shrink-0">
           <Image
-            src="/images/logo.png"
-            alt="Mimshak Wellness"
-            width={428}
-            height={155}
+            src="/images/mimshack-logo.png"
+            alt="Mimshack Wellness"
+            width={500}
+            height={180}
             priority
             className="h-14 w-auto sm:h-16"
           />
@@ -129,16 +129,16 @@ export function SiteFooter() {
   return (
     <footer className="on-navy pb-10 pt-16">
       <div
-        className={`${SHELL} grid gap-x-16 gap-y-12 md:grid-cols-2 lg:grid-cols-[1.8fr_1fr_1fr_1.3fr]`}
+        className={`${SHELL} grid gap-x-16 gap-y-12 md:grid-cols-2 lg:grid-cols-[1.4fr_0.9fr_1fr_1.7fr]`}
       >
         <div>
           {/* The logo is blue on transparent, so on navy it sits on a white tile. */}
           <span className="inline-block rounded-xl bg-white px-3 py-2">
             <Image
-              src="/images/logo.png"
-              alt="Mimshak Wellness"
-              width={428}
-              height={155}
+              src="/images/mimshack-logo.png"
+              alt="Mimshack Wellness"
+              width={500}
+              height={180}
               className="h-12 w-auto"
             />
           </span>
@@ -215,10 +215,10 @@ export function SiteFooter() {
             </li>
             <li>
               <a
-                href="mailto:phakamandamase@gmail.com"
+                href="mailto:phakama.ndamase@mimschakwellness.com"
                 className="break-all transition-colors hover:text-[var(--brand)]"
               >
-                phakamandamase@gmail.com
+                phakama.ndamase@mimschakwellness.com
               </a>
             </li>
             <li style={{ color: "var(--text-soft)" }}>
@@ -237,7 +237,7 @@ export function SiteFooter() {
           className="flex flex-col gap-2 text-[0.95rem] sm:flex-row sm:items-center sm:justify-between"
           style={{ color: "var(--text-soft)" }}
         >
-          <p>&copy; {new Date().getFullYear()} Mimshak Wellness. Kraaifontein, Cape Town.</p>
+          <p>&copy; {new Date().getFullYear()} Mimshack Wellness. Kraaifontein, Cape Town.</p>
           <p>Phakama Ndamase &middot; Registered social worker</p>
         </div>
       </div>

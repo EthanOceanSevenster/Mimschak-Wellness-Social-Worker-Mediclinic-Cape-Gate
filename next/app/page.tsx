@@ -415,9 +415,9 @@ export default function HomePage() {
 
             <div className="grid gap-x-16 gap-y-12 lg:col-span-9 lg:grid-cols-9">
               <div className="reveal lg:col-span-5" style={{ "--d": "80ms" } as React.CSSProperties}>
-                <h2 className="rule text-3xl sm:text-4xl">About Mimshak Wellness</h2>
+                <h2 className="rule text-3xl sm:text-4xl">About Mimshack Wellness</h2>
                 <p className="mt-6 text-lg" style={{ color: "var(--text-soft)" }}>
-                  Mimshak Wellness is the private practice of Phakama Ndamase, a registered
+                  Mimshack Wellness is the private practice of Phakama Ndamase, a registered
                   social worker holding an Honours degree in Social Work from the University
                   of KwaZulu-Natal.
                 </p>
@@ -543,7 +543,7 @@ export default function HomePage() {
                 064 153 3469
               </a>
               <a
-                href="mailto:phakamandamase@gmail.com"
+                href="mailto:phakama.ndamase@mimschakwellness.com"
                 className="rounded-full border px-8 py-4 text-[0.95rem] font-semibold text-white"
                 style={{ borderColor: "rgb(255 255 255 / 0.5)" }}
               >

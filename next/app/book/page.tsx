@@ -8,7 +8,7 @@ import { PageHeader, SHELL, SiteFooter, SiteHeader, WhatsAppFloat } from "../chr
 import { BookingForm } from "./booking-form";
 
 export const metadata: Metadata = {
-  title: "Book a session | Mimshak Wellness",
+  title: "Book a session | Mimshack Wellness",
   description:
     "Book a counselling, family support or crisis support session with Phakama Ndamase in Kraaifontein, in person or online.",
 };
@@ -59,7 +59,7 @@ export default async function BookPage() {
                   </p>
                   <div className="mt-6 flex flex-wrap gap-4">
                     <a
-                      href="https://wa.me/27641533469?text=Hi%20Mimschak%20Wellness%2C%20I%20would%20like%20to%20book%20a%20session.%20"
+                      href="https://wa.me/27641533469?text=Hi%20Mimshack%20Wellness%2C%20I%20would%20like%20to%20book%20a%20session.%20"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="rounded-full px-7 py-3.5 font-semibold"

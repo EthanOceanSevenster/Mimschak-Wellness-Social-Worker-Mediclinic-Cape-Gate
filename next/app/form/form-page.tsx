@@ -81,7 +81,7 @@ export function FormPageContent({ prefill }: { prefill: FormPrefill }) {
                   This opens WhatsApp with a message already started.
                 </p>
                 <a
-                  href={whatsappEnquiry("Hi Mimshak Wellness, I would like to arrange a session. ")}
+                  href={whatsappEnquiry("Hi Mimshack Wellness, I would like to arrange a session. ")}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-5 inline-block rounded-full px-6 py-3 text-[0.95rem] font-semibold"
