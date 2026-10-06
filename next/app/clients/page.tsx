@@ -9,7 +9,7 @@ import {
   type EntrySearch,
 } from "@/lib/client-entries";
 import { bankingReady, FORM_SERVICES, fullName, modeLabel, serviceLabel } from "@/lib/client-form";
-import { hasClientsAccess, passwordConfigured } from "@/lib/clients-auth";
+import { hasAdminAccess, passwordConfigured } from "@/lib/clients-auth";
 
 import { PageHeader, SHELL, SiteFooter, SiteHeader } from "../chrome";
 import { CopyButton } from "../copy-button";
@@ -93,19 +93,28 @@ export default async function ClientsPage({
 }) {
   const params = await searchParams;
 
-  if (!passwordConfigured()) {
-    return (
-      <Locked>
-        <p style={{ color: "var(--text-soft)" }}>
-          This page stays locked until its sign-in is set up. Add{" "}
-          <code>CLIENTS_USERNAME</code> and <code>CLIENTS_PASSWORD</code> (at least 8
-          characters) to the site&rsquo;s environment variables and redeploy.
-        </p>
-      </Locked>
-    );
-  }
-
-  if (!(await hasClientsAccess())) {
+  // Checked first: signed in as the practice owner on the booking system (the
+  // same email and password as /login and the Diary) always gets straight in,
+  // whether or not the fallback sign-in below is even set up.
+  if (!(await hasAdminAccess())) {
+    if (!passwordConfigured()) {
+      return (
+        <Locked>
+          <p style={{ color: "var(--text-soft)" }}>
+            Sign in at{" "}
+            <Link href="/login" className="underline underline-offset-4">
+              /login
+            </Link>{" "}
+            with the practice&rsquo;s email and password to see client form entries.
+          </p>
+          <p className="mt-4" style={{ color: "var(--text-soft)" }}>
+            To also allow a fallback username and password here, independent of that sign-in, add{" "}
+            <code>CLIENTS_USERNAME</code> and <code>CLIENTS_PASSWORD</code> (at least 8
+            characters) to the site&rsquo;s environment variables and redeploy.
+          </p>
+        </Locked>
+      );
+    }
     return (
       <Locked>
         <ClientsLoginForm failed={Boolean(params.error)} />

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { getEntry, StorageNotConfigured } from "@/lib/client-entries";
-import { hasClientsAccess } from "@/lib/clients-auth";
+import { hasAdminAccess } from "@/lib/clients-auth";
 
 import { SHELL, SiteFooter, SiteHeader } from "../../chrome";
 import { EntryCard } from "../entry-card";
@@ -24,7 +24,7 @@ export default async function ClientPage({
   searchParams: Promise<{ back?: string }>;
 }) {
   // Signed out: the sign-in lives on the list page.
-  if (!(await hasClientsAccess())) redirect("/clients");
+  if (!(await hasAdminAccess())) redirect("/clients");
 
   const { id } = await params;
   // Only ever a path within the entries list, never another site.

@@ -1,10 +1,10 @@
 import { getSignedEntry, StorageNotConfigured } from "@/lib/client-entries";
-import { hasClientsAccess } from "@/lib/clients-auth";
+import { hasAdminAccess } from "@/lib/clients-auth";
 import { buildConsentPdf, consentFileName } from "@/lib/consent-pdf";
 
 /** Any client's signed consent form, as a PDF, for the practice. Behind the /clients sign-in. */
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
-  if (!(await hasClientsAccess())) {
+  if (!(await hasAdminAccess())) {
     return new Response("Not found", { status: 404 });
   }
 

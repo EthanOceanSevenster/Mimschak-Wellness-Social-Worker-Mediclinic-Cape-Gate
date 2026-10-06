@@ -1,5 +1,5 @@
 import { getSignature, StorageNotConfigured } from "@/lib/client-entries";
-import { hasClientsAccess } from "@/lib/clients-auth";
+import { hasAdminAccess } from "@/lib/clients-auth";
 
 /**
  * One client's signature as a PNG, for the /clients page.
@@ -8,7 +8,7 @@ import { hasClientsAccess } from "@/lib/clients-auth";
  * and a guessable URL must not be enough to see it.
  */
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
-  if (!(await hasClientsAccess())) {
+  if (!(await hasAdminAccess())) {
     return new Response("Not found", { status: 404 });
   }
 

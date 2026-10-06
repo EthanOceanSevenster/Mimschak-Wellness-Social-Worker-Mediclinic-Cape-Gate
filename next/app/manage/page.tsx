@@ -2,11 +2,17 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { ApiError, apiGetAuthed, BOOKINGS } from "@/lib/api";
+import { searchEntries, StorageNotConfigured, type EntryPage } from "@/lib/client-entries";
+import { fullName, modeLabel, serviceLabel } from "@/lib/client-form";
 import { requireUser } from "@/lib/session";
 import type { ManageBookings } from "@/lib/types";
 
 import { PageHeader, SHELL, SiteFooter, SiteHeader } from "../chrome";
+import { DAY } from "../clients/shared";
 import { DiaryRow } from "./diary-row";
+
+/** How many recent client entries show on the diary itself before "View all". */
+const RECENT_CLIENTS = 6;
 
 export const metadata: Metadata = {
   title: "Diary | Mimshak Wellness",
@@ -71,6 +77,21 @@ export default async function ManagePage({
     (b) => new Date(b.starts_at) >= new Date() && (b.status === "requested" || b.status === "confirmed"),
   );
   const rest = data.bookings.filter((b) => !upcoming.includes(b));
+
+  // Shown on the same page as the diary, so one sign-in covers both: see
+  // lib/clients-auth.ts, hasAdminAccess. This never touches the booking
+  // backend, so it still loads even while that backend is the reason the
+  // page above fell back to "Not your diary" for anyone who is not signed in.
+  let clients: EntryPage | null = null;
+  let clientsProblem: string | null = null;
+  try {
+    clients = await searchEntries({ page: 1 });
+  } catch (error) {
+    clientsProblem =
+      error instanceof StorageNotConfigured
+        ? "No database is connected yet for client form entries."
+        : "Client form entries could not be loaded just now.";
+  }
 
   return (
     <>
@@ -156,6 +177,53 @@ export default async function ManagePage({
                     </div>
                   </div>
                 )}
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* ----------------------------------------- client form entries */}
+        <section className="border-t py-12 sm:py-16" style={{ background: "var(--bg-soft)" }}>
+          <div className={SHELL}>
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <h2 className="rule text-2xl">Client form entries</h2>
+                <p className="mt-2" style={{ color: "var(--text-soft)" }}>
+                  {clientsProblem
+                    ? clientsProblem
+                    : clients && clients.total > 0
+                      ? `${clients.total} ${clients.total === 1 ? "client has" : "clients have"} signed the consent form.`
+                      : "Nobody has filled in the form yet."}
+                </p>
+              </div>
+              <Link
+                href="/clients"
+                className="rounded-full border px-5 py-2.5 text-[0.95rem] font-semibold transition-colors hover:border-[var(--brand)]"
+              >
+                View all client entries
+              </Link>
+            </div>
+
+            {clients && clients.rows.length > 0 && (
+              <div className="mt-8 grid gap-3">
+                {clients.rows.slice(0, RECENT_CLIENTS).map((entry) => (
+                  <Link
+                    key={entry.id}
+                    href={`/clients/${encodeURIComponent(entry.id)}`}
+                    className="flex flex-wrap items-center justify-between gap-3 rounded-lg border px-5 py-4 transition-colors hover:border-[var(--brand)]"
+                    style={{ background: "var(--surface)" }}
+                  >
+                    <span>
+                      <span className="font-semibold">{fullName(entry)}</span>
+                      <span className="ml-3 text-[0.9rem]" style={{ color: "var(--text-soft)" }}>
+                        {serviceLabel(entry)} &middot; {modeLabel(entry.mode)}
+                      </span>
+                    </span>
+                    <span className="text-[0.9rem]" style={{ color: "var(--text-soft)" }}>
+                      {DAY.format(new Date(entry.createdAt))}
+                    </span>
+                  </Link>
+                ))}
               </div>
             )}
           </div>

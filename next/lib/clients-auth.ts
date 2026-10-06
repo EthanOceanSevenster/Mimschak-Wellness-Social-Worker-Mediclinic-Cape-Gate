@@ -2,19 +2,25 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 
 import { cookies } from "next/headers";
 
+import { getUser, looksLikeOwner } from "./session";
+
 /**
- * One username and password for the /clients page. Server only.
+ * Two ways into the client form entries. Server only.
  *
- * Deliberately separate from the site's Django sign-in: the client form has
- * to work whether or not the booking API is up, and so does the page that
- * reads its entries.
+ * The practice owner's own email and password (the site's Django sign-in,
+ * used for the booking diary too) is the first and the one meant for daily
+ * use: hasAdminAccess() accepts it, so one sign-in covers both the diary and
+ * the client list, the moment the booking backend is back online.
  *
- * Set CLIENTS_USERNAME and CLIENTS_PASSWORD in the environment. The username
- * is matched ignoring case and surrounding spaces, so "Phakama " still works;
- * the password must match exactly.
+ * The username and password below are the fallback: the client form has to
+ * take entries, and the practice has to be able to read them, whether or not
+ * that separate backend is up. Set CLIENTS_USERNAME and CLIENTS_PASSWORD in
+ * the environment to turn it on. The username is matched ignoring case and
+ * surrounding spaces, so "Phakama " still works; the password must match
+ * exactly.
  *
  * The cookie holds an HMAC keyed by the password, never the password itself.
- * Changing either value therefore signs everyone out.
+ * Changing either value therefore signs everyone out of the fallback.
  */
 
 export const CLIENTS_COOKIE = "mw_clients";
@@ -53,11 +59,23 @@ export function credentialsMatch(attemptUser: string, attemptPassword: string): 
   return userOk && passwordOk;
 }
 
-export async function hasClientsAccess(): Promise<boolean> {
+/** The fallback cookie alone, regardless of any Django session. */
+async function hasClientsCookie(): Promise<boolean> {
   if (!passwordConfigured()) return false;
   const value = (await cookies()).get(CLIENTS_COOKIE)?.value ?? "";
   const expected = sessionToken();
   return (
     value.length === expected.length && timingSafeEqual(Buffer.from(value), Buffer.from(expected))
   );
+}
+
+/**
+ * Whether this view of the client form entries may be shown: either the
+ * practice owner is signed in on the booking system, or they hold the
+ * fallback cookie. Used by /clients, /clients/[id] and the signature and
+ * signed-PDF routes, so all of them open under either sign-in.
+ */
+export async function hasAdminAccess(): Promise<boolean> {
+  if (await hasClientsCookie()) return true;
+  return looksLikeOwner(await getUser());
 }

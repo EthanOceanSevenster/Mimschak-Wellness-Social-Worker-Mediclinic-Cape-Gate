@@ -24,6 +24,14 @@ export function ClientsLoginForm({ failed }: { failed: boolean }) {
         <p className="mt-2 text-[0.95rem]" style={{ color: "var(--text-soft)" }}>
           This page lists the client forms that have been submitted. Only the practice can open it.
         </p>
+        <p className="mt-2 text-[0.95rem]" style={{ color: "var(--text-soft)" }}>
+          Already signed in at{" "}
+          <a href="/login" className="underline underline-offset-4">
+            /login
+          </a>
+          ? That sign-in opens this page too, alongside the Diary &mdash; no separate password
+          needed. Use the fields below only if that is not working yet.
+        </p>
       </div>
 
       {failed && (
