@@ -93,6 +93,18 @@ export async function SiteHeader() {
             </Link>
           )}
 
+          {/* For the practice, not for clients browsing the site. Always
+              shown, rather than gated on the Django session above: that
+              session depends on the separate booking backend, and this page
+              has its own sign-in regardless of whether that backend is up. */}
+          <Link
+            href="/clients"
+            className="rounded px-4 py-2 text-base font-medium transition-colors hover:text-[var(--brand)]"
+            style={{ color: "var(--text-soft)" }}
+          >
+            Clients
+          </Link>
+
           <Link
             href="/book"
             className="ml-4 rounded-full px-5 py-2.5 text-[0.95rem] font-semibold"
@@ -158,6 +170,11 @@ export function SiteFooter() {
             <li>
               <Link href="/bookings" className="transition-colors hover:text-[var(--brand)]">
                 My bookings
+              </Link>
+            </li>
+            <li>
+              <Link href="/clients" className="transition-colors hover:text-[var(--brand)]">
+                Clients
               </Link>
             </li>
           </ul>
