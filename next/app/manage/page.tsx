@@ -11,7 +11,8 @@ import type { ManageBookings } from "@/lib/types";
 
 import { PageHeader, SHELL, SiteFooter, SiteHeader } from "../chrome";
 import { CHILD_STYLE, OK_STYLE } from "../clients/entry-card";
-import { COUNT, DAY } from "../clients/shared";
+import { COUNT, DAY, formLink } from "../clients/shared";
+import { SendFormPanel } from "../send-form-panel";
 import { DiaryRow } from "./diary-row";
 
 export const metadata: Metadata = {
@@ -112,6 +113,13 @@ export default async function AdminPage({
                 <p className="mt-1 text-3xl font-bold">{stat.value}</p>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* ---------------------------------------------------- send the form */}
+        <section className="pt-10">
+          <div className={SHELL}>
+            <SendFormPanel formUrl={await formLink()} />
           </div>
         </section>
 

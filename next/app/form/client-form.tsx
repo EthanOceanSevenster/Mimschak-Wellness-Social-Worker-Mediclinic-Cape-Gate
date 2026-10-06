@@ -182,12 +182,15 @@ const NO_PERMISSIONS: Record<PermissionKey, PermissionAnswer> = {
   permAttendance: "",
 };
 
-export function ClientForm() {
-  const [firstName, setFirstName] = useState("");
-  const [surname, setSurname] = useState("");
+/** Details carried in a link sent from the Admin page, to fill in for the client. */
+export type FormPrefill = { firstName?: string; surname?: string; email?: string; phone?: string };
+
+export function ClientForm({ prefill = {} }: { prefill?: FormPrefill }) {
+  const [firstName, setFirstName] = useState(prefill.firstName ?? "");
+  const [surname, setSurname] = useState(prefill.surname ?? "");
   const [idOrDob, setIdOrDob] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState(prefill.phone ?? "");
+  const [email, setEmail] = useState(prefill.email ?? "");
   const [contactMethod, setContactMethod] = useState("");
   const [street, setStreet] = useState("");
   const [suburb, setSuburb] = useState("");

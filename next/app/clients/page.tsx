@@ -13,7 +13,7 @@ import { bankingReady, FORM_SERVICES, fullName, modeLabel, serviceLabel } from "
 import { hasAdminAccess } from "@/lib/clients-auth";
 
 import { PageHeader, SHELL, SiteFooter, SiteHeader } from "../chrome";
-import { CopyButton } from "../copy-button";
+import { SendFormPanel } from "../send-form-panel";
 import { CHILD_STYLE, OK_STYLE } from "./entry-card";
 import { BUTTON, COUNT, DAY, formLink } from "./shared";
 
@@ -120,10 +120,6 @@ export default async function ClientsPage({
   }
 
   const link = await formLink();
-  const share = `https://wa.me/?text=${encodeURIComponent(
-    `Hello, please complete the Mimshack Wellness counselling consent form before your first session: ${link}`,
-  )}`;
-
   const here = listHref(search, result?.page ?? search.page ?? 1);
   const first = result && result.total > 0 ? (result.page - 1) * result.pageSize + 1 : 0;
   const last = result ? Math.min(result.page * result.pageSize, result.total) : 0;
@@ -147,41 +143,9 @@ export default async function ClientsPage({
         />
 
         {/* ------------------------------------------------- send the form */}
-        {/* Buttons only: the raw address is never shown, just copied or sent. */}
         <section className="border-b py-6" style={{ background: "var(--bg-soft)" }}>
-          <div className={`${SHELL} flex flex-wrap items-center justify-between gap-5`}>
-            <div>
-              <p className="font-semibold">Send the consent form to a new client</p>
-              <div className="mt-3 flex flex-wrap items-center gap-3">
-                <CopyButton value={link} label="Copy form link" />
-                <a
-                  href={share}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={BUTTON}
-                  style={{ background: "var(--wa-btn)", color: "var(--wa-ink)" }}
-                >
-                  Send on WhatsApp
-                </a>
-                <a
-                  href="/form"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${BUTTON} border hover:border-[var(--brand)]`}
-                >
-                  Open form
-                </a>
-              </div>
-            </div>
-            <form action="/api/auth/logout" method="post">
-              <button
-                type="submit"
-                className={`${BUTTON} border hover:border-[var(--brand)]`}
-                style={{ color: "var(--text-soft)" }}
-              >
-                Sign out
-              </button>
-            </form>
+          <div className={SHELL}>
+            <SendFormPanel formUrl={link} />
           </div>
         </section>
 

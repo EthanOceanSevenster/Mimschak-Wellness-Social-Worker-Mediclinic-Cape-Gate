@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
-import { bankingReady, FEES } from "@/lib/client-form";
+import { bankingReady, FEES, LIMITS } from "@/lib/client-form";
 
 import { PageHeader, SHELL, SiteFooter, SiteHeader, whatsappEnquiry } from "../chrome";
-import { ClientForm } from "./client-form";
+import { ClientForm, type FormPrefill } from "./client-form";
 
 export const metadata: Metadata = {
   title: "Counselling consent form | Mimshack Wellness",
@@ -12,7 +12,27 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function FormPage() {
+/** A value from the link, tidied and capped; anything odd is simply left out. */
+function fromLink(value: string | string[] | undefined, max: number): string | undefined {
+  const text = (Array.isArray(value) ? value[0] : value)?.trim();
+  return text && text.length <= max ? text : undefined;
+}
+
+export default async function FormPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  // A link sent from the Admin page carries the client's name, email and
+  // phone, so the form opens with them already filled in. They stay editable.
+  const params = await searchParams;
+  const prefill: FormPrefill = {
+    firstName: fromLink(params.first, LIMITS.name),
+    surname: fromLink(params.surname, LIMITS.name),
+    email: fromLink(params.email, LIMITS.email),
+    phone: fromLink(params.phone, LIMITS.phone),
+  };
+
   const steps = [
     "Complete the five steps of the form and sign at the end.",
     "Phakama will contact you to confirm your first appointment.",
@@ -37,7 +57,7 @@ export default function FormPage() {
         <section className="py-14 sm:py-20">
           <div className={`${SHELL} grid items-start gap-14 lg:grid-cols-12`}>
             <div className="relative lg:col-span-8">
-              <ClientForm />
+              <ClientForm prefill={prefill} />
             </div>
 
             <aside className="lg:col-span-4">
