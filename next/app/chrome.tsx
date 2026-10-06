@@ -4,6 +4,8 @@ import Link from "next/link";
 import { hasPracticeCookie } from "@/lib/clients-auth";
 import { getUser, looksLikeOwner } from "@/lib/session";
 
+import { MobileMenu } from "./mobile-menu";
+
 /* One shell for every section and every page, so the whole site lines up on
    the same gutters however wide the screen gets. */
 export const SHELL = "mx-auto w-full max-w-[84rem] px-6 lg:px-12";
@@ -106,14 +108,18 @@ export async function SiteHeader() {
           </Link>
         </nav>
 
-        {/* Below lg the nav collapses to the one thing that matters. */}
-        <Link
-          href="/book"
-          className="rounded-full px-5 py-2.5 text-[0.95rem] font-semibold lg:hidden"
-          style={{ background: "var(--btn-bg)", color: "var(--btn-ink)" }}
-        >
-          Book
-        </Link>
+        {/* Below lg: Book stays in view, and the menu holds everything else,
+            sign-in and Admin included, so the site works fully on a phone. */}
+        <div className="flex items-center gap-2 lg:hidden">
+          <Link
+            href="/book"
+            className="rounded-full px-5 py-2.5 text-[0.95rem] font-semibold"
+            style={{ background: "var(--btn-bg)", color: "var(--btn-ink)" }}
+          >
+            Book
+          </Link>
+          <MobileMenu links={NAV} signedIn={signedIn} owner={owner} />
+        </div>
       </div>
     </header>
   );
