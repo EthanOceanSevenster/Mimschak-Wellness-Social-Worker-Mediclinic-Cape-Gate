@@ -23,9 +23,10 @@ export async function POST(request: Request) {
   const login = String(email ?? "");
   const secret = String(password ?? "");
 
-  if (credentialsMatch(login, secret)) {
+  const practiceAccount = credentialsMatch(login, secret);
+  if (practiceAccount) {
     const response = NextResponse.json({ ok: true, owner: true });
-    const cookie = practiceCookie();
+    const cookie = practiceCookie(practiceAccount);
     response.cookies.set(cookie.name, cookie.value, cookie.options);
     return response;
   }
