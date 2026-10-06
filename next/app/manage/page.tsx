@@ -12,6 +12,7 @@ import type { ManageBookings } from "@/lib/types";
 import { PageHeader, SHELL, SiteFooter, SiteHeader } from "../chrome";
 import { CHILD_STYLE, OK_STYLE } from "../clients/entry-card";
 import { COUNT, DAY, formLink } from "../clients/shared";
+import { mailConfigured } from "@/lib/mailer";
 import { SendFormPanel } from "../send-form-panel";
 import { DiaryRow } from "./diary-row";
 
@@ -119,7 +120,7 @@ export default async function AdminPage({
         {/* ---------------------------------------------------- send the form */}
         <section className="pt-10">
           <div className={SHELL}>
-            <SendFormPanel formUrl={await formLink()} />
+            <SendFormPanel formUrl={await formLink()} emailReady={mailConfigured()} />
           </div>
         </section>
 

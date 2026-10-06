@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { inviteLink, inviteText, inviteWhatsApp, isEmail } from "@/lib/consent-invite";
+
 import { CopyButton } from "./copy-button";
 
 const FIELD =
@@ -10,72 +12,69 @@ const FIELD =
 const BUTTON =
   "inline-flex items-center rounded-full px-4 py-2 text-[0.9rem] font-semibold transition-colors";
 
-const SUBJECT = "Mimshack Wellness counselling consent form";
-
 /** 082 123 4567 → 27821234567, the form wa.me expects. */
 function whatsappNumber(phone: string): string {
   const digits = phone.replace(/\D/g, "");
   return digits.startsWith("0") ? `27${digits.slice(1)}` : digits;
 }
 
+type Status = { kind: "idle" } | { kind: "sending" } | { kind: "sent"; to: string } | { kind: "error"; message: string };
+
 /**
  * Sends the consent form to one person, for the Admin page and the client list.
  *
- * Whoever it is for is optional. What is filled in goes into the link, so the
- * form opens with their name, email and phone already entered.
- *
- * "Send by email" opens the practice's email app with the message written and
- * addressed; it is sent from that app, so from the Zoho mailbox when Zoho Mail
- * is the email app. "Copy email text" is the same message to paste into Zoho
- * Mail in a browser. Nothing is sent by the website itself: the free Zoho plan
- * does not let another system send through it.
+ * "Send email" sends it from the website itself (see /api/admin/send-form and
+ * lib/mailer.ts), from the practice's address with replies to its inbox.
+ * WhatsApp, Copy link and Copy email text use the same personal link: it
+ * carries what is filled in here, so the form opens with it already entered.
  */
-export function SendFormPanel({ formUrl }: { formUrl: string }) {
+export function SendFormPanel({ formUrl, emailReady }: { formUrl: string; emailReady: boolean }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [status, setStatus] = useState<Status>({ kind: "idle" });
 
-  const [first, ...rest] = name.trim().split(/\s+/).filter(Boolean);
-  const cleanEmail = email.trim();
-  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail);
+  const who = { name, email, phone };
+  const link = inviteLink(formUrl, who);
   const waDigits = whatsappNumber(phone);
+  const whatsapp = `https://wa.me/${waDigits.length >= 9 ? waDigits : ""}?text=${encodeURIComponent(inviteWhatsApp(link, who))}`;
 
-  const url = new URL(formUrl);
-  if (first) url.searchParams.set("first", first);
-  if (rest.length) url.searchParams.set("surname", rest.join(" "));
-  if (emailOk) url.searchParams.set("email", cleanEmail);
-  if (phone.trim()) url.searchParams.set("phone", phone.trim());
-  const link = url.toString();
+  function change(set: (value: string) => void) {
+    return (event: React.ChangeEvent<HTMLInputElement>) => {
+      set(event.target.value);
+      // A new recipient makes an old "Sent" or error message misleading.
+      if (status.kind !== "sending") setStatus({ kind: "idle" });
+    };
+  }
 
-  const greeting = first ? `Dear ${first},` : "Hello,";
-
-  const emailText = [
-    greeting,
-    "",
-    "Thank you for contacting Mimshack Wellness. Before your first session, please complete and sign our counselling consent form online:",
-    "",
-    link,
-    "",
-    "It takes about ten minutes. Once you have signed, you can download a copy for your records, and the banking details for payment are shown.",
-    "",
-    "If you have any questions, reply to this email or WhatsApp 064 153 3469.",
-    "",
-    "Kind regards,",
-    "Phakama Ndamase",
-    "Mimshack Wellness",
-  ].join("\n");
-
-  const whatsappText = `${first ? `Hi ${first}, ` : "Hello, "}please complete the Mimshack Wellness counselling consent form before your first session: ${link}`;
-
-  const mailto = `mailto:${emailOk ? cleanEmail : ""}?subject=${encodeURIComponent(SUBJECT)}&body=${encodeURIComponent(emailText)}`;
-  const whatsapp = `https://wa.me/${waDigits.length >= 9 ? waDigits : ""}?text=${encodeURIComponent(whatsappText)}`;
+  async function sendEmail() {
+    if (!isEmail(email)) {
+      setStatus({ kind: "error", message: "Please enter the client's email address, for example name@gmail.com." });
+      return;
+    }
+    setStatus({ kind: "sending" });
+    try {
+      const response = await fetch("/api/admin/send-form", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, phone }),
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        setStatus({ kind: "error", message: body.error ?? "The email could not be sent. Please try again." });
+        return;
+      }
+      setStatus({ kind: "sent", to: email.trim() });
+    } catch {
+      setStatus({ kind: "error", message: "Could not reach the website. Check your connection and try again." });
+    }
+  }
 
   return (
     <div className="rounded-lg border p-6 sm:p-7" style={{ background: "var(--surface)" }}>
       <h2 className="text-xl">Send the consent form</h2>
       <p className="mt-1 text-[0.95rem]" style={{ color: "var(--text-soft)" }}>
-        Fill in who it is for, then send it by email or WhatsApp, or copy the link. Their details
-        are filled in on the form for them. All three fields are optional.
+        Fill in who it is for, then send it. Their details are filled in on the form for them.
       </p>
 
       <div className="mt-5 grid gap-4 sm:grid-cols-3">
@@ -83,7 +82,7 @@ export function SendFormPanel({ formUrl }: { formUrl: string }) {
           <span className="text-[0.9rem] font-medium">Client&rsquo;s name</span>
           <input
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={change(setName)}
             maxLength={120}
             placeholder="e.g. Thandi Mokoena"
             autoComplete="off"
@@ -96,7 +95,7 @@ export function SendFormPanel({ formUrl }: { formUrl: string }) {
           <input
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={change(setEmail)}
             maxLength={200}
             placeholder="e.g. thandi@gmail.com"
             autoComplete="off"
@@ -108,7 +107,7 @@ export function SendFormPanel({ formUrl }: { formUrl: string }) {
           <span className="text-[0.9rem] font-medium">Cellphone number</span>
           <input
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={change(setPhone)}
             maxLength={30}
             inputMode="tel"
             placeholder="e.g. 082 123 4567"
@@ -120,13 +119,15 @@ export function SendFormPanel({ formUrl }: { formUrl: string }) {
       </div>
 
       <div className="mt-5 flex flex-wrap items-center gap-3">
-        <a
-          href={mailto}
-          className={BUTTON}
+        <button
+          type="button"
+          onClick={sendEmail}
+          disabled={status.kind === "sending"}
+          className={`${BUTTON} disabled:opacity-60`}
           style={{ background: "var(--btn-bg)", color: "var(--btn-ink)" }}
         >
-          Send by email
-        </a>
+          {status.kind === "sending" ? "Sending…" : "Send email"}
+        </button>
         <a
           href={whatsapp}
           target="_blank"
@@ -137,7 +138,7 @@ export function SendFormPanel({ formUrl }: { formUrl: string }) {
           Send on WhatsApp
         </a>
         <CopyButton value={link} label="Copy link" />
-        <CopyButton value={emailText} label="Copy email text" />
+        <CopyButton value={inviteText(link, who)} label="Copy email text" />
         <a
           href={link}
           target="_blank"
@@ -148,10 +149,32 @@ export function SendFormPanel({ formUrl }: { formUrl: string }) {
         </a>
       </div>
 
-      <p className="mt-4 text-[0.88rem]" style={{ color: "var(--text-soft)" }}>
-        &ldquo;Send by email&rdquo; opens your email app with the message ready to send. If that is
-        not Zoho Mail, use &ldquo;Copy email text&rdquo; and paste it into a new email in Zoho Mail.
-      </p>
+      <div aria-live="polite">
+        {status.kind === "sent" && (
+          <p
+            className="mt-4 rounded border px-4 py-3 text-[0.95rem] font-medium"
+            style={{ borderColor: "var(--green-dark)", color: "var(--green-dark)" }}
+          >
+            {"✓"} Sent to {status.to}. Their replies come to the practice inbox.
+          </p>
+        )}
+        {status.kind === "error" && (
+          <p
+            role="alert"
+            className="mt-4 rounded border px-4 py-3 text-[0.95rem]"
+            style={{ borderColor: "#b42318", color: "#b42318" }}
+          >
+            {status.message}
+          </p>
+        )}
+      </div>
+
+      {!emailReady && (
+        <p className="mt-4 text-[0.88rem]" style={{ color: "#b54708" }}>
+          Sending email from the website is not switched on yet. Until it is, use Copy email text and
+          paste it into a new email in Zoho Mail.
+        </p>
+      )}
     </div>
   );
 }

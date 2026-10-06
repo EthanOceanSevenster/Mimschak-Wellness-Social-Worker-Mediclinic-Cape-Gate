@@ -13,6 +13,7 @@ import { bankingReady, FORM_SERVICES, fullName, modeLabel, serviceLabel } from "
 import { hasAdminAccess } from "@/lib/clients-auth";
 
 import { PageHeader, SHELL, SiteFooter, SiteHeader } from "../chrome";
+import { mailConfigured } from "@/lib/mailer";
 import { SendFormPanel } from "../send-form-panel";
 import { CHILD_STYLE, OK_STYLE } from "./entry-card";
 import { BUTTON, COUNT, DAY, formLink } from "./shared";
@@ -145,7 +146,7 @@ export default async function ClientsPage({
         {/* ------------------------------------------------- send the form */}
         <section className="border-b py-6" style={{ background: "var(--bg-soft)" }}>
           <div className={SHELL}>
-            <SendFormPanel formUrl={link} />
+            <SendFormPanel formUrl={link} emailReady={mailConfigured()} />
           </div>
         </section>
 
