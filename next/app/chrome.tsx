@@ -267,14 +267,10 @@ export function WhatsAppFloat({ message }: { message?: string }) {
 /** Heading band for the pages that are not the home page. */
 export function PageHeader({ title, lead }: { title: string; lead?: string }) {
   return (
-    <section className="border-b py-14" style={{ background: "var(--bg-soft)" }}>
+    <section className="band-navy py-14 sm:py-16">
       <div className={SHELL}>
-        <h1 className="text-3xl sm:text-4xl">{title}</h1>
-        {lead && (
-          <p className="mt-4 max-w-2xl text-lg" style={{ color: "var(--text-soft)" }}>
-            {lead}
-          </p>
-        )}
+        <h1 className="text-3xl sm:text-[2.6rem]">{title}</h1>
+        {lead && <p className="band-soft mt-4 max-w-2xl text-lg">{lead}</p>}
       </div>
     </section>
   );

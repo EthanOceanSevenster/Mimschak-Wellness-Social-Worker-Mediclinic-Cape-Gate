@@ -3,10 +3,17 @@
 /* Brand, carried over from the existing site: blue #1F86C7, green #8BC34A,
    Inter. Dark mode follows the operating system, as on the current site. */
 @theme {
-  --font-sans: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-sans: var(--font-inter), Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
 }
 
 :root {
+  /* The brochure's palette: navy bands, the logo's blue and green. */
+  --navy: #0e3a57;
+  --navy-2: #0b2f47;
+  --leaf: #8bc34a;
+  --mint: #eef6e6;
+  --mint-ink: #3d6b1f;
+  --heading: #0e3a57;
   --bg: #ffffff;
   --bg-soft: #f7fafc;
   --surface: #ffffff;
@@ -34,6 +41,9 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --heading: #e7eef4;
+    --mint: #1f3320;
+    --mint-ink: #b9e08f;
     color-scheme: dark;
     --bg: #101820;
     --bg-soft: #16212b;
@@ -82,10 +92,11 @@ html {
   }
 
   h1, h2, h3, h4 {
-    font-weight: 700;
+    font-family: var(--font-display), Georgia, serif;
+    font-weight: 600;
     letter-spacing: -0.015em;
     line-height: 1.15;
-    color: var(--text);
+    color: var(--heading);
   }
 }
 
@@ -173,4 +184,66 @@ html.js .reveal.shown {
   }
   .reveal { opacity: 1 !important; transform: none !important; }
   .hero-video { display: none; }
+}
+
+/* ------------------------------------------------------------ brochure look */
+
+/* A navy band like the brochure's cover strip and contact panel, with the
+   logo's circles as quiet decoration. Text and headings inside turn white. */
+.band-navy {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(125deg, var(--navy-2), var(--navy) 55%, #12507a);
+  color: #ffffff;
+}
+.band-navy h1, .band-navy h2, .band-navy h3 { color: #ffffff; }
+.band-navy::before,
+.band-navy::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.band-navy::before {
+  right: -6rem;
+  top: -7rem;
+  width: 22rem;
+  height: 22rem;
+  border: 2px solid rgb(139 195 74 / 0.35);
+}
+.band-navy::after {
+  right: 9%;
+  bottom: -2.5rem;
+  width: 5.5rem;
+  height: 5.5rem;
+  background: rgb(139 195 74 / 0.85);
+}
+.band-soft { color: rgb(255 255 255 / 0.82); }
+.eyebrow-leaf { color: var(--leaf); }
+
+/* Round icon badge in the logo's blue, as on the brochure's service tiles. */
+.icon-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #1f86c7, #1a75ad);
+  color: #ffffff;
+}
+.band-navy .icon-badge {
+  background: rgb(255 255 255 / 0.12);
+  color: var(--leaf);
+}
+
+/* Green tags for the areas of support. */
+.chip-mint {
+  display: inline-block;
+  border-radius: 9999px;
+  background: var(--mint);
+  color: var(--mint-ink);
+  padding: 0.45rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
 }

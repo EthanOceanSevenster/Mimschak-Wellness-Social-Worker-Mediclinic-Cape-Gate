@@ -223,12 +223,12 @@ export default function HomePage() {
         {/* ----------------------------------------------------- quick facts */}
         {/* Directly under the hero on purpose: someone in crisis should not
             have to scroll 3,000px to find a phone number. */}
-        <section className="border-b" style={{ background: "var(--bg-soft)" }}>
+        <section className="border-b" style={{ background: "var(--tint)" }}>
           <div className={`${SHELL} grid gap-x-16 gap-y-7 py-9 sm:grid-cols-3`}>
             <a href="tel:+27641533469" className="group flex flex-col">
               <span
                 className="text-xs font-semibold uppercase tracking-[0.18em]"
-                style={{ color: "var(--text-soft)" }}
+                style={{ color: "var(--green-dark)" }}
               >
                 Phone
               </span>
@@ -239,7 +239,7 @@ export default function HomePage() {
             <div className="flex flex-col sm:border-l sm:pl-10">
               <span
                 className="text-xs font-semibold uppercase tracking-[0.18em]"
-                style={{ color: "var(--text-soft)" }}
+                style={{ color: "var(--green-dark)" }}
               >
                 Where
               </span>
@@ -248,7 +248,7 @@ export default function HomePage() {
             <div className="flex flex-col sm:border-l sm:pl-10">
               <span
                 className="text-xs font-semibold uppercase tracking-[0.18em]"
-                style={{ color: "var(--text-soft)" }}
+                style={{ color: "var(--green-dark)" }}
               >
                 Hours
               </span>
@@ -269,13 +269,17 @@ export default function HomePage() {
               {SERVICES.map((service, i) => (
                 <article
                   key={service.title}
-                  className="reveal rounded-lg border p-10 text-center"
-                  style={{ "--d": `${i * 80}ms` } as React.CSSProperties}
+                  className="reveal relative overflow-hidden rounded-xl border p-10 text-center"
+                  style={{ "--d": `${i * 80}ms`, background: "var(--bg-soft)" } as React.CSSProperties}
                 >
                   <span
-                    className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full"
-                    style={{ background: "var(--tint)", color: "var(--brand-dark)" }}
+                    aria-hidden="true"
+                    className="absolute right-5 top-3 text-4xl font-semibold"
+                    style={{ fontFamily: "var(--font-display), Georgia, serif", color: "rgb(26 117 173 / 0.14)" }}
                   >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="icon-badge mx-auto mb-5 h-14 w-14">
                     <Icon name={service.icon} />
                   </span>
                   <h3 className="text-xl">{service.title}</h3>
@@ -292,15 +296,14 @@ export default function HomePage() {
         {/* Centred heading over an icon grid — the "Why Us" pattern. Five items
             use flex-wrap centred, so the last row reads as deliberate rather
             than as an orphaned cell in a rigid 3-column grid. */}
-        <section
-          id="why"
-          className="scroll-mt-28 border-y py-24 sm:py-32"
-          style={{ background: "var(--bg-soft)" }}
-        >
+        <section id="why" className="band-navy scroll-mt-28 py-24 sm:py-32">
           <div className={SHELL}>
             <div className="mx-auto max-w-2xl text-center reveal">
-              <h2 className="text-3xl sm:text-4xl">Why choose me</h2>
-              <p className="mt-5 text-lg" style={{ color: "var(--text-soft)" }}>
+              <p className="eyebrow-leaf text-xs font-semibold uppercase tracking-[0.22em]">
+                Why Mimshack Wellness
+              </p>
+              <h2 className="mt-3 text-3xl sm:text-4xl">Why choose me</h2>
+              <p className="band-soft mt-5 text-lg">
                 Professional qualifications and a safe, supportive environment for your
                 healing journey.
               </p>
@@ -313,14 +316,11 @@ export default function HomePage() {
                   className="reveal w-full max-w-xs text-center sm:w-[calc(50%-2rem)] lg:w-[calc(33.333%-2.7rem)]"
                   style={{ "--d": `${i * 70}ms` } as React.CSSProperties}
                 >
-                  <span
-                    className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full"
-                    style={{ background: "var(--tint)", color: "var(--brand-dark)" }}
-                  >
+                  <span className="icon-badge mx-auto mb-5 h-14 w-14">
                     <Icon name={reason.icon} />
                   </span>
                   <h3 className="text-lg">{reason.title}</h3>
-                  <p className="mx-auto mt-2.5 max-w-xs" style={{ color: "var(--text-soft)" }}>
+                  <p className="band-soft mx-auto mt-2.5 max-w-xs">
                     {reason.body}
                   </p>
                 </div>
@@ -338,19 +338,14 @@ export default function HomePage() {
               evidence-based interventions tailored to your needs.
             </SectionIntro>
 
-            <ul className="mt-16 grid list-none gap-x-16 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="mt-14 flex list-none flex-wrap gap-3">
               {AREAS.map((area, i) => (
                 <li
                   key={area}
-                  className="reveal flex gap-4 border-b py-4"
+                  className="reveal chip-mint"
                   style={{ "--d": `${Math.min(i * 40, 320)}ms` } as React.CSSProperties}
                 >
-                  <span
-                    aria-hidden="true"
-                    className="mt-[0.6em] h-1.5 w-1.5 shrink-0 rounded-full"
-                    style={{ background: "var(--green-dark)" }}
-                  />
-                  <span>{area}</span>
+                  {area}
                 </li>
               ))}
             </ul>
@@ -358,7 +353,7 @@ export default function HomePage() {
         </section>
 
         {/* ----------------------------------------------------- testimonial */}
-        <section className="border-y py-24" style={{ background: "var(--bg-soft)" }}>
+        <section className="py-24" style={{ background: "var(--tint)" }}>
           <div className={`${SHELL} max-w-4xl text-center reveal`}>
             {/* Circular crop. The studio shot sits on a white ground, which as a
                 rectangle would read as a white slab against the dark theme. */}
@@ -370,7 +365,17 @@ export default function HomePage() {
               className="mx-auto mb-8 h-24 w-24 rounded-full object-cover object-top ring-4 ring-[color:var(--tint)]"
               style={{ background: "#ffffff" }}
             />
-            <blockquote className="text-xl leading-relaxed sm:text-[1.6rem] sm:leading-[1.5]">
+            <span
+              aria-hidden="true"
+              className="block text-7xl leading-none"
+              style={{ fontFamily: "var(--font-display), Georgia, serif", color: "var(--green-dark)" }}
+            >
+              &ldquo;
+            </span>
+            <blockquote
+              className="mt-2 text-xl leading-relaxed sm:text-[1.7rem] sm:leading-[1.45]"
+              style={{ fontFamily: "var(--font-display), Georgia, serif", color: "var(--heading)" }}
+            >
               &ldquo;Taking the first step towards healing takes courage. I&rsquo;m here to
               walk alongside you on your journey to wellbeing.&rdquo;
             </blockquote>
@@ -519,14 +524,13 @@ export default function HomePage() {
         </section>
 
         {/* --------------------------------------------------------- contact */}
-        <section
-          id="contact"
-          className="scroll-mt-28 border-t py-28"
-          style={{ background: "var(--bg-soft)" }}
-        >
+        <section id="contact" className="band-navy scroll-mt-28 py-28">
           <div className={`${SHELL} max-w-3xl text-center reveal`}>
-            <h2 className="text-3xl sm:text-5xl">Ready to take the first step?</h2>
-            <p className="mx-auto mt-6 max-w-xl text-lg" style={{ color: "var(--text-soft)" }}>
+            <p className="eyebrow-leaf text-xs font-semibold uppercase tracking-[0.22em]">
+              Take the first step
+            </p>
+            <h2 className="mt-3 text-3xl sm:text-5xl">Ready to take the first step?</h2>
+            <p className="band-soft mx-auto mt-6 max-w-xl text-lg">
               Reach out to arrange a consultation. Sessions are available in person in
               Kraaifontein or online, wherever you are.
             </p>
@@ -534,14 +538,14 @@ export default function HomePage() {
               <a
                 href="tel:+27641533469"
                 className="rounded-full px-8 py-4 text-[0.95rem] font-semibold"
-                style={{ background: "var(--btn-bg)", color: "var(--btn-ink)" }}
+                style={{ background: "#ffffff", color: "var(--navy)" }}
               >
                 064 153 3469
               </a>
               <a
                 href="mailto:phakamandamase@gmail.com"
-                className="rounded-full border px-8 py-4 text-[0.95rem] font-semibold"
-                style={{ borderColor: "var(--line)", color: "var(--text)" }}
+                className="rounded-full border px-8 py-4 text-[0.95rem] font-semibold text-white"
+                style={{ borderColor: "rgb(255 255 255 / 0.5)" }}
               >
                 Email the practice
               </a>

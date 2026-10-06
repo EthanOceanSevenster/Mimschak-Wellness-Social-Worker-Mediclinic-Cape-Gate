@@ -1,6 +1,13 @@
 import type { Metadata, Viewport } from "next";
 
+import { Fraunces, Inter } from "next/font/google";
+
 import "./globals.css";
+
+/* The brochure's two typefaces, served by Next with the site rather than
+   fetched from Google by each visitor. */
+const display = Fraunces({ subsets: ["latin"], weight: ["600"], style: ["normal", "italic"], variable: "--font-display", display: "swap" });
+const sans = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://mimschakwellness.com"),
@@ -63,7 +70,7 @@ const LOCAL_BUSINESS = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-ZA">
+    <html lang="en-ZA" className={`${display.variable} ${sans.variable}`}>
       {/* Browser extensions write attributes onto <body> before React
           hydrates — ColorZilla adds cz-shortcut-listen, Grammarly adds
           data-gr-ext-installed — and React reports the difference as a
