@@ -36,15 +36,18 @@ export function StatusPill({ booking }: { booking: Booking }) {
   );
 }
 
+/* Always South African time: the server renders these too, and it runs in UTC. */
+const SA = "Africa/Johannesburg";
+
 export function when(booking: Booking) {
   const d = new Date(booking.starts_at);
   const e = new Date(booking.ends_at);
   return {
-    date: d.toLocaleDateString("en-ZA", { weekday: "long", day: "numeric", month: "long" }),
-    short: d.toLocaleDateString("en-ZA", { day: "numeric", month: "short" }),
-    weekday: d.toLocaleDateString("en-ZA", { weekday: "long" }),
-    time: d.toLocaleTimeString("en-ZA", { hour: "2-digit", minute: "2-digit", hour12: false }),
-    until: e.toLocaleTimeString("en-ZA", { hour: "2-digit", minute: "2-digit", hour12: false }),
+    date: d.toLocaleDateString("en-ZA", { timeZone: SA, weekday: "long", day: "numeric", month: "long" }),
+    short: d.toLocaleDateString("en-ZA", { timeZone: SA, day: "numeric", month: "short" }),
+    weekday: d.toLocaleDateString("en-ZA", { timeZone: SA, weekday: "long" }),
+    time: d.toLocaleTimeString("en-ZA", { timeZone: SA, hour: "2-digit", minute: "2-digit", hour12: false }),
+    until: e.toLocaleTimeString("en-ZA", { timeZone: SA, hour: "2-digit", minute: "2-digit", hour12: false }),
   };
 }
 

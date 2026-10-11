@@ -1,37 +1,71 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 
-import { API_URL, BOOKINGS, readableError } from "@/lib/api";
-import { ACCESS_COOKIE } from "@/lib/api";
-import { cookies } from "next/headers";
+import { createBooking, readBookingInput, SlotTaken } from "@/lib/bookings";
+import { StorageNotConfigured } from "@/lib/client-entries";
+import { mailConfigured, sendMail } from "@/lib/mailer";
 
 /**
- * Take a booking.
+ * Take a booking, into this site's own database (lib/bookings.ts).
  *
- * Proxied rather than posted straight to Django so the one Django CORS origin
- * does not have to grow an entry per client site, and so a signed-in visitor's
- * booking gets attached to their account — the token is in an httpOnly cookie
- * the page script cannot read, so only the server can send it.
+ * The practice is emailed about it after the response has gone, so a slow
+ * mail server never holds up the person booking. The client still sends it
+ * on WhatsApp from the next screen; the email is so it is never missed.
  */
 export async function POST(request: Request) {
-  const payload = await request.json();
-  const token = (await cookies()).get(ACCESS_COOKIE)?.value;
+  const body = (await request.json().catch(() => null)) as Record<string, unknown> | null;
+  const read = readBookingInput(body ?? {});
+  if (!read.ok) return NextResponse.json({ error: read.error }, { status: 400 });
 
-  const response = await fetch(`${API_URL}${BOOKINGS}/request/`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    body: JSON.stringify(payload),
-    cache: "no-store",
-  });
+  try {
+    const booking = await createBooking(read.value);
 
-  const body = await response.json().catch(() => null);
-  if (!response.ok) {
+    if (mailConfigured() && process.env.MAIL_FROM) {
+      const to = process.env.MAIL_FROM;
+      after(async () => {
+        const when = new Date(booking.starts_at).toLocaleString("en-ZA", {
+          timeZone: "Africa/Johannesburg",
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        });
+        const lines = [
+          `New session request ${booking.reference}`,
+          ``,
+          `${booking.full_name}`,
+          `${booking.service}, ${booking.mode_label}`,
+          `${when}`,
+          `Phone: ${booking.phone}`,
+          `Email: ${booking.email}`,
+          booking.notes ? `Notes: ${booking.notes}` : "",
+          ``,
+          `Confirm or decline it on the Admin page: https://www.mimschakwellness.com/manage`,
+        ].filter((line, i, all) => line !== "" || all[i - 1] !== "");
+        const escape = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        await sendMail({
+          to,
+          subject: `New session request: ${booking.full_name}, ${when}`,
+          text: lines.join("\n"),
+          html: lines.map((l) => (l ? `<p style="margin:0 0 6px 0">${escape(l)}</p>` : "<br>")).join(""),
+        }).catch((error) => console.error("Booking email failed:", error));
+      });
+    }
+
+    return NextResponse.json(booking, { status: 201 });
+  } catch (error) {
+    if (error instanceof SlotTaken) return NextResponse.json({ error: error.message }, { status: 409 });
+    if (error instanceof StorageNotConfigured) {
+      return NextResponse.json(
+        { error: "Online booking is not available just now. Please send a WhatsApp instead." },
+        { status: 503 },
+      );
+    }
+    console.error("Booking failed:", error);
     return NextResponse.json(
-      { error: readableError(body, "That booking could not be made.") },
-      { status: response.status },
+      { error: "That booking could not be made. Please try again, or send a WhatsApp." },
+      { status: 500 },
     );
   }
-  return NextResponse.json(body, { status: 201 });
 }

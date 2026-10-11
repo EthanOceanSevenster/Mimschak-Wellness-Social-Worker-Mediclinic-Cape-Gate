@@ -1,22 +1,30 @@
 import { NextResponse } from "next/server";
 
-import { apiPostAuthed, ApiError, BOOKINGS, readableError } from "@/lib/api";
+import { isStatus, setBookingStatus, SlotTaken } from "@/lib/bookings";
+import { hasAdminAccess } from "@/lib/clients-auth";
 
-/** Owner-only. Django re-checks ownership; this handler never assumes it. */
+/** Admin only: confirm, decline, cancel, reinstate, or mark a session done. */
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ reference: string }> },
 ) {
+  if (!(await hasAdminAccess())) {
+    return NextResponse.json({ error: "Please sign in again." }, { status: 401 });
+  }
   const { reference } = await params;
-  const body = await request.json();
+  const body = (await request.json().catch(() => ({}))) as { status?: unknown };
+  if (!isStatus(body.status)) {
+    return NextResponse.json({ error: "That change is not recognised." }, { status: 400 });
+  }
   try {
-    return NextResponse.json(await apiPostAuthed(`${BOOKINGS}/manage/${reference}/`, body));
+    const booking = await setBookingStatus(reference, body.status);
+    if (!booking) return NextResponse.json({ error: "That booking was not found." }, { status: 404 });
+    return NextResponse.json(booking);
   } catch (error) {
-    const status = error instanceof ApiError ? error.status : 500;
-    const detail = error instanceof ApiError ? error.detail : null;
-    return NextResponse.json(
-      { error: readableError(detail, "That booking could not be updated.") },
-      { status },
-    );
+    if (error instanceof SlotTaken) {
+      return NextResponse.json({ error: "Another session already holds that time." }, { status: 409 });
+    }
+    console.error("Booking update failed:", error);
+    return NextResponse.json({ error: "That booking could not be updated." }, { status: 500 });
   }
 }

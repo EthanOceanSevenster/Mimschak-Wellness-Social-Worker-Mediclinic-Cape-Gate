@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { apiGetAuthed, BOOKINGS } from "@/lib/api";
+import { isStatus, listBookings, monthRange } from "@/lib/bookings";
 import { searchEntries, StorageNotConfigured, type EntryPage } from "@/lib/client-entries";
 import { fullName, modeLabel, serviceLabel } from "@/lib/client-form";
 import { hasAdminAccess } from "@/lib/clients-auth";
@@ -14,6 +14,7 @@ import { CHILD_STYLE, OK_STYLE } from "../clients/entry-card";
 import { COUNT, DAY } from "../clients/shared";
 import { mailConfigured } from "@/lib/mailer";
 import { SendFormPanel } from "../send-form-panel";
+import { MonthCalendar } from "./calendar";
 import { DiaryRow } from "./diary-row";
 
 export const metadata: Metadata = {
@@ -38,16 +39,19 @@ const RECENT_CLIENTS = 8;
  * The practice's one admin page: sessions and the client form entries
  * together, after one sign-in at /login.
  *
- * Opens with either sign-in (see lib/clients-auth.ts). The sessions come from
- * the separate booking backend, so they show only when that backend answers;
- * the client entries come from this site's own database and always show.
+ * Opens with either sign-in (see lib/clients-auth.ts). Sessions and client
+ * entries both come from this site's own database (lib/bookings.ts and
+ * lib/client-entries.ts). The sessions show one month at a time, as a
+ * calendar with the full cards for that month below it.
  */
 export default async function AdminPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: string; month?: string }>;
 }) {
-  const { status } = await searchParams;
+  const params = await searchParams;
+  const status = isStatus(params.status) ? params.status : undefined;
+  const range = monthRange(params.month);
 
   if (!(await hasAdminAccess())) {
     // A client signed in to their own account is sent to their bookings;
@@ -58,13 +62,14 @@ export default async function AdminPage({
 
   // ---------------------------------------------------- sessions (bookings)
   let diary: ManageBookings | null = null;
+  let diaryProblem: string | null = null;
   try {
-    const query = status ? `?status=${encodeURIComponent(status)}` : "";
-    diary = await apiGetAuthed<ManageBookings>(`${BOOKINGS}/manage/${query}`);
-  } catch {
-    // Offline backend, or signed in with the practice username rather than a
-    // booking account: the sessions section says so, the page carries on.
-    diary = null;
+    diary = await listBookings({ from: range.from, to: range.to, status });
+  } catch (error) {
+    diaryProblem =
+      error instanceof StorageNotConfigured
+        ? "No database is connected yet for bookings."
+        : "Sessions could not be loaded just now. Refresh to try again.";
   }
 
   const upcoming = diary
@@ -124,8 +129,83 @@ export default async function AdminPage({
           </div>
         </section>
 
+        {/* --------------------------------------------------------- sessions */}
+        <section id="sessions" className="scroll-mt-28 py-12 sm:py-14">
+          <div className={SHELL}>
+            <h2 className="rule text-2xl">Sessions</h2>
+
+            <p className="mt-2" style={{ color: "var(--text-soft)" }}>
+              Sessions booked on the website. Tap one to confirm, cancel or message the client.
+            </p>
+
+            {!diary ? (
+              <p className="mt-4 max-w-2xl" style={{ color: "var(--text-soft)" }}>
+                {diaryProblem}
+              </p>
+            ) : (
+              <>
+                <MonthCalendar month={range.month} bookings={diary.bookings} status={status} />
+
+                <nav aria-label="Filter sessions" className="mt-10 flex flex-wrap gap-2.5">
+                  {FILTERS.map((f) => {
+                    const on = (status ?? "") === f.value;
+                    return (
+                      <Link
+                        key={f.label}
+                        href={`/manage?month=${range.month}${f.value ? `&status=${f.value}` : ""}#sessions`}
+                        className="rounded-full border px-5 py-2.5 text-[0.95rem] font-semibold"
+                        style={
+                          on
+                            ? { borderColor: "var(--brand)", background: "var(--tint)" }
+                            : { borderColor: "var(--line)", color: "var(--text-soft)" }
+                        }
+                      >
+                        {f.label}
+                      </Link>
+                    );
+                  })}
+                </nav>
+
+                {diary.bookings.length === 0 ? (
+                  <p className="mt-10" style={{ color: "var(--text-soft)" }}>
+                    No sessions this month.
+                  </p>
+                ) : (
+                  <div className="mt-10 grid gap-12">
+                    {upcoming.length > 0 && (
+                      <div>
+                        <h3 className="text-xl">Coming up</h3>
+                        <div className="mt-6 grid gap-4">
+                          {/* Soonest first here: the practice works forwards
+                              through the day, unlike the API's newest first. */}
+                          {[...upcoming]
+                            .sort((a, b) => a.starts_at.localeCompare(b.starts_at))
+                            .map((b) => (
+                              <DiaryRow key={b.reference} booking={b} />
+                            ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {rest.length > 0 && (
+                      <div>
+                        <h3 className="text-xl">Everything else</h3>
+                        <div className="mt-6 grid gap-4">
+                          {rest.map((b) => (
+                            <DiaryRow key={b.reference} booking={b} />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </section>
+
         {/* ---------------------------------------------------------- clients */}
-        <section className="py-12 sm:py-14">
+        <section className="border-t py-12 sm:py-14">
           <div className={SHELL}>
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
@@ -185,75 +265,6 @@ export default async function AdminPage({
           </div>
         </section>
 
-        {/* --------------------------------------------------------- sessions */}
-        <section className="border-t py-12 sm:py-14">
-          <div className={SHELL}>
-            <h2 className="rule text-2xl">Sessions</h2>
-
-            {!diary ? (
-              <p className="mt-4 max-w-2xl" style={{ color: "var(--text-soft)" }}>
-                Online bookings will show here once the booking system is connected. Until then,
-                sessions booked by WhatsApp or phone are not listed on this page.
-              </p>
-            ) : (
-              <>
-                <nav aria-label="Filter sessions" className="mt-6 flex flex-wrap gap-2.5">
-                  {FILTERS.map((f) => {
-                    const on = (status ?? "") === f.value;
-                    return (
-                      <Link
-                        key={f.label}
-                        href={f.value ? `/manage?status=${f.value}` : "/manage"}
-                        className="rounded-full border px-5 py-2.5 text-[0.95rem] font-semibold"
-                        style={
-                          on
-                            ? { borderColor: "var(--brand)", background: "var(--tint)" }
-                            : { borderColor: "var(--line)", color: "var(--text-soft)" }
-                        }
-                      >
-                        {f.label}
-                      </Link>
-                    );
-                  })}
-                </nav>
-
-                {diary.bookings.length === 0 ? (
-                  <p className="mt-10" style={{ color: "var(--text-soft)" }}>
-                    No sessions here yet.
-                  </p>
-                ) : (
-                  <div className="mt-10 grid gap-12">
-                    {upcoming.length > 0 && (
-                      <div>
-                        <h3 className="text-xl">Coming up</h3>
-                        <div className="mt-6 grid gap-4">
-                          {/* Soonest first here: the practice works forwards
-                              through the day, unlike the API's newest first. */}
-                          {[...upcoming]
-                            .sort((a, b) => a.starts_at.localeCompare(b.starts_at))
-                            .map((b) => (
-                              <DiaryRow key={b.reference} booking={b} />
-                            ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {rest.length > 0 && (
-                      <div>
-                        <h3 className="text-xl">Everything else</h3>
-                        <div className="mt-6 grid gap-4">
-                          {rest.map((b) => (
-                            <DiaryRow key={b.reference} booking={b} />
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        </section>
       </main>
 
       <SiteFooter />

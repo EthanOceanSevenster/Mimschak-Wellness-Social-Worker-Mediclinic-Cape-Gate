@@ -56,7 +56,11 @@ export function DiaryRow({ booking }: { booking: Booking }) {
   }
 
   return (
-    <article className="rounded-lg border p-6" style={{ background: "var(--surface)" }}>
+    <article
+      id={`booking-${booking.reference}`}
+      className="scroll-mt-28 rounded-lg border p-6"
+      style={{ background: "var(--surface)" }}
+    >
       <div className="grid gap-5 lg:grid-cols-12 lg:items-start">
         <div className="lg:col-span-3">
           <p className="text-lg font-semibold">{at.date}</p>

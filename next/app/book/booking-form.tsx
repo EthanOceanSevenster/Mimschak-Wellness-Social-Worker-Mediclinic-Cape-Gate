@@ -115,22 +115,8 @@ export function BookingForm({ practice, days, signedIn, knownEmail }: Props) {
         </a>
 
         <p className="mt-6 text-[0.95rem]" style={{ color: "var(--text-soft)" }}>
-          {signedIn ? (
-            <>
-              It is saved to your account —{" "}
-              <a href="/bookings" className="underline">
-                see your bookings
-              </a>
-              .
-            </>
-          ) : (
-            <>
-              <a href="/login?tab=register" className="underline">
-                Create an account
-              </a>{" "}
-              with {email} to check this booking later.
-            </>
-          )}
+          Keep your reference, {booked.reference}. Phakama will confirm the time with you on
+          WhatsApp or by phone.
         </p>
       </div>
     );

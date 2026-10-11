@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { apiGet, BOOKINGS } from "@/lib/api";
+import { availability, PRACTICE } from "@/lib/bookings";
 import { getUser } from "@/lib/session";
 import type { DiaryDay, Practice } from "@/lib/types";
 
@@ -22,9 +22,8 @@ export default async function BookPage() {
   let practice: Practice | null = null;
   let days: DiaryDay[] = [];
   try {
-    practice = await apiGet<Practice>(`${BOOKINGS}/`);
-    const availability = await apiGet<{ days: DiaryDay[] }>(`${BOOKINGS}/availability/?days=14`);
-    days = availability.days;
+    days = await availability(14);
+    practice = PRACTICE;
   } catch {
     practice = null;
   }
