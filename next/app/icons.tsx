@@ -23,7 +23,8 @@ export type IconName =
   | "qualified"
   | "compassionate"
   | "place"
-  | "video";
+  | "video"
+  | "spiritual";
 
 const PATHS: Record<IconName, React.ReactNode> = {
   counselling: (
@@ -71,6 +72,12 @@ const PATHS: Record<IconName, React.ReactNode> = {
     <>
       <rect x="2.5" y="6.5" width="13" height="11" rx="2" />
       <path d="m15.5 11 6-3v8l-6-3" />
+    </>
+  ),
+  spiritual: (
+    <>
+      <path d="M12 2.8c1.9 2.6 3.6 4.2 3.6 6.8a3.6 3.6 0 0 1-7.2 0c0-2.6 1.7-4.2 3.6-6.8Z" />
+      <rect x="9" y="14.5" width="6" height="7" rx="1" />
     </>
   ),
 };

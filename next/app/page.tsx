@@ -23,6 +23,11 @@ const SERVICES: { title: string; body: string; icon: IconName }[] = [
     body: "Trauma, bereavement and abuse support, when you need it most.",
     icon: "crisis",
   },
+  {
+    title: "Spiritual support",
+    body: "Faith-based support and spiritual counselling, to find meaning, purpose and inner peace.",
+    icon: "spiritual",
+  },
 ];
 
 const REASONS: { title: string; body: string; icon: IconName }[] = [
@@ -265,7 +270,7 @@ export default function HomePage() {
               compassion, understanding and expertise.
             </SectionIntro>
 
-            <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
               {SERVICES.map((service, i) => (
                 <article
                   key={service.title}

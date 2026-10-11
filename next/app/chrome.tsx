@@ -23,6 +23,7 @@ export const FOOTER_SERVICES = [
   "Counselling",
   "Family support",
   "Crisis support",
+  "Spiritual support",
   "Employee wellness",
 ];
 
@@ -132,14 +133,14 @@ export function SiteFooter() {
         className={`${SHELL} grid gap-x-16 gap-y-12 md:grid-cols-2 lg:grid-cols-[1.4fr_0.9fr_1fr_1.7fr]`}
       >
         <div>
-          {/* The logo is blue on transparent, so on navy it sits on a white tile. */}
-          <span className="inline-block rounded-xl bg-white px-3 py-2">
+          {/* The full logo, with the practice number, on a white tile. */}
+          <span className="inline-block rounded-xl bg-white p-2">
             <Image
-              src="/images/mimshack-logo.png"
-              alt="Mimshack Wellness"
-              width={500}
-              height={180}
-              className="h-12 w-auto"
+              src="/images/mimshack-logo-practice.jpg"
+              alt="Mimshack Wellness, social worker. UKZN (Honours) BA in Social Work. Practice number 089 000 0495425."
+              width={900}
+              height={344}
+              className="h-auto w-72 max-w-full"
             />
           </span>
           <p className="mt-6 max-w-xs text-[0.95rem]" style={{ color: "var(--text-soft)" }}>
@@ -238,7 +239,10 @@ export function SiteFooter() {
           style={{ color: "var(--text-soft)" }}
         >
           <p>&copy; {new Date().getFullYear()} Mimshack Wellness. Kraaifontein, Cape Town.</p>
-          <p>Phakama Ndamase &middot; Registered social worker</p>
+          <p>
+            Phakama Ndamase &middot; Registered social worker &middot; SACSSP 10-25003 &middot;
+            Practice number 089 000 0495425
+          </p>
         </div>
       </div>
     </footer>

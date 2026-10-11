@@ -64,6 +64,12 @@ export const PRACTICE: Practice = {
       duration_minutes: 60,
     },
     {
+      slug: "spiritual-support",
+      name: "Spiritual support",
+      description: "Faith-based support and spiritual counselling.",
+      duration_minutes: 60,
+    },
+    {
       slug: "employee-wellness",
       name: "Employee wellness",
       description: "For organisations, including support after workplace incidents.",
