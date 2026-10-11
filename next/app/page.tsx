@@ -33,7 +33,7 @@ const REASONS: { title: string; body: string; icon: IconName }[] = [
   },
   {
     title: "Qualified",
-    body: "UKZN Honours degree in Social Work with registered practice credentials.",
+    body: "BA Social Sciences, Social Work (UKZN)\nSACSSP 10-25003\nPractice number 089 000 0495425",
     icon: "qualified",
   },
   {
@@ -320,7 +320,7 @@ export default function HomePage() {
                     <Icon name={reason.icon} />
                   </span>
                   <h3 className="text-lg">{reason.title}</h3>
-                  <p className="band-soft mx-auto mt-2.5 max-w-xs">
+                  <p className="band-soft mx-auto mt-2.5 max-w-xs whitespace-pre-line">
                     {reason.body}
                   </p>
                 </div>
