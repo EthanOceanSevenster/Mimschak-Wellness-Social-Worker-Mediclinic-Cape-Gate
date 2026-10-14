@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
 /* Brand, carried over from the existing site: blue #1F86C7, green #8BC34A,
-   Inter. Dark mode follows the operating system, as on the current site. */
+   Inter. One light design only: the brochure colours do not survive a dark
+   theme, so a phone or laptop in dark mode still gets the light site. */
 @theme {
   --font-sans: var(--font-inter), Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
 }
@@ -37,34 +38,7 @@
   --wa-ink: #ffffff;
   --green: #8bc34a;
   --green-dark: #5fa53a;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --heading: #e7eef4;
-    --mint: #1f3320;
-    --mint-ink: #b9e08f;
-    color-scheme: dark;
-    --bg: #101820;
-    --bg-soft: #16212b;
-    --surface: #1a2732;
-    --tint: #22323f;
-    --text: #e7eef4;
-    --text-soft: #a8b7c4;
-    --line: #2a3a48;
-    --brand: #4aa6e0;
-    --brand-dark: #6fbdee;
-    /* On a dark page the readable button is a light fill with dark ink:
-       6.58:1, against 2.68:1 for white on the same blue. */
-    --btn-bg: #4aa6e0;
-    --btn-ink: #0c1a24;
-    /* Dark mode flips to a light fill with dark ink, as the blue buttons
-       do: 7.20:1, against 1.98:1 for white on the brand green. */
-    --wa-btn: #3fbf6a;
-    --wa-ink: #05210f;
-    --green: #9ed15f;
-    --green-dark: #9ed15f;
-  }
+  color-scheme: light;
 }
 
 * {
@@ -255,7 +229,6 @@ html.js .reveal.shown {
   background: rgb(139 195 74 / 0.85);
 }
 .band-soft { color: rgb(255 255 255 / 0.82); }
-@media (prefers-color-scheme: dark) { .band-mint { background: var(--mint); } }
 .eyebrow-leaf { color: var(--leaf); }
 
 /* Round icon badge in the logo's blue, as on the brochure's service tiles. */

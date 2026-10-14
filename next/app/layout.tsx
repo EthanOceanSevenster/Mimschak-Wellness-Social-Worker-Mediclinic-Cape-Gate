@@ -36,10 +36,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#101820" },
-  ],
+  themeColor: "#ffffff",
+  colorScheme: "light",
 };
 
 /* Carried over from the existing site so local search results are not lost
