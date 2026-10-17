@@ -35,6 +35,9 @@ export async function POST(request: Request) {
           `New session request ${booking.reference}`,
           ``,
           `${booking.full_name}`,
+          ...(booking.partner_name
+            ? [`Referred by ${booking.partner_name}${booking.partner_ref ? ` (reference ${booking.partner_ref})` : ""}`]
+            : []),
           `${booking.service}, ${booking.mode_label}`,
           `${when}`,
           `Phone: ${booking.phone}`,
@@ -46,7 +49,7 @@ export async function POST(request: Request) {
         const escape = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         await sendMail({
           to,
-          subject: `New session request: ${booking.full_name}, ${when}`,
+          subject: `${booking.partner_short ? `[${booking.partner_short}] ` : ""}New session request: ${booking.full_name}, ${when}`,
           text: lines.join("\n"),
           html: lines.map((l) => (l ? `<p style="margin:0 0 6px 0">${escape(l)}</p>` : "<br>")).join(""),
         }).catch((error) => console.error("Booking email failed:", error));

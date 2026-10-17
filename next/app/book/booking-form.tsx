@@ -3,46 +3,56 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import type { Partner } from "@/lib/partners";
+
+import { DateTimePicker } from "./date-time-picker";
+
+/** Same value as OWN_WORDS in lib/bookings.ts (server only, so not imported here). */
+const OWN_WORDS = "own-words";
 import type { Booking, DiaryDay, Practice } from "@/lib/types";
 
-type Props = { practice: Practice; days: DiaryDay[]; signedIn: boolean; knownEmail: string | null };
+type Props = {
+  practice: Practice;
+  days: DiaryDay[];
+  signedIn: boolean;
+  knownEmail: string | null;
+  /** Set on a partner's own link (/book/<slug>): the booking is marked as theirs. */
+  partner?: Partner | null;
+};
 
 const FIELD =
   "w-full rounded border px-4 py-3 text-base outline-none transition-colors focus:border-[var(--brand)]";
 
-function formatDay(iso: string) {
-  const d = new Date(`${iso}T00:00:00`);
-  return {
-    weekday: d.toLocaleDateString("en-ZA", { weekday: "short" }),
-    day: d.toLocaleDateString("en-ZA", { day: "numeric" }),
-    month: d.toLocaleDateString("en-ZA", { month: "short" }),
-    full: d.toLocaleDateString("en-ZA", { weekday: "long", day: "numeric", month: "long" }),
-  };
-}
 
-export function BookingForm({ practice, days, signedIn, knownEmail }: Props) {
+
+export function BookingForm({ practice, days, knownEmail, partner = null }: Props) {
   const router = useRouter();
   const bookable = useMemo(() => days.filter((d) => d.slots.length > 0), [days]);
 
   const [service, setService] = useState(practice.services[0]?.slug ?? "");
   const [mode, setMode] = useState(practice.modes[0]?.value ?? "in_person");
-  const [date, setDate] = useState(bookable[0]?.date ?? "");
+  const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState(knownEmail ?? "");
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
+  const [partnerRef, setPartnerRef] = useState("");
+  const [ownWords, setOwnWords] = useState("");
 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [booked, setBooked] = useState<Booking | null>(null);
 
-  const slots = bookable.find((d) => d.date === date)?.slots ?? [];
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     setError(null);
 
+    if (service === OWN_WORDS && ownWords.trim().length < 2) {
+      setError("Please say in a few words what you would like help with.");
+      return;
+    }
     if (!date || !time) {
       setError("Please choose a day and a time.");
       return;
@@ -62,6 +72,9 @@ export function BookingForm({ practice, days, signedIn, knownEmail }: Props) {
           email,
           phone,
           notes,
+          partner: partner?.slug ?? "",
+          partner_ref: partnerRef,
+          own_words: service === OWN_WORDS ? ownWords : "",
         }),
       });
       const body = await response.json();
@@ -117,6 +130,7 @@ export function BookingForm({ practice, days, signedIn, knownEmail }: Props) {
         <p className="mt-6 text-[0.95rem]" style={{ color: "var(--text-soft)" }}>
           Keep your reference, {booked.reference}. Phakama will confirm the time with you on
           WhatsApp or by phone.
+          {partner && <> Your booking is marked as referred by {partner.name}.</>}
         </p>
       </div>
     );
@@ -128,7 +142,7 @@ export function BookingForm({ practice, days, signedIn, knownEmail }: Props) {
       <div className="rounded-lg border p-8" style={{ background: "var(--surface)" }}>
         <h2 className="text-xl">No times open just now</h2>
         <p className="mt-3" style={{ color: "var(--text-soft)" }}>
-          The diary has nothing free in the next two weeks. Send a message and Phakama will find
+          The diary has nothing free at the moment. Send a message and Phakama will find
           you a time.
         </p>
         <a
@@ -179,7 +193,46 @@ export function BookingForm({ practice, days, signedIn, knownEmail }: Props) {
               </span>
             </label>
           ))}
+          {partner && (
+            <label
+              className="cursor-pointer rounded-lg border p-5 transition-colors"
+              style={
+                service === OWN_WORDS
+                  ? { borderColor: "var(--brand)", background: "var(--tint)" }
+                  : { background: "var(--surface)" }
+              }
+            >
+              <input
+                type="radio"
+                name="service"
+                value={OWN_WORDS}
+                checked={service === OWN_WORDS}
+                onChange={() => setService(OWN_WORDS)}
+                className="sr-only"
+              />
+              <span className="block font-semibold">In my own words</span>
+              <span className="mt-1 block text-[0.95rem]" style={{ color: "var(--text-soft)" }}>
+                Say what you would like help with.
+              </span>
+            </label>
+          )}
         </div>
+
+        {service === OWN_WORDS && (
+          <label className="grid gap-2">
+            <span className="text-[0.95rem] font-medium">What would you like help with?</span>
+            <textarea
+              value={ownWords}
+              onChange={(e) => setOwnWords(e.target.value)}
+              placeholder="e.g. I have been feeling stressed and anxious since losing my job"
+              rows={3}
+              maxLength={500}
+              className={FIELD}
+              style={{ background: "var(--surface)" }}
+              autoFocus
+            />
+          </label>
+        )}
 
         <div className="mt-1 flex flex-wrap gap-3">
           {practice.modes.map((m) => (
@@ -212,51 +265,15 @@ export function BookingForm({ practice, days, signedIn, knownEmail }: Props) {
           2 — When suits you
         </legend>
 
-        <div className="flex gap-3 overflow-x-auto pb-2">
-          {bookable.map((d) => {
-            const label = formatDay(d.date);
-            const on = date === d.date;
-            return (
-              <button
-                key={d.date}
-                type="button"
-                onClick={() => {
-                  setDate(d.date);
-                  setTime("");
-                }}
-                aria-pressed={on}
-                className="shrink-0 rounded-lg border px-5 py-3 text-center"
-                style={on ? { borderColor: "var(--brand)", background: "var(--tint)" } : undefined}
-              >
-                <span className="block text-[0.95rem]" style={{ color: "var(--text-soft)" }}>
-                  {label.weekday}
-                </span>
-                <span className="block text-lg font-semibold">{label.day}</span>
-                <span className="block text-[0.95rem]" style={{ color: "var(--text-soft)" }}>
-                  {label.month}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="flex flex-wrap gap-3">
-          {slots.map((s) => {
-            const on = time === s;
-            return (
-              <button
-                key={s}
-                type="button"
-                onClick={() => setTime(s)}
-                aria-pressed={on}
-                className="rounded-full border px-5 py-2.5 text-[0.95rem] font-medium"
-                style={on ? { borderColor: "var(--brand)", background: "var(--tint)" } : undefined}
-              >
-                {s}
-              </button>
-            );
-          })}
-        </div>
+        <DateTimePicker
+          days={days}
+          date={date}
+          time={time}
+          onChange={(d, t) => {
+            setDate(d);
+            setTime(t);
+          }}
+        />
       </fieldset>
 
       {/* ---------------------------------------------------------- 3. you */}
@@ -271,6 +288,7 @@ export function BookingForm({ practice, days, signedIn, knownEmail }: Props) {
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
+              placeholder="e.g. Thandi Mokoena"
               className={FIELD}
               style={{ background: "var(--surface)" }}
               autoComplete="name"
@@ -286,7 +304,7 @@ export function BookingForm({ practice, days, signedIn, knownEmail }: Props) {
               style={{ background: "var(--surface)" }}
               autoComplete="tel"
               inputMode="tel"
-              placeholder="082 123 4567"
+              placeholder="e.g. 082 123 4567"
             />
           </label>
         </div>
@@ -297,14 +315,29 @@ export function BookingForm({ practice, days, signedIn, knownEmail }: Props) {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+              placeholder="e.g. thandi@gmail.com"
             className={FIELD}
             style={{ background: "var(--surface)" }}
             autoComplete="email"
           />
-          <span className="text-[0.95rem]" style={{ color: "var(--text-soft)" }}>
-            Used to find this booking again if you make an account.
-          </span>
         </label>
+        {partner && (
+          <label className="grid gap-2">
+            <span className="text-[0.95rem] font-medium">
+              {partner.referenceLabel}{" "}
+              <span style={{ color: "var(--text-soft)" }}>(optional)</span>
+            </span>
+            <input
+              value={partnerRef}
+              onChange={(e) => setPartnerRef(e.target.value)}
+              placeholder={`e.g. the number ${partner.short} gave you`}
+              className={FIELD}
+              style={{ background: "var(--surface)" }}
+              maxLength={60}
+              autoComplete="off"
+            />
+          </label>
+        )}
         <label className="grid gap-2">
           <span className="text-[0.95rem] font-medium">
             Anything Phakama should know{" "}
@@ -313,6 +346,7 @@ export function BookingForm({ practice, days, signedIn, knownEmail }: Props) {
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
+              placeholder="e.g. the best time to call you, or anything you would like Phakama to know first"
             rows={3}
             className={FIELD}
             style={{ background: "var(--surface)" }}
@@ -335,7 +369,11 @@ export function BookingForm({ practice, days, signedIn, knownEmail }: Props) {
           type="submit"
           disabled={busy}
           className="rounded-full px-8 py-4 font-semibold disabled:opacity-60"
-          style={{ background: "var(--btn-bg)", color: "var(--btn-ink)" }}
+          style={
+            partner
+              ? { background: partner.accent, color: partner.accentInk }
+              : { background: "var(--btn-bg)", color: "var(--btn-ink)" }
+          }
         >
           {busy ? "Holding your slot…" : "Request this session"}
         </button>

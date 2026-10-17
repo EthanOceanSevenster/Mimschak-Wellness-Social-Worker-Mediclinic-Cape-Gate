@@ -21,7 +21,7 @@ const CLOCK = new Intl.DateTimeFormat("en-ZA", {
   hour12: false,
 });
 
-function shift(month: string, by: number): string {
+export function shift(month: string, by: number): string {
   const [y, m] = month.split("-").map(Number);
   const total = y * 12 + (m - 1) + by;
   return `${Math.floor(total / 12)}-${String((total % 12) + 1).padStart(2, "0")}`;
@@ -35,11 +35,15 @@ function shift(month: string, by: number): string {
 export function MonthCalendar({
   month,
   bookings,
-  status,
+  linkFor,
+  bare = false,
 }: {
   month: string;
   bookings: Booking[];
-  status?: string;
+  /** The Admin link for another month, keeping the current filters. */
+  linkFor: (month: string) => string;
+  /** Leave out the title and month buttons, when the page shows its own. */
+  bare?: boolean;
 }) {
   const [y, m] = month.split("-").map(Number);
   const daysInMonth = new Date(Date.UTC(y, m, 0)).getUTCDate();
@@ -58,7 +62,7 @@ export function MonthCalendar({
     year: "numeric",
     timeZone: "UTC",
   });
-  const link = (to: string) => `/manage?month=${to}${status ? `&status=${status}` : ""}#sessions`;
+  const link = linkFor;
 
   const cells: (string | null)[] = [
     ...Array.from({ length: lead }, () => null),
@@ -67,7 +71,8 @@ export function MonthCalendar({
   while (cells.length % 7) cells.push(null);
 
   return (
-    <div className="mt-6">
+    <div className={bare ? "" : "mt-6"}>
+      {!bare && (
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h3 className="text-xl">{title}</h3>
         <div className="flex gap-2">
@@ -96,8 +101,12 @@ export function MonthCalendar({
           </Link>
         </div>
       </div>
+      )}
 
-      <div className="mt-4 overflow-hidden rounded-xl border" style={{ background: "var(--surface)" }}>
+      <div
+        className={`${bare ? "" : "mt-4 rounded-xl border"} overflow-hidden`}
+        style={{ background: "var(--surface)" }}
+      >
         <div className="grid grid-cols-7 border-b text-center" style={{ background: "var(--tint)" }}>
           {WEEKDAYS.map((d) => (
             <div
@@ -157,9 +166,10 @@ export function MonthCalendar({
                                   ...(TONE[b.status] ?? TONE.completed),
                                   textDecoration: b.status === "cancelled" ? "line-through" : undefined,
                                 }}
-                                title={`${CLOCK.format(new Date(b.starts_at))} ${b.full_name}, ${b.service}, ${b.status_label}`}
+                                title={`${CLOCK.format(new Date(b.starts_at))} ${b.full_name}, ${b.service}, ${b.status_label}${b.partner_name ? `, referred by ${b.partner_name}` : ""}`}
                               >
                                 {CLOCK.format(new Date(b.starts_at))} {b.full_name.split(" ")[0]}
+                                {b.partner_short && <b> &middot; {b.partner_short}</b>}
                               </a>
                             </li>
                           ))}

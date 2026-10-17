@@ -146,14 +146,6 @@ export default function HomePage() {
     <>
       <Reveal />
 
-      <a
-        href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:px-4 focus:py-2 focus:font-semibold"
-        style={{ background: "var(--btn-bg)", color: "var(--btn-ink)" }}
-      >
-        Skip to content
-      </a>
-
       <SiteHeader />
 
       <main id="main">

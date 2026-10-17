@@ -5,6 +5,7 @@ import path from "node:path";
 import { neon } from "@neondatabase/serverless";
 
 import { StorageNotConfigured } from "./client-entries";
+import { getPartner } from "./partners";
 import type { Booking, BookingStatus, DiaryDay, ManageBookings, Practice } from "./types";
 
 /**
@@ -32,7 +33,8 @@ const OPEN_HOUR = 8;
 const CLOSE_HOUR = 17;
 const SLOT_MINUTES = 60;
 const MIN_NOTICE_HOURS = 12;
-export const HORIZON_DAYS = 21;
+/** How far ahead clients can book: a year. */
+export const HORIZON_DAYS = 366;
 
 const WHATSAPP_NUMBER = "27641533469";
 
@@ -121,6 +123,9 @@ type Stored = {
   notes: string;
   status: BookingStatus;
   cancel_reason: string;
+  /** Referring organisation (lib/partners.ts) and their reference, or "". */
+  partner: string;
+  partner_ref: string;
 };
 
 let tableReady: Promise<unknown> | null = null;
@@ -147,6 +152,9 @@ function database() {
       CREATE UNIQUE INDEX IF NOT EXISTS bookings_one_live_per_slot
       ON bookings (starts_at) WHERE status IN ('requested', 'confirmed')`;
     await sql`CREATE INDEX IF NOT EXISTS bookings_starts_idx ON bookings (starts_at)`;
+    // Added with partner booking links; harmless on a table that has them.
+    await sql`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS partner TEXT NOT NULL DEFAULT ''`;
+    await sql`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS partner_ref TEXT NOT NULL DEFAULT ''`;
   })();
   return { sql, ready: tableReady };
 }
@@ -159,7 +167,8 @@ function useLocalFile(): boolean {
 
 async function readLocal(): Promise<Stored[]> {
   try {
-    return JSON.parse(await fs.readFile(LOCAL_FILE, "utf8")) as Stored[];
+    const rows = JSON.parse(await fs.readFile(LOCAL_FILE, "utf8")) as Stored[];
+    return rows.map((r) => ({ ...r, partner: r.partner ?? "", partner_ref: r.partner_ref ?? "" }));
   } catch {
     return [];
   }
@@ -188,12 +197,18 @@ function fromRow(row: Record<string, unknown>): Stored {
     notes: String(row.notes ?? ""),
     status: (isStatus(row.status) ? row.status : "requested") as BookingStatus,
     cancel_reason: String(row.cancel_reason ?? ""),
+    partner: String(row.partner ?? ""),
+    partner_ref: String(row.partner_ref ?? ""),
   };
 }
 
 /* ------------------------------------------------------------- shaping */
 
+/** The client describes what they need themselves (the text goes in notes). */
+export const OWN_WORDS = "own-words";
+
 function serviceName(slug: string): string {
+  if (slug === OWN_WORDS) return "In their own words";
   return PRACTICE.services.find((s) => s.slug === slug)?.name ?? slug;
 }
 
@@ -216,12 +231,16 @@ const CLOCK = new Intl.DateTimeFormat("en-ZA", {
 
 function toBooking(row: Stored): Booking {
   const start = new Date(row.starts_at);
+  const partner = getPartner(row.partner);
   const message =
     `Hi Mimshack Wellness, I have requested a session. Reference ${row.reference}: ` +
     `${serviceName(row.service)}, ${modeName(row.mode).toLowerCase()}, on ` +
-    `${LONG.format(start)} at ${CLOCK.format(start)}. My name is ${row.full_name}.`;
+    `${LONG.format(start)} at ${CLOCK.format(start)}. My name is ${row.full_name}.` +
+    (partner ? ` I was referred by ${partner.name}${row.partner_ref ? ` (reference ${row.partner_ref})` : ""}.` : "");
   return {
     ...row,
+    partner_name: partner?.name ?? "",
+    partner_short: partner?.short ?? "",
     service: serviceName(row.service),
     mode_label: modeName(row.mode),
     status_label: STATUS_LABEL[row.status],
@@ -310,6 +329,8 @@ export type BookingInput = {
   email: string;
   phone: string;
   notes: string;
+  partner: string;
+  partner_ref: string;
 };
 
 function text(value: unknown, max: number): string {
@@ -328,8 +349,17 @@ export function readBookingInput(
     email: text(body.email, 200).toLowerCase(),
     phone: text(body.phone, 30),
     notes: text(body.notes, 1000),
+    // An unknown partner is dropped rather than refused: the booking still
+    // reaches the practice, just as a direct one.
+    partner: getPartner(text(body.partner, 40))?.slug ?? "",
+    partner_ref: "",
   };
-  if (!PRACTICE.services.some((s) => s.slug === value.service)) {
+  value.partner_ref = value.partner ? text(body.partner_ref, 60) : "";
+  if (value.service === OWN_WORDS) {
+    const own = text(body.own_words, 500);
+    if (own.length < 2) return { ok: false, error: "Please say in a few words what you would like help with." };
+    value.notes = `In their own words: ${own}${value.notes ? `\n${value.notes}` : ""}`;
+  } else if (!PRACTICE.services.some((s) => s.slug === value.service)) {
     return { ok: false, error: "Please choose what you need." };
   }
   if (!PRACTICE.modes.some((m) => m.value === value.mode)) {
@@ -339,7 +369,10 @@ export function readBookingInput(
     return { ok: false, error: "Please choose a day and a time." };
   }
   if (value.full_name.length < 2) return { ok: false, error: "Please enter your name." };
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.email)) {
+  // Email is optional on a partner's link, where many clients have none;
+  // the phone number is how the practice reaches them.
+  const emailOptional = Boolean(value.partner) && value.email === "";
+  if (!emailOptional && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.email)) {
     return { ok: false, error: "Please enter a valid email address." };
   }
   if (value.phone.replace(/\D/g, "").length < 9) {
@@ -375,6 +408,8 @@ export async function createBooking(input: BookingInput): Promise<Booking> {
     notes: input.notes,
     status: "requested",
     cancel_reason: "",
+    partner: input.partner,
+    partner_ref: input.partner_ref,
   };
 
   if (useLocalFile()) {
@@ -389,9 +424,9 @@ export async function createBooking(input: BookingInput): Promise<Booking> {
   await ready;
   try {
     await sql`
-      INSERT INTO bookings (reference, created_at, full_name, email, phone, service, mode, starts_at, ends_at, notes, status)
+      INSERT INTO bookings (reference, created_at, full_name, email, phone, service, mode, starts_at, ends_at, notes, status, partner, partner_ref)
       VALUES (${row.reference}, ${row.created_at}, ${row.full_name}, ${row.email}, ${row.phone}, ${row.service},
-              ${row.mode}, ${row.starts_at}, ${row.ends_at}, ${row.notes}, 'requested')`;
+              ${row.mode}, ${row.starts_at}, ${row.ends_at}, ${row.notes}, 'requested', ${row.partner}, ${row.partner_ref})`;
   } catch (error) {
     // The one-live-booking-per-slot index: somebody else got there first.
     if (String((error as { code?: string }).code) === "23505") throw new SlotTaken();
@@ -412,6 +447,8 @@ export async function listBookings(options: {
   from: Date;
   to: Date;
   status?: BookingStatus;
+  /** "" for everyone, "direct" for bookings with no partner, or a partner's slug. */
+  source?: string;
 }): Promise<Diary> {
   const now = new Date();
   const week = new Date(now.getTime() + 7 * 86_400_000);
@@ -422,7 +459,13 @@ export async function listBookings(options: {
     const all = await readLocal();
     rows = all.filter((r) => {
       const at = new Date(r.starts_at);
-      return at >= options.from && at < options.to && (!options.status || r.status === options.status);
+      return (
+        at >= options.from &&
+        at < options.to &&
+        (!options.status || r.status === options.status) &&
+        (!options.source ||
+          (options.source === "direct" ? r.partner === "" : r.partner === options.source))
+      );
     });
     const live = all.filter((r) => LIVE.includes(r.status) && new Date(r.starts_at) >= now);
     counts = {
@@ -434,13 +477,15 @@ export async function listBookings(options: {
   } else {
     const { sql, ready } = database();
     await ready;
-    const found = options.status
-      ? await sql`
-          SELECT * FROM bookings WHERE starts_at >= ${options.from.toISOString()} AND starts_at < ${options.to.toISOString()}
-          AND status = ${options.status} ORDER BY starts_at DESC LIMIT 1000`
-      : await sql`
-          SELECT * FROM bookings WHERE starts_at >= ${options.from.toISOString()} AND starts_at < ${options.to.toISOString()}
-          ORDER BY starts_at DESC LIMIT 1000`;
+    // Empty string means "any" for both filters.
+    const found = await sql`
+      SELECT * FROM bookings
+      WHERE starts_at >= ${options.from.toISOString()} AND starts_at < ${options.to.toISOString()}
+        AND (${options.status ?? ""} = '' OR status = ${options.status ?? ""})
+        AND (${options.source ?? ""} = ''
+          OR (${options.source ?? ""} = 'direct' AND partner = '')
+          OR partner = ${options.source ?? ""})
+      ORDER BY starts_at DESC LIMIT 1000`;
     rows = found.map(fromRow);
     const [c] = await sql`
       SELECT
@@ -501,4 +546,34 @@ export function monthRange(month: string | undefined): { month: string; from: Da
     from: new Date(`${chosen}-01T00:00:00${OFFSET}`),
     to: new Date(`${next}-01T00:00:00${OFFSET}`),
   };
+}
+
+/** How many sessions each partner has sent: upcoming (live) and all time. */
+export async function partnerCounts(): Promise<Record<string, { upcoming: number; total: number }>> {
+  const now = new Date();
+  const counts: Record<string, { upcoming: number; total: number }> = {};
+  const add = (partner: string, upcoming: number, total: number) => {
+    if (partner) counts[partner] = { upcoming, total };
+  };
+  if (useLocalFile()) {
+    const rows = await readLocal();
+    for (const partner of new Set(rows.map((r) => r.partner))) {
+      const mine = rows.filter((r) => r.partner === partner);
+      add(
+        partner,
+        mine.filter((r) => LIVE.includes(r.status) && new Date(r.starts_at) >= now).length,
+        mine.length,
+      );
+    }
+    return counts;
+  }
+  const { sql, ready } = database();
+  await ready;
+  const rows = await sql`
+    SELECT partner,
+      count(*) FILTER (WHERE status IN ('requested', 'confirmed') AND starts_at >= ${now.toISOString()})::int AS upcoming,
+      count(*)::int AS total
+    FROM bookings WHERE partner <> '' GROUP BY partner`;
+  for (const r of rows) add(String(r.partner), Number(r.upcoming), Number(r.total));
+  return counts;
 }

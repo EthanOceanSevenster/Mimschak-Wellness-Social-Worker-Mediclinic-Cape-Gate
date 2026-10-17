@@ -255,3 +255,22 @@ html.js .reveal.shown {
   font-size: 0.95rem;
   font-weight: 500;
 }
+
+/* ------------------------------------------------------------- admin area */
+
+/* The admin area reads like an Office 365 app: Segoe UI where the computer
+   has it (every Windows machine), Inter otherwise, and plain headings
+   rather than the brochure's serif. */
+.admin-shell,
+.admin-shell h1,
+.admin-shell h2,
+.admin-shell h3,
+.admin-shell h4 {
+  font-family: "Segoe UI", var(--font-inter), system-ui, -apple-system, sans-serif;
+  letter-spacing: 0;
+}
+.admin-shell h1,
+.admin-shell h2,
+.admin-shell h3 {
+  color: #242424;
+}

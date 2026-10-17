@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { availability, PRACTICE } from "@/lib/bookings";
+import { availability, HORIZON_DAYS, PRACTICE } from "@/lib/bookings";
 import { getUser } from "@/lib/session";
 import type { DiaryDay, Practice } from "@/lib/types";
 
@@ -22,7 +22,7 @@ export default async function BookPage() {
   let practice: Practice | null = null;
   let days: DiaryDay[] = [];
   try {
-    days = await availability(14);
+    days = await availability(HORIZON_DAYS);
     practice = PRACTICE;
   } catch {
     practice = null;

@@ -44,6 +44,11 @@ export type Booking = {
   created_at: string;
   whatsapp_url: string;
   can_cancel: boolean;
+  /** The referring organisation's slug (lib/partners.ts), or "" for a direct booking. */
+  partner?: string;
+  partner_name?: string;
+  partner_short?: string;
+  partner_ref?: string;
 };
 
 export type MyBookings = { upcoming: Booking[]; past: Booking[] };
