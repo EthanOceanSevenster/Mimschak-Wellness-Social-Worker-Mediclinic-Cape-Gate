@@ -3,6 +3,8 @@ import Link from "next/link";
 import { saDate, TIME_ZONE } from "@/lib/bookings";
 import type { Booking } from "@/lib/types";
 
+import { DayCell } from "./add-session";
+
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 /** Colour per status, matching the pills on each session below. */
@@ -13,6 +15,13 @@ const TONE: Record<string, { color: string; background: string }> = {
   completed: { color: "#3a4a58", background: "#eef2f6" },
   no_show: { color: "#8a2b25", background: "#fbeceb" },
 };
+
+const LONG_DAY = new Intl.DateTimeFormat("en-ZA", {
+  timeZone: TIME_ZONE,
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+});
 
 const CLOCK = new Intl.DateTimeFormat("en-ZA", {
   timeZone: TIME_ZONE,
@@ -123,17 +132,20 @@ export function MonthCalendar({
             const sessions = day ? (byDay.get(day) ?? []) : [];
             const isToday = day === today;
             const weekend = i % 7 >= 5;
+            const cellClass = "min-h-[3.5rem] border-b border-r p-1 sm:min-h-[6.5rem] sm:p-1.5";
+            const cellStyle = { borderColor: "var(--line)" };
+            if (!day) {
+              return <div key={`blank-${i}`} className={cellClass} style={{ ...cellStyle, background: "var(--bg-soft)" }} />;
+            }
             return (
-              <div
-                key={day ?? `blank-${i}`}
-                className="min-h-[3.5rem] border-b border-r p-1 sm:min-h-[6.5rem] sm:p-1.5"
-                style={{
-                  borderColor: "var(--line)",
-                  background: !day ? "var(--bg-soft)" : weekend ? "var(--bg-soft)" : undefined,
-                }}
+              <DayCell
+                key={day}
+                date={day}
+                label={LONG_DAY.format(new Date(`${day}T12:00:00+02:00`))}
+                // A class, not an inline style, so the hover colour still shows on weekends.
+                className={`${cellClass} ${weekend ? "bg-[var(--bg-soft)]" : ""}`}
+                style={cellStyle}
               >
-                {day && (
-                  <>
                     <span
                       className="inline-flex h-6 min-w-6 items-center justify-center rounded-full px-1 text-[0.8rem] font-semibold"
                       style={
@@ -176,9 +188,7 @@ export function MonthCalendar({
                         </ul>
                       </>
                     )}
-                  </>
-                )}
-              </div>
+              </DayCell>
             );
           })}
         </div>

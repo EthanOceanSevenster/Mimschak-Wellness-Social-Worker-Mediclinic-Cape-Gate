@@ -13,10 +13,15 @@ type Props = {
   defaultDate: string;
 };
 
+const NEW_ON_DAY = "mw:new-session-on-day";
+
 const TIMES = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"];
 
 const FIELD =
-  "w-full rounded border bg-white px-3 py-2 text-[0.92rem] outline-none transition-colors focus:border-[#1a75ad]";
+  "w-full rounded-md border border-[#d1d1d1] bg-white px-3 py-2 text-[0.92rem] outline-none transition-colors hover:border-[#a8a8a8] focus:border-[#1a75ad] focus:ring-2 focus:ring-[#1a75ad]/20";
+
+/** Dropdowns: the browser's arrow replaced by a neat chevron, same height and border as the text boxes. */
+const SELECT = `${FIELD} h-10 cursor-pointer appearance-none pr-9 font-medium`;
 
 /**
  * "New session": the practice adds a session itself, for a booking made by
@@ -56,12 +61,21 @@ export function AddSession({ services, modes, partners, defaultDate }: Props) {
     return () => document.removeEventListener("keydown", onKey);
   }, [open]);
 
-  function start() {
+  function start(date: string = defaultDate) {
     setError(null);
     setDone(null);
-    setForm((f) => ({ ...f, full_name: "", phone: "", email: "", partner: "", partner_ref: "", notes: "", date: defaultDate }));
+    setForm((f) => ({ ...f, full_name: "", phone: "", email: "", partner: "", partner_ref: "", notes: "", date }));
     setOpen(true);
   }
+
+  // A click on a day in the calendar opens this form on that day.
+  useEffect(() => {
+    const onDay = (e: Event) => start((e as CustomEvent<{ date: string }>).detail.date);
+    window.addEventListener(NEW_ON_DAY, onDay);
+    return () => window.removeEventListener(NEW_ON_DAY, onDay);
+    // start only sets state
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function save(event: React.FormEvent) {
     event.preventDefault();
@@ -98,7 +112,7 @@ export function AddSession({ services, modes, partners, defaultDate }: Props) {
     <>
       <button
         type="button"
-        onClick={start}
+        onClick={() => start()}
         className="inline-flex h-8 items-center gap-1.5 rounded px-3 text-[0.88rem] font-semibold text-white"
         style={{ background: "#1a75ad" }}
       >
@@ -157,7 +171,7 @@ export function AddSession({ services, modes, partners, defaultDate }: Props) {
                 <div className="mt-6 flex gap-2">
                   <button
                     type="button"
-                    onClick={start}
+                    onClick={() => start(form.date)}
                     className="rounded border px-4 py-2 text-[0.9rem] font-semibold"
                     style={{ borderColor: "#d1d1d1" }}
                   >
@@ -176,49 +190,56 @@ export function AddSession({ services, modes, partners, defaultDate }: Props) {
             ) : (
               <form onSubmit={save} className="grid gap-4 px-5 py-5 sm:grid-cols-2">
                 <Field label="Client's name">
-                  <input required value={form.full_name} onChange={set("full_name")} className={FIELD} placeholder="e.g. Thandi Mokoena" />
+                  <input required value={form.full_name} onChange={set("full_name")} className={`${FIELD} h-10`} placeholder="e.g. Thandi Mokoena" />
                 </Field>
                 <Field label="Cellphone">
-                  <input required value={form.phone} onChange={set("phone")} className={FIELD} inputMode="tel" placeholder="e.g. 082 123 4567" />
+                  <input required value={form.phone} onChange={set("phone")} className={`${FIELD} h-10`} inputMode="tel" placeholder="e.g. 082 123 4567" />
                 </Field>
                 <Field label="Email (optional)" wide>
-                  <input type="email" value={form.email} onChange={set("email")} className={FIELD} placeholder="e.g. thandi@gmail.com" />
+                  <input type="email" value={form.email} onChange={set("email")} className={`${FIELD} h-10`} placeholder="e.g. thandi@gmail.com" />
                 </Field>
 
                 <Field label="Date">
-                  <input required type="date" value={form.date} onChange={set("date")} className={FIELD} />
+                  <input required type="date" value={form.date} onChange={set("date")} className={`${FIELD} h-10 cursor-pointer`} />
                 </Field>
                 <Field label="Time">
-                  <select value={form.time} onChange={set("time")} className={FIELD}>
+                  <Chevron>
+                    <select value={form.time} onChange={set("time")} className={SELECT}>
                     {TIMES.map((t) => (
                       <option key={t} value={t}>
                         {t} – {String(Number(t.slice(0, 2)) + 1).padStart(2, "0")}:00
                       </option>
                     ))}
                   </select>
+                  </Chevron>
                 </Field>
 
                 <Field label="Service">
-                  <select value={form.service} onChange={set("service")} className={FIELD}>
+                  <Chevron>
+                    <select value={form.service} onChange={set("service")} className={SELECT}>
                     {services.map((s) => (
                       <option key={s.value} value={s.value}>
                         {s.label}
                       </option>
                     ))}
                   </select>
+                  </Chevron>
                 </Field>
                 <Field label="In person or online">
-                  <select value={form.mode} onChange={set("mode")} className={FIELD}>
+                  <Chevron>
+                    <select value={form.mode} onChange={set("mode")} className={SELECT}>
                     {modes.map((m) => (
                       <option key={m.value} value={m.value}>
                         {m.label}
                       </option>
                     ))}
                   </select>
+                  </Chevron>
                 </Field>
 
                 <Field label="Referred by">
-                  <select value={form.partner} onChange={set("partner")} className={FIELD}>
+                  <Chevron>
+                    <select value={form.partner} onChange={set("partner")} className={SELECT}>
                     <option value="">Nobody (direct)</option>
                     {partners.map((p) => (
                       <option key={p.slug} value={p.slug}>
@@ -226,17 +247,20 @@ export function AddSession({ services, modes, partners, defaultDate }: Props) {
                       </option>
                     ))}
                   </select>
+                  </Chevron>
                 </Field>
                 {partner ? (
                   <Field label={`${partner.referenceLabel} (optional)`}>
-                    <input value={form.partner_ref} onChange={set("partner_ref")} className={FIELD} placeholder={`e.g. the number ${partner.short} gave`} />
+                    <input value={form.partner_ref} onChange={set("partner_ref")} className={`${FIELD} h-10`} placeholder={`e.g. the number ${partner.short} gave`} />
                   </Field>
                 ) : (
                   <Field label="Status">
-                    <select value={form.status} onChange={set("status")} className={FIELD}>
+                    <Chevron>
+                      <select value={form.status} onChange={set("status")} className={SELECT}>
                       <option value="confirmed">Confirmed</option>
                       <option value="requested">Awaiting confirmation</option>
                     </select>
+                    </Chevron>
                   </Field>
                 )}
 
@@ -325,5 +349,66 @@ function Field({ label, wide = false, children }: { label: string; wide?: boolea
       </span>
       {children}
     </label>
+  );
+}
+
+/**
+ * A day on the Admin calendar. Clicking the day (anywhere but on a session)
+ * opens New session on that date; the + button does the same from the
+ * keyboard.
+ */
+export function DayCell({
+  date,
+  label,
+  className,
+  style,
+  children,
+}: {
+  date: string;
+  label: string;
+  className: string;
+  style: React.CSSProperties;
+  children: React.ReactNode;
+}) {
+  const open = () => window.dispatchEvent(new CustomEvent(NEW_ON_DAY, { detail: { date } }));
+  return (
+    <div
+      className={`group relative cursor-pointer transition-colors hover:bg-[#eaf3fa] ${className}`}
+      style={style}
+      onClick={(e) => {
+        if ((e.target as HTMLElement).closest("a, button")) return;
+        open();
+      }}
+      title={`Add a session on ${label}`}
+    >
+      {children}
+      <button
+        type="button"
+        onClick={open}
+        aria-label={`Add a session on ${label}`}
+        className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded text-[1rem] font-semibold text-white opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100"
+        style={{ background: "#1a75ad" }}
+      >
+        +
+      </button>
+    </div>
+  );
+}
+
+function Chevron({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="relative block">
+      {children}
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 20 20"
+        width="16"
+        height="16"
+        className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2"
+        style={{ color: "#616161" }}
+      >
+        <path d="M5 7.5 10 12.5 15 7.5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </span>
   );
 }
