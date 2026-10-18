@@ -36,14 +36,14 @@ export const PARTNERS: Partner[] = [
     logo: "/images/partners/dthf-logo.png",
     logoWidth: 114,
     logoHeight: 114,
-    // The red of the logo's rainbow, darkened enough for white text (5.9:1).
-    accent: "#c41f1f",
+    // The green of the logo's rainbow, darkened enough for white text (5.1:1).
+    accent: "#2e7d32",
     accentInk: "#ffffff",
     // The logo's rainbow.
     stripe: "linear-gradient(90deg, #eb2a2a, #f89623 25%, #f9ed25 45%, #6cbf4b 65%, #2a8fd6 85%, #6b3fa0)",
     // The black of the logo's figures, softened.
     band: "linear-gradient(125deg, #1d2024, #2c3036 60%, #3a3f46)",
-    tint: "#fdeeee",
+    tint: "#e8f5e9",
     referenceLabel: "DTHF reference or case number",
   },
 ];

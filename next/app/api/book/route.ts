@@ -3,6 +3,7 @@ import { after, NextResponse } from "next/server";
 import { createBooking, readBookingInput, SlotTaken } from "@/lib/bookings";
 import { StorageNotConfigured } from "@/lib/client-entries";
 import { mailConfigured, sendMail } from "@/lib/mailer";
+import { sessionEmail } from "@/lib/session-email";
 
 /**
  * Take a booking, into this site's own database (lib/bookings.ts).
@@ -53,6 +54,17 @@ export async function POST(request: Request) {
           text: lines.join("\n"),
           html: lines.map((l) => (l ? `<p style="margin:0 0 6px 0">${escape(l)}</p>` : "<br>")).join(""),
         }).catch((error) => console.error("Booking email failed:", error));
+      });
+    }
+
+    // The client's own confirmation, with a calendar invite and a copy of the
+    // consent form they agreed to.
+    if (mailConfigured() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(booking.email)) {
+      after(async () => {
+        const mail = await sessionEmail(booking, { attachConsent: Boolean(booking.consent_version) });
+        await sendMail({ to: booking.email, ...mail }).catch((error) =>
+          console.error("Client booking email failed:", error instanceof Error ? error.message : error),
+        );
       });
     }
 

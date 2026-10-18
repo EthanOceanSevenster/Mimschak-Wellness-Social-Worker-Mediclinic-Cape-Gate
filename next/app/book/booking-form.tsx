@@ -18,6 +18,8 @@ type Props = {
   knownEmail: string | null;
   /** Set on a partner's own link (/book/<slug>): the booking is marked as theirs. */
   partner?: Partner | null;
+  /** The partner reference this booking will get, shown read-only. */
+  partnerRef?: string;
 };
 
 const FIELD =
@@ -25,7 +27,7 @@ const FIELD =
 
 
 
-export function BookingForm({ practice, days, knownEmail, partner = null }: Props) {
+export function BookingForm({ practice, days, knownEmail, partner = null, partnerRef = "" }: Props) {
   const router = useRouter();
   const bookable = useMemo(() => days.filter((d) => d.slots.length > 0), [days]);
 
@@ -37,8 +39,8 @@ export function BookingForm({ practice, days, knownEmail, partner = null }: Prop
   const [email, setEmail] = useState(knownEmail ?? "");
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
-  const [partnerRef, setPartnerRef] = useState("");
   const [ownWords, setOwnWords] = useState("");
+  const [agreeConsent, setAgreeConsent] = useState(false);
 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -57,6 +59,10 @@ export function BookingForm({ practice, days, knownEmail, partner = null }: Prop
       setError("Please choose a day and a time.");
       return;
     }
+    if (!agreeConsent) {
+      setError("Please tick the box to agree to the consent form.");
+      return;
+    }
 
     setBusy(true);
     try {
@@ -73,8 +79,9 @@ export function BookingForm({ practice, days, knownEmail, partner = null }: Prop
           phone,
           notes,
           partner: partner?.slug ?? "",
-          partner_ref: partnerRef,
           own_words: service === OWN_WORDS ? ownWords : "",
+          partner_ref: partnerRef,
+          consent: agreeConsent,
         }),
       });
       const body = await response.json();
@@ -132,6 +139,12 @@ export function BookingForm({ practice, days, knownEmail, partner = null }: Prop
           WhatsApp or by phone.
           {partner && <> Your booking is marked as referred by {partner.name}.</>}
         </p>
+        {booked.partner_ref && (
+          <p className="mt-3 text-[0.95rem]" style={{ color: "var(--text-soft)" }}>
+            Your {partner?.short ?? ""} reference:{" "}
+            <strong style={{ color: "var(--text)" }}>{booked.partner_ref}</strong>
+          </p>
+        )}
       </div>
     );
   }
@@ -321,20 +334,14 @@ export function BookingForm({ practice, days, knownEmail, partner = null }: Prop
             autoComplete="email"
           />
         </label>
-        {partner && (
+        {partner && partnerRef && (
           <label className="grid gap-2">
-            <span className="text-[0.95rem] font-medium">
-              {partner.referenceLabel}{" "}
-              <span style={{ color: "var(--text-soft)" }}>(optional)</span>
-            </span>
+            <span className="text-[0.95rem] font-medium">{partner.referenceLabel}</span>
             <input
               value={partnerRef}
-              onChange={(e) => setPartnerRef(e.target.value)}
-              placeholder={`e.g. the number ${partner.short} gave you`}
-              className={FIELD}
-              style={{ background: "var(--surface)" }}
-              maxLength={60}
-              autoComplete="off"
+              readOnly
+              className={`${FIELD} cursor-default`}
+              style={{ background: "var(--bg-soft)" }}
             />
           </label>
         )}
@@ -352,6 +359,40 @@ export function BookingForm({ practice, days, knownEmail, partner = null }: Prop
             style={{ background: "var(--surface)" }}
           />
         </label>
+      </fieldset>
+
+      {/* --------------------------------------------------------- 4. consent */}
+      <fieldset className="grid gap-4">
+        <legend className="text-xs font-semibold uppercase tracking-[0.18em]" style={{ color: "var(--text-soft)" }}>
+          4 — Consent
+        </legend>
+        <div className="rounded-lg border p-5" style={{ background: "var(--surface)" }}>
+          <p className="text-[0.95rem]" style={{ color: "var(--text-soft)" }}>
+            {partner
+              ? "The consent form explains the service, confidentiality and its limits, records and privacy, and cancellation."
+              : "The consent form explains the service, confidentiality and its limits, records and privacy, fees and cancellation."}
+          </p>
+          {/* Opens in a new tab so nothing typed here is lost. A partner's
+              clients get the version without fees and payment. */}
+          <a
+            href={partner ? `/consent?for=${partner.slug}` : "/consent"}
+            target="_blank"
+            rel="opener"
+            className="mt-4 inline-block rounded-full px-6 py-3 text-[0.95rem] font-semibold"
+            style={{ background: "var(--btn-bg)", color: "var(--btn-ink)" }}
+          >
+            Read the consent form
+          </a>
+          <label className="mt-4 flex cursor-pointer items-start gap-3 border-t pt-4">
+            <input
+              type="checkbox"
+              checked={agreeConsent}
+              onChange={(e) => setAgreeConsent(e.target.checked)}
+              className="mt-1 h-5 w-5 shrink-0 accent-[var(--brand)]"
+            />
+            <span className="text-[0.95rem] font-medium">I have read the consent form and agree to it.</span>
+          </label>
+        </div>
       </fieldset>
 
       {error && (

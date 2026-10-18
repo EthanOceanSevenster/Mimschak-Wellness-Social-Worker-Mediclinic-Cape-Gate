@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+import { SITE_URL } from "@/lib/site";
+
 import { createInvite } from "@/lib/client-entries";
 import { hasAdminAccess } from "@/lib/clients-auth";
 import { formLinkFor, INVITE_SUBJECT, inviteHtml, inviteText, isEmail, prefillFor } from "@/lib/consent-invite";
@@ -31,7 +33,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const site = new URL("/", request.url).toString();
+  const site = SITE_URL;
 
   try {
     const link = formLinkFor(site, await createInvite(prefillFor(who)));

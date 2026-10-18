@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
 
+import { SITE_URL } from "@/lib/site";
+
 import { createBooking, isStatus, readBookingInput, SlotTaken } from "@/lib/bookings";
 import { createInvite, StorageNotConfigured } from "@/lib/client-entries";
 import { hasAdminAccess } from "@/lib/clients-auth";
-import { formLinkFor, INVITE_SUBJECT, inviteHtml, inviteText, inviteWhatsApp, isEmail, prefillFor } from "@/lib/consent-invite";
+import { formLinkFor, inviteWhatsApp, isEmail, prefillFor } from "@/lib/consent-invite";
 import { mailConfigured, sendMail } from "@/lib/mailer";
+import { sessionEmail } from "@/lib/session-email";
 
 /**
  * Admin only: the practice adds a session itself (a booking made by phone,
@@ -38,30 +41,51 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "The session could not be saved. Please try again." }, { status: 500 });
   }
 
-  // ------------------------------------------------- the consent form
+  // ------------------------------------- the client's email, and the consent form
+  // One email to the client: the session booked, with a calendar invite, and
+  // (when the switch is on) the consent form to sign online plus its PDF.
+  // Without an email address, or if it cannot be sent, the consent form goes
+  // on WhatsApp instead: the message has the signing link and the PDF link.
+  const sendConsent = body.send_consent === true;
+  const who = { name: booking.full_name, email: booking.email, phone: booking.phone };
+  let consentLink: string | undefined;
   let consent: { emailed: boolean; whatsapp?: string; error?: string } | null = null;
-  if (body.send_consent === true) {
-    const who = { name: booking.full_name, email: booking.email, phone: booking.phone };
-    const site = new URL("/", request.url).toString();
+  let emailed = false;
+
+  if (sendConsent) {
     try {
-      const link = formLinkFor(site, await createInvite(prefillFor(who)));
-      const digits = who.phone.replace(/\D/g, "").replace(/^0/, "27");
-      const whatsapp = `https://wa.me/${digits}?text=${encodeURIComponent(inviteWhatsApp(link, who))}`;
-      if (isEmail(who.email) && mailConfigured()) {
-        try {
-          await sendMail({ to: who.email, subject: INVITE_SUBJECT, text: inviteText(link, who), html: inviteHtml(link, who, site) });
-          consent = { emailed: true, whatsapp };
-        } catch (error) {
-          console.error("admin add session: consent email failed:", error instanceof Error ? error.message : error);
-          consent = { emailed: false, whatsapp, error: "The consent form email could not be sent. Send it on WhatsApp instead." };
-        }
-      } else {
-        consent = { emailed: false, whatsapp };
-      }
+      consentLink = formLinkFor(SITE_URL, await createInvite(prefillFor(who)));
     } catch {
       consent = { emailed: false, error: "The consent form link could not be made just now." };
     }
   }
 
-  return NextResponse.json({ booking, consent }, { status: 201 });
+  if (isEmail(who.email) && mailConfigured()) {
+    try {
+      const mail = await sessionEmail(booking, { consentLink, attachConsent: sendConsent });
+      await sendMail({ to: who.email, ...mail });
+      emailed = true;
+    } catch (error) {
+      console.error("admin add session: client email failed:", error instanceof Error ? error.message : error);
+    }
+  }
+
+  if (sendConsent && consentLink) {
+    const digits = who.phone.replace(/\D/g, "").replace(/^0/, "27");
+    // WhatsApp links carry text only, so the message has the link to the form.
+    const whatsapp = `https://wa.me/${digits}?text=${encodeURIComponent(inviteWhatsApp(consentLink, who))}`;
+    consent = emailed
+      ? { emailed: true, whatsapp }
+      : {
+          emailed: false,
+          whatsapp,
+          error: !who.email
+            ? undefined
+            : mailConfigured()
+              ? "The email could not be sent. Send the consent form on WhatsApp instead."
+              : "Email sending is not set up here. Send the consent form on WhatsApp instead.",
+        };
+  }
+
+  return NextResponse.json({ booking, consent, emailed }, { status: 201 });
 }

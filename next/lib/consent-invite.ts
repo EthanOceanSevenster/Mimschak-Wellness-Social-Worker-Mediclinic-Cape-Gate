@@ -76,9 +76,12 @@ export function inviteText(link: string, who: InviteFor): string {
   ].join("\n");
 }
 
-export function inviteWhatsApp(link: string, who: InviteFor): string {
+export function inviteWhatsApp(link: string, who: InviteFor, pdfLink?: string): string {
   const { first } = splitName(who.name);
-  return `${first ? `Hi ${first}, ` : "Hello, "}please complete the Mimshack Wellness counselling consent form before your first session: ${link}`;
+  return [
+    `${first ? `Hi ${first}, ` : "Hello, "}please complete the Mimshack Wellness counselling consent form before your first session: ${link}`,
+    ...(pdfLink ? ["", `The consent form as a PDF: ${pdfLink}`] : []),
+  ].join("\n");
 }
 
 function escapeHtml(text: string): string {

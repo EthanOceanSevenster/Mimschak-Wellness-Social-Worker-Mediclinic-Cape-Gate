@@ -51,6 +51,8 @@ export async function sendMail(message: {
   subject: string;
   text: string;
   html: string;
+  /** Files to attach, e.g. the consent form PDF or a calendar invite. */
+  attachments?: { filename: string; content: Buffer | Uint8Array | string; contentType: string }[];
 }): Promise<void> {
   const s = settings();
   if (!s) throw new MailNotConfigured();
@@ -72,5 +74,10 @@ export async function sendMail(message: {
     subject: message.subject,
     text: message.text,
     html: message.html,
+    attachments: message.attachments?.map((a) => ({
+      filename: a.filename,
+      content: typeof a.content === "string" ? a.content : Buffer.from(a.content),
+      contentType: a.contentType,
+    })),
   });
 }

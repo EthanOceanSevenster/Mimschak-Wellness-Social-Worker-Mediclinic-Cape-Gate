@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import type { Booking, BookingStatus } from "@/lib/types";
 import { when } from "../bookings/booking-card";
+import { editSession } from "./add-session";
 
 /** Only the moves that make sense from where the booking already is. */
 function nextMoves(booking: Booking): { status: BookingStatus; label: string; primary?: boolean }[] {
@@ -122,6 +123,7 @@ function SessionRow({ booking }: { booking: Booking }) {
         <span className="block truncate">{booking.service ?? "Consultation"}</span>
         <span className="block truncate text-[0.82rem]" style={{ color: "var(--text-soft)" }}>
           {booking.mode_label}
+          {booking.consent_version && <> &middot; consent agreed</>}
           {booking.notes && <> &middot; &ldquo;{booking.notes}&rdquo;</>}
         </span>
       </span>
@@ -130,7 +132,7 @@ function SessionRow({ booking }: { booking: Booking }) {
         {booking.partner_short ? (
           <span
             className="inline-block rounded px-2 py-0.5 text-[0.78rem] font-semibold"
-            style={{ background: "#fdecec", color: "#9b1c1c" }}
+            style={{ background: "#e8f5e9", color: "#1b5e20" }}
             title={`Referred by ${booking.partner_name}${booking.partner_ref ? `, reference ${booking.partner_ref}` : ""}`}
           >
             {booking.partner_short}
@@ -164,6 +166,14 @@ function SessionRow({ booking }: { booking: Booking }) {
             {busy === m.label ? "…" : m.label}
           </button>
         ))}
+        <button
+          type="button"
+          onClick={() => editSession(booking)}
+          className="rounded px-3 py-1.5 text-[0.82rem] font-semibold"
+          style={{ border: "1px solid #d1d1d1", background: "#ffffff" }}
+        >
+          Edit
+        </button>
         <a
           href={whatsapp(booking.phone)}
           target="_blank"

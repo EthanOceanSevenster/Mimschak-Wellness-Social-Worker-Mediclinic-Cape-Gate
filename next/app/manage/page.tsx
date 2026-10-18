@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { HORIZON_DAYS, isStatus, listBookings, monthRange, partnerCounts, PRACTICE, saDate } from "@/lib/bookings";
+import { HORIZON_DAYS, isStatus, listBookings, monthRange, nextPartnerReference, partnerCounts, PRACTICE, saDate } from "@/lib/bookings";
 import { searchEntries, StorageNotConfigured, type EntryPage } from "@/lib/client-entries";
 import { fullName, modeLabel, serviceLabel } from "@/lib/client-form";
 import { hasAdminAccess, practiceUser } from "@/lib/clients-auth";
@@ -106,6 +106,10 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   } catch {
     referrals = {};
   }
+
+  // The reference a new session for each partner will get, shown in New session.
+  const nextRefs: Record<string, string> = {};
+  for (const p of PARTNERS) nextRefs[p.slug] = await nextPartnerReference(p.slug).catch(() => "");
 
   let clients: EntryPage | null = null;
   let clientsProblem: string | null = null;
@@ -266,7 +270,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
                 ...PRACTICE.services.map((s) => ({ value: s.slug, label: s.name })),
               ]}
               modes={PRACTICE.modes.map((m) => ({ value: m.value, label: m.label }))}
-              partners={PARTNERS.map((p) => ({ slug: p.slug, name: p.name, short: p.short, referenceLabel: p.referenceLabel }))}
+              partners={PARTNERS.map((p) => ({ slug: p.slug, name: p.name, short: p.short, referenceLabel: p.referenceLabel, nextRef: nextRefs[p.slug] ?? "" }))}
               defaultDate={saDate()}
             />
           </div>

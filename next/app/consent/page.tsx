@@ -11,6 +11,7 @@ import {
   PERMISSIONS,
   SERVICE_SECTIONS,
 } from "@/lib/client-form";
+import { getPartner } from "@/lib/partners";
 
 import { SHELL, SiteFooter, SiteHeader } from "../chrome";
 import { CloseOrBack } from "./close-or-back";
@@ -28,7 +29,13 @@ export const metadata: Metadata = {
  * stays short. Every word comes from lib/client-form.ts, the same text the
  * signed PDF reproduces, so what a client reads here is what they sign.
  */
-export default function ConsentPage() {
+export default async function ConsentPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ for?: string }>;
+}) {
+  // A partner's clients (/consent?for=<slug>) read it without fees and payment.
+  const partner = getPartner((await searchParams).for);
   return (
     <>
       <SiteHeader />
@@ -65,6 +72,7 @@ export default function ConsentPage() {
                 </section>
               ))}
 
+              {!partner && (
               <section>
                 <h2 className="rule text-xl">Fees and payment</h2>
                 <dl className="mt-4 grid gap-2">
@@ -97,6 +105,7 @@ export default function ConsentPage() {
                   ))}
                 </dl>
               </section>
+              )}
 
               <section>
                 <h2 className="rule text-xl">Cancellation and postponement</h2>

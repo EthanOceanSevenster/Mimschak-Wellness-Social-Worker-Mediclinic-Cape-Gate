@@ -161,7 +161,8 @@ class Writer {
   field(label: string, value: string) {
     const labelText = this.safe(label);
     const labelWidth = this.bold.widthOfTextAtSize(labelText, BODY) + 8;
-    const lines = this.wrap(value || " ", this.regular, BODY + 0.5, WIDTH - labelWidth);
+    // An empty value still gets its ruled line, for the blank form.
+    const lines = value ? this.wrap(value, this.regular, BODY + 0.5, WIDTH - labelWidth) : [""];
     for (const [i, line] of lines.entries()) {
       this.ensure(LEADING + 4);
       this.y -= LEADING + 3;
@@ -402,4 +403,81 @@ export function consentFileName(entry: SignedEntry): string {
       .replace(/\s+/g, "-")
       .slice(0, 40) || "client";
   return `Consent-form-${part(entry.firstName)}-${part(entry.surname)}-${date}.pdf`;
+}
+
+/**
+ * The consent form as a blank document, to read or print: the same wording
+ * and layout as the signed copy, with the blanks left empty and no boxes
+ * ticked. Sent with the consent form on WhatsApp and attached to session
+ * emails. A partner's clients get it without the fees and payment section.
+ */
+export async function buildBlankConsentPdf(options: { withFees: boolean }): Promise<Uint8Array> {
+  const doc = await PDFDocument.create();
+  doc.setTitle(DOC_TITLE);
+  doc.setAuthor("Mimshack Wellness");
+  doc.setSubject("Counselling and therapy consent form");
+
+  const w = new Writer(
+    doc,
+    await doc.embedFont(StandardFonts.Helvetica),
+    await doc.embedFont(StandardFonts.HelveticaBold),
+    await doc.embedPng(Buffer.from(CONSENT_LOGO_PNG_BASE64, "base64")),
+  );
+
+  w.y -= 18;
+  w.page.drawText(w.safe(DOC_TITLE), { x: MARGIN_X, y: w.y, size: 17, font: w.bold, color: BRAND });
+  w.gap(8);
+  w.paragraph(DOC_INTRO, { color: SOFT });
+
+  w.heading("Client details");
+  w.field("Full name", "");
+  w.field("Identity number or date of birth", "");
+  w.field("Mobile number", "");
+  w.field("Email address", "");
+  w.choices(CONTACT_METHODS.map((m) => ({ label: m.label, checked: false })), 0, "Preferred contact method:");
+
+  for (const section of SERVICE_SECTIONS) {
+    w.heading(section.title);
+    w.paragraph(section.paragraphs.join(" "));
+  }
+
+  if (options.withFees) {
+    w.ensure(LEADING * 9);
+    w.heading("Fees and payment");
+    w.paragraph([...FEES.map((fee) => `${fee.label}: ${fee.amount}.`), ...PAYMENT_TERMS].join(" "));
+    w.paragraph(`Bank: ${BANKING.bankName}   |   Account name: ${BANKING.accountHolder}`, { font: w.bold, after: 0 });
+    w.paragraph(
+      `Account type: ${BANKING.accountType}   |   Account number: ${BANKING.accountNumber}   |   Branch code: ${BANKING.branchCode}`,
+      { font: w.bold },
+    );
+  }
+
+  w.heading("Cancellation and postponement");
+  w.paragraph(CANCELLATION_TERMS.join(" "));
+
+  w.heading("Additional permissions");
+  w.paragraph("Please mark your choice. Leaving a box unmarked means permission has not been given.", {
+    color: SOFT,
+  });
+  for (const permission of PERMISSIONS) {
+    const answers = permission.allowNotApplicable ? (["yes", "no", "na"] as const) : (["yes", "no"] as const);
+    w.paragraph(permission.text, { after: 0 });
+    w.choices(answers.map((a) => ({ label: PERMISSION_LABELS[a], checked: false })), 14);
+  }
+
+  w.heading("Consent");
+  w.paragraph(CONSENT_TEXT);
+  w.signature("Client or authorised representative signature", null);
+  w.field("Printed name of person signing", "");
+  w.field("Date and place", "");
+  w.signature("Social worker signature", null);
+  w.textThenBlank(`Social worker: ${SOCIAL_WORKER}`, "Date:");
+
+  w.heading("For a minor client");
+  w.field("Full name of minor", "");
+  w.field("Relationship of person signing to minor", "");
+  w.field("Basis for consenting on behalf of minor", "");
+
+  w.footers();
+  return doc.save();
 }

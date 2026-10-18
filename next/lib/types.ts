@@ -33,6 +33,8 @@ export type Booking = {
   email: string;
   phone: string;
   service: string | null;
+  /** The service's slug (lib/bookings.ts PRACTICE.services), for editing. */
+  service_slug?: string;
   mode: string;
   mode_label: string;
   starts_at: string;
@@ -49,6 +51,8 @@ export type Booking = {
   partner_name?: string;
   partner_short?: string;
   partner_ref?: string;
+  /** The consent form version agreed to when booking online, or "". */
+  consent_version?: string;
 };
 
 export type MyBookings = { upcoming: Booking[]; past: Booking[] };

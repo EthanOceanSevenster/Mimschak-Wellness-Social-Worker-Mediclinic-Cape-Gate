@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
-import { availability, HORIZON_DAYS, PRACTICE } from "@/lib/bookings";
+import { availability, HORIZON_DAYS, nextPartnerReference, PRACTICE } from "@/lib/bookings";
 import { getPartner } from "@/lib/partners";
 import type { DiaryDay } from "@/lib/types";
 
@@ -36,8 +36,10 @@ export default async function PartnerBookPage({ params }: Params) {
 
   let days: DiaryDay[] = [];
   let diaryUp = true;
+  let partnerRef = "";
   try {
     days = await availability(HORIZON_DAYS);
+    partnerRef = await nextPartnerReference(partner.slug);
   } catch {
     diaryUp = false;
   }
@@ -93,6 +95,7 @@ export default async function PartnerBookPage({ params }: Params) {
                   signedIn={false}
                   knownEmail={null}
                   partner={partner}
+                  partnerRef={partnerRef}
                 />
               ) : (
                 <div className="rounded-lg border p-8" style={{ background: "var(--surface)" }}>

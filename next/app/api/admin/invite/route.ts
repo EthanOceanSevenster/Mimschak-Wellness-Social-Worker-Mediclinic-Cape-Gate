@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+import { SITE_URL } from "@/lib/site";
+
 import { createInvite, StorageNotConfigured } from "@/lib/client-entries";
 import { hasAdminAccess } from "@/lib/clients-auth";
 import { formLinkFor, hasPrefill, prefillFor } from "@/lib/consent-invite";
@@ -23,7 +25,7 @@ export async function POST(request: Request) {
     email: typeof body.email === "string" ? body.email : "",
     phone: typeof body.phone === "string" ? body.phone.slice(0, 30) : "",
   };
-  const site = new URL("/", request.url).toString();
+  const site = SITE_URL;
 
   if (!hasPrefill(who)) return NextResponse.json({ link: formLinkFor(site) });
 

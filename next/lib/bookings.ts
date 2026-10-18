@@ -5,6 +5,7 @@ import path from "node:path";
 import { neon } from "@neondatabase/serverless";
 
 import { StorageNotConfigured } from "./client-entries";
+import { TERMS_VERSION } from "./client-form";
 import { getPartner } from "./partners";
 import type { Booking, BookingStatus, DiaryDay, ManageBookings, Practice } from "./types";
 
@@ -126,6 +127,8 @@ type Stored = {
   /** Referring organisation (lib/partners.ts) and their reference, or "". */
   partner: string;
   partner_ref: string;
+  /** The consent form version the client agreed to when booking, or "". */
+  consent_version: string;
 };
 
 let tableReady: Promise<unknown> | null = null;
@@ -155,6 +158,7 @@ function database() {
     // Added with partner booking links; harmless on a table that has them.
     await sql`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS partner TEXT NOT NULL DEFAULT ''`;
     await sql`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS partner_ref TEXT NOT NULL DEFAULT ''`;
+    await sql`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS consent_version TEXT NOT NULL DEFAULT ''`;
   })();
   return { sql, ready: tableReady };
 }
@@ -168,7 +172,12 @@ function useLocalFile(): boolean {
 async function readLocal(): Promise<Stored[]> {
   try {
     const rows = JSON.parse(await fs.readFile(LOCAL_FILE, "utf8")) as Stored[];
-    return rows.map((r) => ({ ...r, partner: r.partner ?? "", partner_ref: r.partner_ref ?? "" }));
+    return rows.map((r) => ({
+      ...r,
+      partner: r.partner ?? "",
+      partner_ref: r.partner_ref ?? "",
+      consent_version: r.consent_version ?? "",
+    }));
   } catch {
     return [];
   }
@@ -199,6 +208,7 @@ function fromRow(row: Record<string, unknown>): Stored {
     cancel_reason: String(row.cancel_reason ?? ""),
     partner: String(row.partner ?? ""),
     partner_ref: String(row.partner_ref ?? ""),
+    consent_version: String(row.consent_version ?? ""),
   };
 }
 
@@ -242,6 +252,7 @@ function toBooking(row: Stored): Booking {
     partner_name: partner?.name ?? "",
     partner_short: partner?.short ?? "",
     service: serviceName(row.service),
+    service_slug: row.service,
     mode_label: modeName(row.mode),
     status_label: STATUS_LABEL[row.status],
     whatsapp_url: `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`,
@@ -331,6 +342,7 @@ export type BookingInput = {
   notes: string;
   partner: string;
   partner_ref: string;
+  consent_version: string;
 };
 
 function text(value: unknown, max: number): string {
@@ -355,12 +367,22 @@ export function readBookingInput(
     // reaches the practice, just as a direct one.
     partner: getPartner(text(body.partner, 40))?.slug ?? "",
     partner_ref: "",
+    consent_version: body.consent === true ? TERMS_VERSION : "",
   };
-  value.partner_ref = value.partner ? text(body.partner_ref, 60) : "";
+  // The reference shown (read-only) on the form; the server checks it again.
+  value.partner_ref = value.partner ? text(body.partner_ref, 40) : "";
+  // Clients booking online agree to the consent form first; the practice
+  // adding a session itself sends the form separately instead.
+  if (!options.admin && !value.consent_version) {
+    return { ok: false, error: "Please read the consent form and tick the box to agree to it." };
+  }
   if (value.service === OWN_WORDS) {
     const own = text(body.own_words, 500);
-    if (own.length < 2) return { ok: false, error: "Please say in a few words what you would like help with." };
-    value.notes = `In their own words: ${own}${value.notes ? `\n${value.notes}` : ""}`;
+    // When the practice edits such a session, the words are already in its notes.
+    if (own.length < 2 && !options.admin) {
+      return { ok: false, error: "Please say in a few words what you would like help with." };
+    }
+    if (own) value.notes = `In their own words: ${own}${value.notes ? `\n${value.notes}` : ""}`;
   } else if (!PRACTICE.services.some((s) => s.slug === value.service)) {
     return { ok: false, error: "Please choose what you need." };
   }
@@ -381,6 +403,58 @@ export function readBookingInput(
     return { ok: false, error: "Please enter a phone number we can reach you on." };
   }
   return { ok: true, value };
+}
+
+/**
+ * The partner's reference for a client, made by the site and never typed in:
+ * <SHORT>-<year>-<number>, e.g. DTHF-2026-0007, numbered per partner. A client
+ * who has booked through the same partner before (same cellphone number)
+ * keeps their first reference, so one person is one case.
+ */
+async function partnerRefs(partner: string): Promise<{ ref: string; digits: string }[]> {
+  let refs: { ref: string; digits: string }[];
+  if (useLocalFile()) {
+    refs = (await readLocal())
+      .filter((r) => r.partner === partner && r.partner_ref)
+      .map((r) => ({ ref: r.partner_ref, digits: r.phone.replace(/\D/g, "").replace(/^27/, "0") }));
+  } else {
+    const { sql, ready } = database();
+    await ready;
+    const rows = await sql`SELECT partner_ref, phone FROM bookings WHERE partner = ${partner} AND partner_ref <> ''`;
+    refs = rows.map((r) => ({
+      ref: String(r.partner_ref),
+      digits: String(r.phone).replace(/\D/g, "").replace(/^27/, "0"),
+    }));
+  }
+  return refs;
+}
+
+/** The next unused reference for a partner, e.g. DTHF-2026-0008. */
+function nextIn(partner: string, refs: { ref: string }[]): string {
+  const short = getPartner(partner)?.short ?? partner.toUpperCase();
+  const year = saDate().slice(0, 4);
+  const numbers = refs
+    .map((r) => r.ref.match(new RegExp(`^${short}-${year}-(\\d+)$`)))
+    .filter(Boolean)
+    .map((m) => Number(m![1]));
+  const next = (numbers.length ? Math.max(...numbers) : 0) + 1;
+  return `${short}-${year}-${String(next).padStart(4, "0")}`;
+}
+
+/** Shown on the booking form before it is sent. */
+export async function nextPartnerReference(partner: string): Promise<string> {
+  return nextIn(partner, await partnerRefs(partner));
+}
+
+async function partnerReference(partner: string, phone: string, shown: string): Promise<string> {
+  const digits = phone.replace(/\D/g, "").replace(/^27/, "0");
+  const refs = await partnerRefs(partner);
+  const known = refs.find((r) => r.digits === digits);
+  if (known) return known.ref;
+  // The one shown on the form, unless someone else has taken it meanwhile.
+  const short = getPartner(partner)?.short ?? partner.toUpperCase();
+  if (new RegExp(`^${short}-\\d{4}-\\d{4}$`).test(shown) && !refs.some((r) => r.ref === shown)) return shown;
+  return nextIn(partner, refs);
 }
 
 const REF_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -405,6 +479,7 @@ export async function createBooking(
     if (!free.includes(input.time)) throw new SlotTaken();
   }
   const status: BookingStatus = options.status ?? "requested";
+  const partnerRef = input.partner ? await partnerReference(input.partner, input.phone, input.partner_ref) : "";
 
   const start = slotStart(input.date, input.time);
   const row: Stored = {
@@ -421,7 +496,8 @@ export async function createBooking(
     status,
     cancel_reason: "",
     partner: input.partner,
-    partner_ref: input.partner_ref,
+    partner_ref: partnerRef,
+    consent_version: input.consent_version,
   };
 
   if (useLocalFile()) {
@@ -438,9 +514,9 @@ export async function createBooking(
   await ready;
   try {
     await sql`
-      INSERT INTO bookings (reference, created_at, full_name, email, phone, service, mode, starts_at, ends_at, notes, status, partner, partner_ref)
+      INSERT INTO bookings (reference, created_at, full_name, email, phone, service, mode, starts_at, ends_at, notes, status, partner, partner_ref, consent_version)
       VALUES (${row.reference}, ${row.created_at}, ${row.full_name}, ${row.email}, ${row.phone}, ${row.service},
-              ${row.mode}, ${row.starts_at}, ${row.ends_at}, ${row.notes}, ${status}, ${row.partner}, ${row.partner_ref})`;
+              ${row.mode}, ${row.starts_at}, ${row.ends_at}, ${row.notes}, ${status}, ${row.partner}, ${row.partner_ref}, ${row.consent_version})`;
   } catch (error) {
     // The one-live-booking-per-slot index: somebody else got there first.
     if (String((error as { code?: string }).code) === "23505") throw new SlotTaken();
@@ -518,6 +594,62 @@ export async function listBookings(options: {
 
   rows.sort((a, b) => b.starts_at.localeCompare(a.starts_at));
   return { practice: PRACTICE.name, counts, bookings: rows.map(toBooking) };
+}
+
+/**
+ * The practice edits a session from Admin: who, when, what and its status.
+ * Its references and referring partner stay as they were. Null if there is
+ * no such booking; SlotTaken if the new time is held by another session.
+ */
+export async function updateBooking(
+  reference: string,
+  input: BookingInput,
+  status: BookingStatus,
+): Promise<Booking | null> {
+  const start = slotStart(input.date, input.time);
+  const changes = {
+    full_name: input.full_name,
+    email: input.email,
+    phone: input.phone,
+    service: input.service,
+    mode: input.mode,
+    starts_at: start.toISOString(),
+    ends_at: new Date(start.getTime() + SLOT_MINUTES * 60_000).toISOString(),
+    notes: input.notes,
+    status,
+  };
+
+  if (useLocalFile()) {
+    const rows = await readLocal();
+    const row = rows.find((r) => r.reference === reference);
+    if (!row) return null;
+    if (
+      LIVE.includes(status) &&
+      rows.some((r) => r !== row && LIVE.includes(r.status) && r.starts_at === changes.starts_at)
+    ) {
+      throw new SlotTaken();
+    }
+    Object.assign(row, changes);
+    await writeLocal(rows);
+    return toBooking(row);
+  }
+
+  const { sql, ready } = database();
+  await ready;
+  try {
+    const found = await sql`
+      UPDATE bookings SET
+        full_name = ${changes.full_name}, email = ${changes.email}, phone = ${changes.phone},
+        service = ${changes.service}, mode = ${changes.mode},
+        starts_at = ${changes.starts_at}, ends_at = ${changes.ends_at},
+        notes = ${changes.notes}, status = ${changes.status}
+      WHERE reference = ${reference}
+      RETURNING *`;
+    return found[0] ? toBooking(fromRow(found[0])) : null;
+  } catch (error) {
+    if (String((error as { code?: string }).code) === "23505") throw new SlotTaken();
+    throw error;
+  }
 }
 
 /** Moves a booking on (confirm, cancel, done...). Null if there is no such booking. */
