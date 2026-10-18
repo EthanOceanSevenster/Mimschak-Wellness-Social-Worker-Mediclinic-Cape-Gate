@@ -3,11 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { HORIZON_DAYS, isStatus, listBookings, monthRange, partnerCounts, saDate } from "@/lib/bookings";
+import { HORIZON_DAYS, isStatus, listBookings, monthRange, partnerCounts, PRACTICE, saDate } from "@/lib/bookings";
 import { searchEntries, StorageNotConfigured, type EntryPage } from "@/lib/client-entries";
 import { fullName, modeLabel, serviceLabel } from "@/lib/client-form";
 import { hasAdminAccess, practiceUser } from "@/lib/clients-auth";
-import { mailConfigured } from "@/lib/mailer";
 import { getPartner, partnerLink, PARTNERS } from "@/lib/partners";
 import { getUser } from "@/lib/session";
 import type { Booking, ManageBookings } from "@/lib/types";
@@ -15,8 +14,8 @@ import type { Booking, ManageBookings } from "@/lib/types";
 import { CHILD_STYLE, OK_STYLE } from "../clients/entry-card";
 import { COUNT, DAY } from "../clients/shared";
 import { CopyButton } from "../copy-button";
-import { SendFormPanel } from "../send-form-panel";
 import { MonthCalendar, shift } from "./calendar";
+import { AddSession } from "./add-session";
 import { SessionList } from "./session-list";
 
 export const metadata: Metadata = {
@@ -26,7 +25,7 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-const VIEWS = ["overview", "sessions", "clients", "send", "partners"] as const;
+const VIEWS = ["overview", "sessions", "clients", "partners"] as const;
 type View = (typeof VIEWS)[number];
 
 const STATUS_FILTERS = [
@@ -66,7 +65,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   const view: View = (VIEWS as readonly string[]).includes(params.view ?? "") ? (params.view as View) : "overview";
   const source = params.source === "direct" ? "direct" : (getPartner(params.source)?.slug ?? "");
   const status = isStatus(params.status) ? params.status : undefined;
-  const layout = params.layout === "calendar" ? "calendar" : "list";
+  const layout = params.layout === "list" ? "list" : "calendar";
   const range = monthRange(params.month);
   const who = (await practiceUser()) ?? "Admin";
 
@@ -76,7 +75,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
     // Only sessions use the filters; other views get a clean address.
     const keep = next.view === "sessions" ? next : { view: next.view };
     const query = Object.entries(keep)
-      .filter(([k, v]) => v && !(k === "view" && v === "overview") && !(k === "layout" && v === "list"))
+      .filter(([k, v]) => v && !(k === "view" && v === "overview") && !(k === "layout" && v === "calendar"))
       .map(([k, v]) => `${k}=${encodeURIComponent(v as string)}`)
       .join("&");
     return query ? `/manage?${query}` : "/manage";
@@ -136,7 +135,6 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
     { view: "overview", label: "Overview", icon: ICONS.home },
     { view: "sessions", label: "Sessions", icon: ICONS.calendar, badge: counts?.requested || undefined },
     { view: "clients", label: "Clients", icon: ICONS.people },
-    { view: "send", label: "Send consent form", icon: ICONS.send },
     { view: "partners", label: "Partner links", icon: ICONS.link },
   ];
 
@@ -149,7 +147,6 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
           ? `Sessions: ${getPartner(source)?.name}`
           : "Sessions",
     clients: "Clients",
-    send: "Send the consent form",
     partners: "Partner booking links",
   };
 
@@ -262,7 +259,17 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
 
         {/* ----------------------------------------------------------- view */}
         <main id="main" className="min-w-0 px-4 py-6 sm:px-6 lg:px-8">
-          <h1 className="text-[1.6rem] font-semibold">{titles[view]}</h1>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h1 className="text-[1.6rem] font-semibold">{titles[view]}</h1>
+            <AddSession
+              services={[
+                ...PRACTICE.services.map((s) => ({ value: s.slug, label: s.name })),
+              ]}
+              modes={PRACTICE.modes.map((m) => ({ value: m.value, label: m.label }))}
+              partners={PARTNERS.map((p) => ({ slug: p.slug, name: p.name, short: p.short, referenceLabel: p.referenceLabel }))}
+              defaultDate={saDate()}
+            />
+          </div>
 
           {/* ======================================================= overview */}
           {view === "overview" && (
@@ -360,7 +367,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
                     />
                   </label>
                   <div className="inline-flex overflow-hidden rounded border" style={{ borderColor: "#d1d1d1" }}>
-                    {(["list", "calendar"] as const).map((l) => (
+                    {(["calendar", "list"] as const).map((l) => (
                       <Link
                         key={l}
                         href={href({ layout: l })}
@@ -379,14 +386,25 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
                 {!diary ? (
                   <Notice>{diaryProblem ?? "Sessions could not be loaded."}</Notice>
                 ) : layout === "calendar" ? (
-                  <Card>
-                    <MonthCalendar
-                      month={range.month}
-                      bookings={diary.bookings}
-                      linkFor={(month) => href({ month })}
-                      bare
-                    />
-                  </Card>
+                  <>
+                    <Card>
+                      <MonthCalendar
+                        month={range.month}
+                        bookings={diary.bookings}
+                        linkFor={(month) => href({ month })}
+                        bare
+                      />
+                    </Card>
+                    {/* The month's sessions, so a click on the calendar lands on one with its actions. */}
+                    <div className="mt-6">
+                      <Card title={`Sessions in ${monthTitle}`}>
+                        <SessionList
+                          bookings={soonest(diary.bookings)}
+                          empty={`No sessions in ${monthTitle}${status ? " with this status" : ""}.`}
+                        />
+                      </Card>
+                    </div>
+                  </>
                 ) : (
                   <Card>
                     <SessionList
@@ -408,13 +426,6 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
               >
                 <ClientRows clients={clients} problem={clientsProblem} limit={20} />
               </Card>
-            </div>
-          )}
-
-          {/* =========================================================== send */}
-          {view === "send" && (
-            <div className="mt-5 max-w-4xl">
-              <SendFormPanel emailReady={mailConfigured()} />
             </div>
           )}
 

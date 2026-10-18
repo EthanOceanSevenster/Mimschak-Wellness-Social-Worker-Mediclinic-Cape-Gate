@@ -339,6 +339,8 @@ function text(value: unknown, max: number): string {
 
 export function readBookingInput(
   body: Record<string, unknown>,
+  /** The practice adding a session itself: the client's email is optional. */
+  options: { admin?: boolean } = {},
 ): { ok: true; value: BookingInput } | { ok: false; error: string } {
   const value: BookingInput = {
     service: text(body.service, 60),
@@ -371,7 +373,7 @@ export function readBookingInput(
   if (value.full_name.length < 2) return { ok: false, error: "Please enter your name." };
   // Email is optional on a partner's link, where many clients have none;
   // the phone number is how the practice reaches them.
-  const emailOptional = Boolean(value.partner) && value.email === "";
+  const emailOptional = (Boolean(value.partner) || Boolean(options.admin)) && value.email === "";
   if (!emailOptional && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.email)) {
     return { ok: false, error: "Please enter a valid email address." };
   }
@@ -390,9 +392,19 @@ function newReference(): string {
 }
 
 /** Holds the time for the client. Throws SlotTaken if it is no longer free. */
-export async function createBooking(input: BookingInput): Promise<Booking> {
-  const free = (await availability(HORIZON_DAYS)).find((d) => d.date === input.date)?.slots ?? [];
-  if (!free.includes(input.time)) throw new SlotTaken();
+export async function createBooking(
+  input: BookingInput,
+  /**
+   * The practice adding a session from Admin: any day, past or future, and
+   * no notice period, but still never two live sessions at the same time.
+   */
+  options: { admin?: boolean; status?: BookingStatus } = {},
+): Promise<Booking> {
+  if (!options.admin) {
+    const free = (await availability(HORIZON_DAYS)).find((d) => d.date === input.date)?.slots ?? [];
+    if (!free.includes(input.time)) throw new SlotTaken();
+  }
+  const status: BookingStatus = options.status ?? "requested";
 
   const start = slotStart(input.date, input.time);
   const row: Stored = {
@@ -406,7 +418,7 @@ export async function createBooking(input: BookingInput): Promise<Booking> {
     starts_at: start.toISOString(),
     ends_at: new Date(start.getTime() + SLOT_MINUTES * 60_000).toISOString(),
     notes: input.notes,
-    status: "requested",
+    status,
     cancel_reason: "",
     partner: input.partner,
     partner_ref: input.partner_ref,
@@ -414,7 +426,9 @@ export async function createBooking(input: BookingInput): Promise<Booking> {
 
   if (useLocalFile()) {
     const rows = await readLocal();
-    if (rows.some((r) => LIVE.includes(r.status) && r.starts_at === row.starts_at)) throw new SlotTaken();
+    if (LIVE.includes(status) && rows.some((r) => LIVE.includes(r.status) && r.starts_at === row.starts_at)) {
+      throw new SlotTaken();
+    }
     rows.push(row);
     await writeLocal(rows);
     return toBooking(row);
@@ -426,7 +440,7 @@ export async function createBooking(input: BookingInput): Promise<Booking> {
     await sql`
       INSERT INTO bookings (reference, created_at, full_name, email, phone, service, mode, starts_at, ends_at, notes, status, partner, partner_ref)
       VALUES (${row.reference}, ${row.created_at}, ${row.full_name}, ${row.email}, ${row.phone}, ${row.service},
-              ${row.mode}, ${row.starts_at}, ${row.ends_at}, ${row.notes}, 'requested', ${row.partner}, ${row.partner_ref})`;
+              ${row.mode}, ${row.starts_at}, ${row.ends_at}, ${row.notes}, ${status}, ${row.partner}, ${row.partner_ref})`;
   } catch (error) {
     // The one-live-booking-per-slot index: somebody else got there first.
     if (String((error as { code?: string }).code) === "23505") throw new SlotTaken();
