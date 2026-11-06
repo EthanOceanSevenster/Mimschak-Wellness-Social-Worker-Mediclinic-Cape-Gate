@@ -127,3 +127,22 @@ export function practiceCookie(username: string) {
     },
   };
 }
+
+/**
+ * The secret part of the calendar feed's address (/api/calendar/<token>),
+ * for subscribing from Zoho Calendar, Google Calendar or Outlook. Calendar
+ * apps cannot sign in, so the address itself is the key: derived from the
+ * main password, so changing that password changes the address and cuts off
+ * any old subscription. Null when no password is set.
+ */
+export function calendarFeedToken(): string | null {
+  const password = process.env.CLIENTS_PASSWORD ?? "";
+  if (password.length < 8) return null;
+  return createHmac("sha256", password).update("mimshack-calendar-feed-v1").digest("hex").slice(0, 40);
+}
+
+export function calendarFeedTokenMatches(attempt: string): boolean {
+  const expected = calendarFeedToken();
+  if (!expected || attempt.length !== expected.length) return false;
+  return timingSafeEqual(Buffer.from(attempt), Buffer.from(expected));
+}

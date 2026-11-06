@@ -6,7 +6,8 @@ import { redirect } from "next/navigation";
 import { HORIZON_DAYS, isStatus, listBookings, monthRange, nextPartnerReference, partnerCounts, PRACTICE, saDate } from "@/lib/bookings";
 import { searchEntries, StorageNotConfigured, type EntryPage } from "@/lib/client-entries";
 import { fullName, modeLabel, serviceLabel } from "@/lib/client-form";
-import { hasAdminAccess, practiceUser } from "@/lib/clients-auth";
+import { calendarFeedToken, hasAdminAccess, practiceUser } from "@/lib/clients-auth";
+import { SITE_URL } from "@/lib/site";
 import { getPartner, partnerLink, PARTNERS } from "@/lib/partners";
 import { getUser } from "@/lib/session";
 import type { Booking, ManageBookings } from "@/lib/types";
@@ -68,6 +69,8 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   const layout = params.layout === "list" ? "list" : "calendar";
   const range = monthRange(params.month);
   const who = (await practiceUser()) ?? "Admin";
+  const feedToken = calendarFeedToken();
+  const feedUrl = feedToken ? new URL(`/api/calendar/${feedToken}`, SITE_URL).toString() : null;
 
   /** An Admin address with the current choices, changed as given. */
   const href = (change: Partial<Params>) => {
@@ -418,6 +421,37 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
                   </Card>
                 )}
               </div>
+
+              {/* The sessions as a feed, for Zoho Calendar (or Google, Outlook) to subscribe to. */}
+              {feedUrl && (
+                <div className="mt-6">
+                  <Card title="Show these sessions in Zoho Calendar">
+                    <div className="grid gap-3 px-4 py-4 text-[0.9rem]">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <code
+                          className="min-w-0 flex-1 truncate rounded border bg-[#fafafa] px-3 py-2 text-[0.82rem]"
+                          style={{ borderColor: "#e0e0e0" }}
+                        >
+                          {feedUrl}
+                        </code>
+                        <CopyButton value={feedUrl} label="Copy link" />
+                      </div>
+                      <ol className="grid list-decimal gap-1 pl-5" style={{ color: "#424242" }}>
+                        <li>Copy the link above.</li>
+                        <li>
+                          In Zoho Calendar, next to <b>Shared calendars</b> (or <b>My calendars</b>) click <b>+</b>, then{" "}
+                          <b>Subscribe</b> and <b>By URL</b>.
+                        </li>
+                        <li>Paste the link, name it &ldquo;Mimshack sessions&rdquo; and click <b>Subscribe</b>.</li>
+                      </ol>
+                      <p className="text-[0.82rem]" style={{ color: "#707070" }}>
+                        Zoho checks it every few hours, so new and changed sessions appear there on their own. It works one
+                        way: changes made in Zoho do not come back here. Keep the link private, as it shows client names.
+                      </p>
+                    </div>
+                  </Card>
+                </div>
+              )}
             </>
           )}
 

@@ -15,6 +15,7 @@ export const SHELL = "mx-auto w-full max-w-[84rem] px-6 lg:px-12";
 export const NAV = [
   { href: "/#services", label: "Services" },
   { href: "/#why", label: "Why me" },
+  { href: "/corporate-wellness", label: "Corporate" },
   { href: "/#about", label: "About" },
   { href: "/#contact", label: "Contact" },
 ];
